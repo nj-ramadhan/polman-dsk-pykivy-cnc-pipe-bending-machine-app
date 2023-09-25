@@ -1,2 +1,2 @@
-# resistivity_meter_app
- Embedded system application for Resistivity Meter
+# CNC Pipe Bending Machine
+ Embedded system application for Pipe Bending CNC Machine
