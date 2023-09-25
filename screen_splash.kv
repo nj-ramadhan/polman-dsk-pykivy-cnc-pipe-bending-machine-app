@@ -1,0 +1,56 @@
+#:kivy 2.1.0
+
+<ScreenSplash>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 5 , 5
+        Label:
+            text: 'Automatic Multichannel Resistivity MG-AT'
+            halign: 'center'
+            valign: 'middle'
+            font_size: 40
+            padding: 10 , 10
+            bold: True
+            size_hint_y: 0.2
+            color: 0, 0, 0
+
+        Image:
+            id: logo
+            source:'asset/logo_labtek.png'
+            padding: 20
+            spacing: 20
+            size_hint_y: 0.2
+            allow_stretch: True
+
+        Label:
+            text: ''
+            size_hint_y: 0.05
+
+        MDProgressBar:
+            id: progress_bar
+            padding: 20
+            spacing: 200
+            size_hint_y: .02
+            max: 100
+            value: 1
+
+        Label:
+            id: progress_bar_label
+            text: 'Loading.. [0 %]'
+            halign: 'center'
+            valign: 'middle'
+            font_size: 50
+            padding: 2 , 2
+            bold: 'true'
+            size_hint_y: .1
+            color: 0, 0, 0
+
+        Label:
+            text: 'Developed by Labtek Copyrights @2022'
+            halign: 'center'
+            valign: 'middle'
+            font_size: 30
+            padding: 2 , 2
+            bold: 'true'
+            size_hint_y: .1
+            color: 0, 0, 0

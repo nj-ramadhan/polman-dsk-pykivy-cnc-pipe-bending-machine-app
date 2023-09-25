@@ -1,0 +1,243 @@
+#:kivy 2.1.0
+
+<ScreenData>:
+    BoxLayout:
+        orientation: "vertical"
+		# header layout
+        BoxLayout:
+            id: header_layout
+            orientation: "horizontal"
+            padding: 20
+			size_hint_y: 0.1
+
+			MDFillRoundFlatIconButton:
+				id: bt_shutdown
+				icon: "power"
+				text: " "
+				font_size: 22
+				size_hint_x: 0.15
+				on_press: root.exec_shutdown()
+
+            BoxLayout:
+                orientation: "vertical"
+                padding: 0, 15
+
+                Label:
+                    id: subtitle            
+                    text: "Automatic Multichannel Resistivity MG-AT"
+                    bold: True
+                    font_size: 30
+                    color: 0, 0, 0
+                    
+            Image:
+                id: logo
+                source:'asset/logo_labtek.png'
+                size_hint_x: 0.25
+                allow_stretch: True
+
+						
+		# data layout
+		BoxLayout:
+			id: layout_data
+			orientation: "vertical"
+			size_hint_y: 0.5
+			padding:10
+			spacing:10
+
+			Label:
+				text: "DATA SCREEN"
+				bold: True
+				font_size: 32
+				color: 0, 0, 0
+				size_hint_y: 0.1
+
+			BoxLayout:
+				orientation: "horizontal"
+				size_hint_y: 0.9
+				padding:10
+				spacing:10
+
+				BoxLayout:
+					orientation: "vertical"
+					size_hint_x: 0.2
+					padding:20
+					spacing:20
+					canvas.before:
+						Color:
+							rgba: 0, 0, 0, 1
+						Line:
+							width: 2
+							rectangle: self.x, self.y, self.width, self.height
+					Label:
+						text: "REALTIME DATA"
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+						size_hint_y: 0.1
+
+					BoxLayout:
+						orientation: "horizontal"
+						size_hint_y: 0.4
+
+						BoxLayout:
+							orientation: "vertical"
+							size_hint_x: 0.4
+							Label:
+								text: "Volt [V]"
+								font_size:12
+								color: 0, 0, 0
+
+							Label:
+								text: "Curr [mA]"
+								font_size:12
+								color: 0, 0, 0
+
+							Label:
+								text: "Res [kOhm]"
+								font_size:12
+								color: 0, 0, 0
+
+						BoxLayout:
+							orientation: "vertical"
+							size_hint_x: 0.6
+
+							Label:
+								id: realtime_voltage
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+							Label:
+								id: realtime_current
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+							Label:
+								id: realtime_resistivity
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+					Label:
+						text: "AVERAGE DATA"
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+						size_hint_y: 0.1
+
+					BoxLayout:
+						orientation: "horizontal"
+						size_hint_y: 0.4
+
+						BoxLayout:
+							orientation: "vertical"
+							size_hint_x: 0.4
+							Label:
+								text: "Volt [V]"
+								font_size:12
+								color: 0, 0, 0
+
+							Label:
+								text: "Curr [mA]"
+								font_size:12
+								color: 0, 0, 0
+
+							Label:
+								text: "Res [kOhm]"
+								font_size:12
+								color: 0, 0, 0
+
+						BoxLayout:
+							orientation: "vertical"
+							size_hint_x: 0.6
+
+							Label:
+								id: average_voltage
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+							Label:
+								id: average_current
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+							Label:
+								id: average_resistivity
+								font_size:16
+								color: 0, 0, 0
+								bold: True
+
+				AnchorLayout:
+					id: layout_tables
+					size_hint_x: 0.7
+					spacing: 5
+
+
+		# MDFillRoundFlatIconButton: interfacing layout
+		BoxLayout:
+			orientation: "horizontal"
+			size_hint_y: 0.06
+			padding:10	
+			spacing:20			
+			MDFillRoundFlatIconButton:
+				id: bt_reset_data
+				icon: "reload"
+				text: "RESET DATA"
+				font_size: 22
+				size_hint_x: 0.24
+				on_press: root.reset_data()
+
+			MDFillRoundFlatIconButton:
+				id: bt_save_data
+				icon: "content-save"
+				text: "SAVE DATA"
+				font_size: 22
+				size_hint_x: 0.24
+				on_press: root.save_data()
+
+			MDFillRoundFlatIconButton:
+				id: bt_measure
+				icon: "gauge"
+				text: "RUN MEASUREMENT"
+				font_size: 22
+				size_hint_x: 0.5
+				on_press: root.measure()
+
+		# MDRectangleFlatIconButton: navigation layout
+		BoxLayout:
+			orientation: "horizontal"
+			size_hint_y: 0.06
+			padding:10
+			spacing:10
+
+			MDFillRoundFlatIconButton:
+				id: bt_screen_setting
+				icon: "cogs"
+				text: "SETTING"
+				font_size: 22
+				size_hint_x: 0.25
+				on_press: root.screen_setting()
+
+			MDFillRoundFlatIconButton:
+				id: bt_screen_data
+				icon: "pencil"
+				text: "DATA"
+				font_size: 22
+				size_hint_x: 0.25
+				on_press: root.screen_data()
+
+			MDFillRoundFlatIconButton:
+				id: bt_screen_graph
+				icon: "chart-line"
+				text: "GRAPH"
+				font_size: 22
+				size_hint_x: 0.25
+				on_press: root.screen_graph()
+
+
+
+
+
