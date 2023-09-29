@@ -26,9 +26,9 @@ plt.style.use('bmh')
 
 colors = {
     "Red": {
-        "200": "#EE2222",
-        "500": "#EE2222",
-        "700": "#EE2222",
+        "A200": "#EE2222",
+        "A500": "#EE2222",
+        "A700": "#EE2222",
     },
 
     "Blue": {
@@ -80,33 +80,9 @@ USERNAME = 'labtek'
 DISK_ADDRESS = Path("/media/" + USERNAME + "/RESDONGLE/")
 SERIAL_NUMBER = "2301212112233412"
 
-if(not DEBUG):
-    # GPIO control and sensor acquisiton
-    import board
-    import busio
-    import adafruit_ads1x15.ads1115 as ADS
-    from adafruit_ads1x15.analog_in import AnalogIn
-    import RPi.GPIO as GPIO
-    import RPi.GPIO as GPIO
-    i2c = busio.I2C(board.SCL, board.SDA)
-    ads = ADS.ADS1115(i2c)
-#     from ina219c import INA219 as read_c
-#     from ina219p import INA219 as read_p
-
-    GPIO.cleanup
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(PIN_ENABLE, GPIO.OUT)
-    GPIO.setup(PIN_POLARITY, GPIO.OUT)
-
-# x_datum = np.zeros(MAX_POINT)
-# y_datum = np.zeros(MAX_POINT)
-x_electrode = np.zeros((4, MAX_POINT))
-n_electrode = np.zeros((ELECTRODES_NUM, STEPS))
-c_electrode = np.array(["#196BA5","#FF0000","#FFDD00","#00FF00","#00FFDD"])
-l_electrode = np.array(["Datum","C1","C2","P1","P2"])
-data_base = np.zeros([5, 1])
-data_pos = np.zeros([2, 1])
-data_pos = np.zeros([2, 1])
+tube_length = 6000.0
+tube_diameter = 60.3
+tube_thickness = 3.0
 
 checks_mode = []
 checks_config = []
@@ -131,7 +107,7 @@ inject_state = 0
 
 class ScreenSplash(BoxLayout):
     screen_manager = ObjectProperty(None)
-    screen_setting = ObjectProperty(None)
+    screen_tube_setting = ObjectProperty(None)
     app_window = ObjectProperty(None)
     
     def __init__(self, **kwargs):
@@ -150,244 +126,164 @@ class ScreenSplash(BoxLayout):
             self.ids.progress_bar.value = 100
             self.ids.progress_bar_label.text = 'Loading.. [{:} %]'.format(100)
             time.sleep(0.5)
-            self.screen_manager.current = 'screen_setting'
+            self.screen_manager.current = 'screen_tube_setting'
             return False
 
-class ScreenSetting(BoxLayout):
+class ScreenTubeSetting(BoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-        super(ScreenSetting, self).__init__(**kwargs)
+        super(ScreenTubeSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
-        Clock.schedule_interval(self.regular_check, 2)
-
-    def regular_check(self, dt):
-        global flag_run
-        if(flag_run):
-            self.ids.bt_measure.text = "STOP MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#A50000"
-        else:
-            self.ids.bt_measure.text = "RUN MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#196BA5"
 
     def delayed_init(self, dt):
-        self.ids.mode_ves.active = True
+        global tube_length
+        global tube_diameter
+        global tube_thickness
 
-        self.fig, self.ax = plt.subplots()
+        self.ids.input_tube_length.text = str(tube_length)
+        self.ids.input_tube_diameter.text = str(tube_diameter)
+        self.ids.input_tube_thickness.text = str(tube_thickness)
+
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111, projection='3d')
         self.fig.set_facecolor("#eeeeee")
         self.fig.tight_layout()
-        l, b, w, h = self.ax.get_position().bounds
-        self.ax.set_position(pos=[l, b + 0.3*h, w, h*0.7])
+
+        Uc = np.linspace(0, 2 * np.pi, 32)
+        Xc = np.linspace(0, tube_length, 4)
+
+        Uc_inner = np.linspace(0, 2 * np.pi, 32)
+        Xc_inner = np.linspace(0, tube_length, 4)
+
+        Uc, Xc = np.meshgrid(Uc, Xc)
+        Uc_inner, Xc_inner = np.meshgrid(Uc_inner, Xc_inner)
         
-        self.ax.set_xlabel("distance [m]", fontsize=10)
-        self.ax.set_ylabel("n", fontsize=10)
+        tube_radius = tube_diameter / 2
+        tube_radius_inner = (tube_diameter / 2) - tube_thickness
 
-        self.ids.layout_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
+        Yc = tube_radius * np.cos(Uc)
+        Zc = tube_radius * np.sin(Uc)
 
-    def illustrate(self):
-        global dt_mode
-        global dt_config
-        global dt_distance
-        global dt_constant
-        global dt_time
-        global dt_cycle
-        global x_datum
-        global y_datum
-        global data_pos
+        Yc_inner = tube_radius_inner * np.cos(Uc_inner)
+        Zc_inner = tube_radius_inner * np.sin(Uc_inner)
 
-        dt_distance = self.ids.slider_distance.value
-        dt_constant = self.ids.slider_constant.value
-        dt_time = self.ids.slider_time.value
-        dt_cycle = int(self.ids.slider_cycle.value)
+        self.ax.plot_surface(Xc, Yc, Zc, color='gray', alpha=0.8)
+        self.ax.plot_surface(Xc_inner, Yc_inner, Zc_inner, color='gray')
+        self.ax.set_box_aspect(aspect=(1, 1, 1))
+        # self.ax.set_xlim([0, 6000])
+        # self.ax.set_ylim([-100, 100])
+        # self.ax.set_zlim([-100, 100])
+        # self.ax.axis('off')
 
-        self.fig, self.ax = plt.subplots()
-        self.ids.layout_illustration.remove_widget(FigureCanvasKivyAgg(self.fig))
-        x_datum = np.zeros(MAX_POINT)
-        y_datum = np.zeros(MAX_POINT)
-        # x_datum = np.zeros(MAX_POINT)
-        # y_datum = np.zeros(MAX_POINT)
+        self.ids.tube_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
 
-        if("WENNER (ALPHA)" in dt_config):
-            num_step = 0
-            num_trial = 1
-            for multiplier in range(dt_constant):
-                for pos_el in range(ELECTRODES_NUM - 3 * num_trial):
-                    x_electrode[0, num_step] = pos_el
-                    x_electrode[1, num_step] = num_trial + x_electrode[0, num_step]
-                    x_electrode[2, num_step] = num_trial + x_electrode[1, num_step]
-                    x_electrode[3, num_step] = num_trial + x_electrode[2, num_step]
-                    x_datum[num_step] = (x_electrode[1, num_step] + (x_electrode[2, num_step] - x_electrode[1, num_step])/2) * dt_distance
-                    y_datum[num_step] = (multiplier + 1) * dt_distance
-                    
-                    num_step += 1
+    def update(self):
+        global tube_length
+        global tube_diameter
+        global tube_thickness
 
-                num_trial += 1
+        try:
+            self.ids.tube_illustration.clear_widgets()
+            self.fig = plt.figure()
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.fig.set_facecolor("#eeeeee")
+            self.fig.tight_layout()
 
-        elif("WENNER (BETA)" in dt_config):
-            num_step = 0
-            num_trial = 1
-            for multiplier in range(dt_constant):
-                for pos_el in range(ELECTRODES_NUM - 3 * num_trial):
-                    x_electrode[0, num_step] = pos_el
-                    x_electrode[1, num_step] = num_trial + x_electrode[0, num_step]
-                    x_electrode[2, num_step] = num_trial + x_electrode[1, num_step]
-                    x_electrode[3, num_step] = num_trial + x_electrode[2, num_step]
-                    x_datum[num_step] = (x_electrode[1, num_step] + (x_electrode[2, num_step] - x_electrode[1, num_step])/2) * dt_distance
-                    y_datum[num_step] = (multiplier + 1) * dt_distance
-                    
-                    num_step += 1
+            tube_length = float(self.ids.input_tube_length.text)
+            tube_diameter = float(self.ids.input_tube_diameter.text)
+            tube_thickness = float(self.ids.input_tube_thickness.text)
 
-                num_trial += 1
+            Uc = np.linspace(0, 2 * np.pi, 32)
+            Xc = np.linspace(0, tube_length, 4)
 
-        if("WENNER (GAMMA)" in dt_config):
-            num_step = 0
-            num_trial = 1
-            for multiplier in range(dt_constant):
-                for pos_el in range(ELECTRODES_NUM - 3 * num_trial):
-                    x_electrode[0, num_step] = pos_el
-                    x_electrode[1, num_step] = num_trial + x_electrode[0, num_step]
-                    x_electrode[2, num_step] = num_trial + x_electrode[1, num_step]
-                    x_electrode[3, num_step] = num_trial + x_electrode[2, num_step]
-                    x_datum[num_step] = (x_electrode[1, num_step] + (x_electrode[2, num_step] - x_electrode[1, num_step])/2) * dt_distance
-                    y_datum[num_step] = (multiplier + 1) * dt_distance
-                    
-                    num_step += 1
+            Uc_inner = np.linspace(0, 2 * np.pi, 32)
+            Xc_inner = np.linspace(0, tube_length, 4)
 
-                num_trial += 1
+            Uc, Xc = np.meshgrid(Uc, Xc)
+            Uc_inner, Xc_inner = np.meshgrid(Uc_inner, Xc_inner)
+            
+            tube_radius = tube_diameter / 2
+            tube_radius_inner = (tube_diameter / 2) - tube_thickness
 
-        elif("SCHLUMBERGER" in dt_config):
-            num_step = 0
-            num_trial = 1
-            for multiplier in range(dt_constant):
-                for pos_el in range(ELECTRODES_NUM - 3 * num_trial):
-                    x_electrode[0, num_step] = pos_el
-                    x_electrode[1, num_step] = num_trial + x_electrode[0, num_step]
-                    x_electrode[2, num_step] = num_trial + x_electrode[1, num_step]
-                    x_electrode[3, num_step] = num_trial + x_electrode[2, num_step]
-                    x_datum[num_step] = (x_electrode[1, num_step] + (x_electrode[2, num_step] - x_electrode[1, num_step])/2) * dt_distance
-                    y_datum[num_step] = (multiplier + 1) * dt_distance
-                    
-                    num_step += 1
+            Yc = tube_radius * np.cos(Uc)
+            Zc = tube_radius * np.sin(Uc)
 
-                num_trial += 1
+            Yc_inner = tube_radius_inner * np.cos(Uc_inner)
+            Zc_inner = tube_radius_inner * np.sin(Uc_inner)
 
-        elif("DIPOLE-DIPOLE" in dt_config):
-            nmax_available = 0
-            if(ELECTRODES_NUM % 2) != 0:
-                if(dt_constant > (ELECTRODES_NUM - 3) / 2):
-                    nmax_available = (ELECTRODES_NUM - 3) / 2
-                else:
-                    nmax_available = dt_constant
-            else:
-                if(dt_constant > (ELECTRODES_NUM - 3) / 2):
-                    nmax_available = round((ELECTRODES_NUM - 3) / 2)
-                else:
-                    nmax_available = dt_constant
+            self.ax.plot_surface(Xc, Yc, Zc, color='gray', alpha=0.8)
+            self.ax.plot_surface(Xc_inner, Yc_inner, Zc_inner, color='gray')
+            self.ax.set_box_aspect(aspect=(1, 1, 1))
+            # self.ax.set_xlim([0, 6000])
+            # self.ax.set_ylim([-100, 100])
+            # self.ax.set_zlim([-100, 100])
+            # self.ax.axis('off')
 
-            num_datum = 0
-            count_datum = 0      
-            for i in range(nmax_available):
-                for j in range(ELECTRODES_NUM - 1 - i * 2):
-                    num_datum = num_datum + j
-                count_datum = count_datum + num_datum
-                num_datum = 0     
+            self.ids.tube_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
+        except:
+            toast("error update tube illustration")
 
-            num_step = 1
-            num_trial = 1
-            for i in range(nmax_available):
-                for j in range(ELECTRODES_NUM - 1 - i * 2):
-                    for k in range(ELECTRODES_NUM - i * 2 - j):
-                        x_electrode[1, num_step] = j
-                        x_electrode[0, num_step] = j + 1 + (i - 1)
-                        x_electrode[2, num_step] = num_trial + x_electrode[0, num_step]
-                        x_electrode[3, num_step] = i + x_electrode[2, num_step]
-                        x_datum[num_step] = (x_electrode[0, num_step] + (x_electrode[2, num_step] - x_electrode[0, num_step])/2) * dt_distance
-                        y_datum[num_step] = (i + 1) * dt_distance
-                        
-                        num_step += 1
-                        num_trial += 1
+    def screen_tube_setting(self):
+        self.screen_manager.current = 'screen_tube_setting'
 
-                    num_trial = 0
-        else:
-            pass
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
 
-        self.fig.set_facecolor("#eeeeee")
-        self.fig.tight_layout()
-        l, b, w, h = self.ax.get_position().bounds
-        self.ax.set_position(pos=[l, b + 0.3*h, w*0.9, h*0.7])
-        self.ax.set_xlabel("distance [m]", fontsize=10)
-        self.ax.set_ylabel("n", fontsize=10)
-       
-        self.ax.set_facecolor("#eeeeee")
-        
-        x_data = np.trim_zeros(x_datum)
-        y_data = np.trim_zeros(y_datum)
-        # x_data = x_datum[np.array([x.size>0 for x in x_datum])]
-        # y_data = y_datum[np.array([y.size>0 for y in y_datum])]
-        data_pos = np.array([x_data, y_data])
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
 
-        #datum location
-        self.ax.scatter(x_data, y_data, c=c_electrode[0], label=l_electrode[0], marker='.')
+    def screen_data(self):
+        self.screen_manager.current = 'screen_data'
 
-        #electrode location
-        self.ax.scatter(x_electrode[0,0]*dt_distance , 0, c=c_electrode[1], label=l_electrode[1], marker=7)
-        self.ax.scatter(x_electrode[1,0]*dt_distance , 0, c=c_electrode[2], label=l_electrode[2], marker=7)
-        self.ax.scatter(x_electrode[2,0]*dt_distance , 0, c=c_electrode[3], label=l_electrode[3], marker=7)
-        self.ax.scatter(x_electrode[3,0]*dt_distance , 0, c=c_electrode[4], label=l_electrode[4], marker=7)
+    def screen_graph(self):
+        self.screen_manager.current = 'screen_graph'
 
-        self.ax.invert_yaxis()
-        self.ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), title="Electrode")         
-        self.ids.layout_illustration.clear_widgets()
-        self.ids.layout_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
+    def exec_shutdown(self):
+        # os.system("shutdown /s /t 1") #for windows os
+        toast("shutting down system")
+        os.system("shutdown -h now")
 
-    def measure(self):
-        global flag_run
+class ScreenMachineSetting(BoxLayout):
+    screen_manager = ObjectProperty(None)
 
-        if(flag_run):
-            flag_run = False
-        else:
-            flag_run = True
+    def __init__(self, **kwargs):
+        super(ScreenMachineSetting, self).__init__(**kwargs)
 
-    def checkbox_mode_click(self, instance, value, waves):
-        global checks_mode
-        global dt_mode
-        
-        if value == True:
-            checks_mode.append(waves)
-            modes = ''
-            for x in checks_mode:
-                modes = f'{modes} {x}'
-            self.ids.output_mode_label.text = f'{modes} MODE CHOSEN'
-        else:
-            checks_mode.remove(waves)
-            modes = ''
-            for x in checks_mode:
-                modes = f'{modes} {x}'
-            self.ids.output_mode_label.text = ''
-        
-        dt_mode = modes
+    def screen_tube_setting(self):
+        self.screen_manager.current = 'screen_tube_setting'
 
-    def checkbox_config_click(self, instance, value, waves):
-        global checks_config
-        global dt_config
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
 
-        if value == True:
-            checks_config.append(waves)
-            configs = ''
-            for x in checks_config:
-                configs = f'{configs} {x}'
-            self.ids.output_config_label.text = f'{configs} CONFIGURATION CHOSEN'
-        else:
-            checks_config.remove(waves)
-            configs = ''
-            for x in checks_config:
-                configs = f'{configs} {x}'
-            self.ids.output_config_label.text = ''
-        
-        dt_config = configs
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
 
-    def screen_setting(self):
-        self.screen_manager.current = 'screen_setting'
+    def screen_data(self):
+        self.screen_manager.current = 'screen_data'
+
+    def screen_graph(self):
+        self.screen_manager.current = 'screen_graph'
+
+    def exec_shutdown(self):
+        # os.system("shutdown /s /t 1") #for windows os
+        toast("shutting down system")
+        os.system("shutdown -h now")
+
+class ScreenAdvancedSetting(BoxLayout):
+    screen_manager = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(ScreenAdvancedSetting, self).__init__(**kwargs)
+
+    def screen_tube_setting(self):
+        self.screen_manager.current = 'screen_tube_setting'
+
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
+
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
 
     def screen_data(self):
         self.screen_manager.current = 'screen_data'
@@ -422,58 +318,11 @@ class ScreenData(BoxLayout):
         global inject_state
         global flag_autosave_data
 
+        global flag_run
         if(flag_run):
-            self.ids.bt_measure.text = "STOP MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#A50000"
-            # Clock.schedule_interval(self.inject_current, dt_time / 1000)
-            # Clock.schedule_interval(self.measurement_sampling, dt_time / 10000)
-            flag_autosave_data = True
-
-            if("(VES) VERTICAL ELECTRICAL SOUNDING" in dt_mode):
-                if(flag_measure == False):
-                    Clock.schedule_interval(self.measurement_check, ((4 * dt_cycle * dt_time) / 1000))
-                    Clock.schedule_interval(self.inject_current, ((dt_cycle * dt_time)  / 1000))
-                
-                flag_measure = True
-        
-            elif("(SP) SELF POTENTIAL" in dt_mode):
-                if(flag_measure == False):
-                    Clock.schedule_interval(self.measurement_check, ((4 * dt_cycle * dt_time) / 1000))
-                
-                flag_measure = True
-                
-            elif("(R) RESISTIVITY" in dt_mode):
-                if(flag_measure == False):
-                    Clock.schedule_interval(self.measurement_check, ((4 * dt_cycle * dt_time) / 1000))
-                    Clock.schedule_interval(self.inject_current, ((dt_cycle * dt_time)  / 1000))
-                
-                flag_measure = True
-                
-            elif("(R+IP) INDUCED POLARIZATION" in dt_mode):
-                if(flag_measure == False):
-                    Clock.schedule_interval(self.measurement_check, ((4 * dt_cycle * dt_time) / 1000))
-                    Clock.schedule_interval(self.inject_current, ((dt_cycle * dt_time)  / 1000))
-                
-                flag_measure = True                        
-            else:
-                pass
-            
-
+            pass
         else:
-            self.ids.bt_measure.text = "RUN MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#196BA5"
-            Clock.unschedule(self.measurement_check)
-            Clock.unschedule(self.inject_current)
-            inject_state = 0
-            flag_measure = False
-            if(not DEBUG):
-                # GPIO.output(PIN_FWD, GPIO.LOW)
-                # GPIO.output(PIN_REV, GPIO.LOW)
-                GPIO.output(PIN_ENABLE, GPIO.HIGH)
-                GPIO.output(PIN_POLARITY, GPIO.HIGH)
-            if(flag_autosave_data):
-                self.autosave_data()
-                flag_autosave_data = False
+            pass
 
 #         self.ids.bt_save_data.disabled = False
             
@@ -718,8 +567,14 @@ class ScreenData(BoxLayout):
         else:
             flag_run = True
 
-    def screen_setting(self):
-        self.screen_manager.current = 'screen_setting'
+    def screen_tube_setting(self):
+        self.screen_manager.current = 'screen_tube_setting'
+
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
+
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
 
     def screen_data(self):
         self.screen_manager.current = 'screen_data'
@@ -739,126 +594,94 @@ class ScreenGraph(BoxLayout):
     def __init__(self, **kwargs):
         super(ScreenGraph, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
-        Clock.schedule_interval(self.regular_check, 2)
-
-    def regular_check(self, dt):
-        global flag_run
-        global flag_dongle
-        global count_mounting
-        global dt_time
-        global data_base
-        global flag_autosave_graph
-
-        if(flag_run):
-            self.ids.bt_measure.text = "STOP MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#A50000"
-            Clock.schedule_interval(self.measurement_check, dt_time / 100)
-            flag_autosave_graph = True
-        else:
-            self.ids.bt_measure.text = "RUN MEASUREMENT"
-            self.ids.bt_measure.md_bg_color = "#196BA5"
-            Clock.unschedule(self.measurement_check)
-            if(flag_autosave_graph):
-                self.autosave_graph()
-                flag_autosave_graph = False  
-        
-        if not DISK_ADDRESS.exists() and flag_dongle:
-            try:
-                print("try mounting")
-                serial_file = str(DISK_ADDRESS) + "/serial.key"
-                print(serial_file)
-                with open(serial_file,"r") as f:
-                    serial_number = f.readline()
-                    if serial_number == SERIAL_NUMBER:
-                        print("success, serial number is valid")
-                        self.ids.bt_save_graph.disabled = False
-                    else:
-                        print("fail, serial number is invalid")
-                        self.ids.bt_save_graph.disabled = True                    
-            except:
-                print(f"Could not mount {DISK_ADDRESS}")
-                self.ids.bt_save_graph.disabled = True
-                count_mounting += 1
-                if(count_mounting > 10):
-                    flag_dongle = False 
-
-    def measurement_check(self, dt):
-        global flag_run
-        global x_datum
-        global y_datum
-        global data_base
-        global data_pos
-
-        data_limit = len(data_base[2,:])
-        visualized_data_pos = data_pos
-
-        try:
-            self.fig.set_facecolor("#eeeeee")
-            self.fig.tight_layout()
-            
-            self.ax.set_xlabel("distance [m]", fontsize=10)
-            self.ax.set_ylabel("n", fontsize=10)
-            self.ax.set_facecolor("#eeeeee")
-
-            # datum location
-            max_data = np.max(data_base[2,:data_limit])
-            cmap, norm = mcolors.from_levels_and_colors([0.0, max_data, max_data * 2],['green','red'])
-            self.ax.scatter(visualized_data_pos[0,:data_limit], -visualized_data_pos[1,:data_limit], c=data_base[2,:data_limit], cmap=cmap, norm=norm, label=l_electrode[0], marker='o')
-            # electrode location
-            self.ids.layout_graph.clear_widgets()
-            self.ids.layout_graph.add_widget(FigureCanvasKivyAgg(self.fig))
-
-            print("successfully show graphic")
-        
-        except:
-            print("error show graphic")
-
-        if(data_limit >= len(data_pos[0,:])):
-            self.measure()
 
     def delayed_init(self, dt):
-        self.fig, self.ax = plt.subplots()
+        global tube_length
+        global tube_diameter
+        global tube_thickness
+
+        self.ids.input_tube_length.text = str(tube_length)
+        self.ids.input_tube_diameter.text = str(tube_diameter)
+        self.ids.input_tube_thickness.text = str(tube_thickness)
+
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111, projection='3d')
         self.fig.set_facecolor("#eeeeee")
         self.fig.tight_layout()
-        l, b, w, h = self.ax.get_position().bounds
-        self.ax.set_position(pos=[l, b + 0.3*h, w, h*0.7])
-        
-        self.ax.set_xlabel("distance [m]", fontsize=10)
-        self.ax.set_ylabel("n", fontsize=10)
 
-        self.ids.layout_graph.add_widget(FigureCanvasKivyAgg(self.fig))        
+        # theta: poloidal angle; phi: toroidal angle 
+        theta = np.linspace(0, 2*np.pi, 100) 
+        phi   = np.linspace(0, 2*np.pi, 100) 
+        theta, phi = np.meshgrid(theta, phi) 
 
-    def measure(self):
-        global flag_run
-        if(flag_run):
-            flag_run = False
-        else:
-            flag_run = True
+        # R0: major radius; a: minor radius 
+        R0, a = 2., 1. 
 
-    def reset_graph(self):
-        global data_base
-        global data_pos
+        # torus parametrization 
+        x = (R0 + a*np.cos(theta)) * np.cos(phi) 
+        y = (R0 + a*np.cos(theta)) * np.sin(phi) 
+        z = a * np.sin(theta) 
 
-        data_base = np.zeros([5, 1])
-        data_pos = np.zeros([2, 1])
+        # "cut-off" half of the torus using transparent colors 
+        c = np.full(x.shape + (4,), [0, 0, 0.85, 1])  # shape (nx, ny, 4)
+        c[x>0, -1] = 0 # set these to transparent 
+
+        self.ax.plot_surface(x, y, z, facecolors=c, rstride=5, cstride=5)
+        # self.ax.set_box_aspect(aspect=(1, 1, 1))
+        self.ax.set_aspect('equal')
+        # self.ax.set_xlim([0, 6000])
+        # self.ax.set_ylim([-100, 100])
+        # self.ax.set_zlim([-100, 100])
+        # self.ax.axis('off')
+
+        self.ids.tube_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
+
+    def update(self):
+        global tube_length
+        global tube_diameter
+        global tube_thickness
 
         try:
-            self.ids.layout_graph.clear_widgets()
-            self.fig, self.ax = plt.subplots()
+            self.ids.tube_bended_illustration.clear_widgets()
+            self.fig = plt.figure()
+            self.ax = self.fig.add_subplot(111, projection='3d')
             self.fig.set_facecolor("#eeeeee")
             self.fig.tight_layout()
-            l, b, w, h = self.ax.get_position().bounds
-            self.ax.set_position(pos=[l, b + 0.3*h, w, h*0.7])
+
+            tube_length = float(self.ids.input_tube_length.text)
+            tube_diameter = float(self.ids.input_tube_diameter.text)
+            tube_thickness = float(self.ids.input_tube_thickness.text)
+
+            Uc = np.linspace(0, 2 * np.pi, 32)
+            Xc = np.linspace(0, tube_length, 4)
+
+            Uc_inner = np.linspace(0, 2 * np.pi, 32)
+            Xc_inner = np.linspace(0, tube_length, 4)
+
+            Uc, Xc = np.meshgrid(Uc, Xc)
+            Uc_inner, Xc_inner = np.meshgrid(Uc_inner, Xc_inner)
             
-            self.ax.set_xlabel("distance [m]", fontsize=10)
-            self.ax.set_ylabel("n", fontsize=10)
+            tube_radius = tube_diameter / 2
+            tube_radius_inner = (tube_diameter / 2) - tube_thickness
 
-            self.ids.layout_graph.add_widget(FigureCanvasKivyAgg(self.fig))        
-            print("successfully reset graphic")
-        
+            Yc = tube_radius * np.cos(Uc)
+            Zc = tube_radius * np.sin(Uc)
+
+            Yc_inner = tube_radius_inner * np.cos(Uc_inner)
+            Zc_inner = tube_radius_inner * np.sin(Uc_inner)
+
+            self.ax.plot_surface(Xc, Yc, Zc, color='gray', alpha=0.8)
+            self.ax.plot_surface(Xc_inner, Yc_inner, Zc_inner, color='gray')
+            # self.ax.set_box_aspect(aspect=(1, 1, 1))
+            self.ax.set_aspect('equal')
+            # self.ax.set_xlim([0, 6000])
+            # self.ax.set_ylim([-100, 100])
+            # self.ax.set_zlim([-100, 100])
+            # self.ax.axis('off')
+
+            self.ids.tube_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
         except:
-            print("error reset graphic")
-
+            toast("error update tube illustration")
 
     def save_graph(self):
         try:
@@ -883,8 +706,14 @@ class ScreenGraph(BoxLayout):
             print("error auto saving graph")
             # toast("error saving graph")
                 
-    def screen_setting(self):
-        self.screen_manager.current = 'screen_setting'
+    def screen_tube_setting(self):
+        self.screen_manager.current = 'screen_tube_setting'
+
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
+
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
 
     def screen_data(self):
         self.screen_manager.current = 'screen_data'
@@ -897,14 +726,14 @@ class ScreenGraph(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h 1")
 
-class ResistivityMeterApp(MDApp):
+class PipeBendingCNCApp(MDApp):
     def build(self):
         self.theme_cls.colors = colors
         self.theme_cls.primary_palette = "Blue"
-        self.icon = 'asset/logo_labtek_p.ico'
-        # Window.fullscreen = 'auto'
+        self.icon = 'asset/logo.ico'
+        Window.fullscreen = 'auto'
         Window.borderless = True
-        Window.size = 1024, 600
+        # Window.size = 1024, 600
         Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')
@@ -913,4 +742,4 @@ class ResistivityMeterApp(MDApp):
 
 
 if __name__ == '__main__':
-    ResistivityMeterApp().run()
+    PipeBendingCNCApp().run()

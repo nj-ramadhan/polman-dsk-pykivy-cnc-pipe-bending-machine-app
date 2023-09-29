@@ -24,16 +24,22 @@
 
                 Label:
                     id: subtitle            
-                    text: "Automatic Multichannel Resistivity MG-AT"
+                    text: "Pipe Bending CNC Machine"
                     bold: True
                     font_size: 30
                     color: 0, 0, 0
                     
             Image:
                 id: logo
-                source:'asset/logo_labtek.png'
-                size_hint_x: 0.25
-                allow_stretch: True
+                source:'asset/logo_rafindo.png'
+                size_hint_x: 0.125
+                allow_stretch: True                   
+
+            Image:
+                id: logo
+                source:'asset/logo_polman.png'
+                size_hint_x: 0.125
+                allow_stretch: True    
 
 						
 		# data layout
@@ -214,25 +220,41 @@
 			spacing:10
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_setting
+				id: bt_screen_tube_setting
 				icon: "cogs"
-				text: "SETTING"
+				text: "TUBE SETTING"
 				font_size: 22
 				size_hint_x: 0.25
-				on_press: root.screen_setting()
+				on_press: root.screen_tube_setting()
+			
+			MDFillRoundFlatIconButton:
+				id: bt_screen_machine_setting
+				icon: "cogs"
+				text: "MACHINE SETTING"
+				font_size: 22
+				size_hint_x: 0.25
+				on_press: root.screen_machine_setting()
+
+			MDFillRoundFlatIconButton:
+				id: bt_screen_advanced_setting
+				icon: "cogs"
+				text: "ADVANCED SETTING"
+				font_size: 22
+				size_hint_x: 0.25
+				on_press: root.screen_advanced_setting()
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_data
-				icon: "pencil"
-				text: "DATA"
+				icon: "human"
+				text: "OPERATION MODE"
 				font_size: 22
 				size_hint_x: 0.25
 				on_press: root.screen_data()
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_graph
-				icon: "chart-line"
-				text: "GRAPH"
+				icon: "file"
+				text: "COMPILE FILE"
 				font_size: 22
 				size_hint_x: 0.25
 				on_press: root.screen_graph()

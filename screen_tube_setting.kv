@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<ScreenGraph>:
+<ScreenTubeSetting>:
     BoxLayout:
         orientation: "vertical"
 		# header layout
@@ -39,9 +39,8 @@
                 id: logo
                 source:'asset/logo_polman.png'
                 size_hint_x: 0.125
-                allow_stretch: True    
-						
-		# graph layout
+                allow_stretch: True  
+
 		# setting layout
 		BoxLayout:
 			id: layout_tube_setting
@@ -142,10 +141,9 @@
 							
 				# illustration pipe
 				BoxLayout:
-					id: tube_bended_illustration
+					id: tube_illustration
 					size_hint_x: 0.6
 					# padding:10
-
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:

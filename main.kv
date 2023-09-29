@@ -2,7 +2,9 @@
 
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 #:include screen_splash.kv
-#:include screen_setting.kv
+#:include screen_tube_setting.kv
+#:include screen_machine_setting.kv
+#:include screen_advanced_setting.kv
 #:include screen_data.kv
 #:include screen_graph.kv
 
@@ -14,12 +16,24 @@ ScreenManager:
         ScreenSplash:
             app_window: app
             screen_manager: screen_manager
-            screen_setting: screen_setting
+            screen_tube_setting: screen_tube_setting
 
     Screen:
-        name: 'screen_setting'
-        ScreenSetting:
-            id: screen_setting
+        name: 'screen_tube_setting'
+        ScreenTubeSetting:
+            id: screen_tube_setting
+            screen_manager: screen_manager
+
+    Screen:
+        name: 'screen_machine_setting'
+        ScreenMachineSetting:
+            id: screen_machine_setting
+            screen_manager: screen_manager
+
+    Screen:
+        name: 'screen_advanced_setting'
+        ScreenAdvancedSetting:
+            id: screen_advanced_setting
             screen_manager: screen_manager
 
     Screen:

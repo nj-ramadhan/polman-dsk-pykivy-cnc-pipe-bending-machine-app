@@ -5,22 +5,30 @@
         orientation: 'vertical'
         padding: 5 , 5
         Label:
-            text: 'Automatic Multichannel Resistivity MG-AT'
+            text: 'Pipe Bending CNC Machine'
             halign: 'center'
             valign: 'middle'
-            font_size: 40
+            font_size: 64
             padding: 10 , 10
             bold: True
             size_hint_y: 0.2
             color: 0, 0, 0
 
-        Image:
-            id: logo
-            source:'asset/logo_labtek.png'
-            padding: 20
-            spacing: 20
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 25 , 25
             size_hint_y: 0.2
-            allow_stretch: True
+
+            Image:
+                id: logo
+                source:'asset/logo_rafindo.png'
+                allow_stretch: True
+            
+            Image:
+                id: logo
+                source:'asset/logo_polman.png'
+                allow_stretch: True
+
 
         Label:
             text: ''
@@ -46,7 +54,7 @@
             color: 0, 0, 0
 
         Label:
-            text: 'Developed by Labtek Copyrights @2022'
+            text: 'Developed by Polman Bandung & Rafindo Raya, Copyrights @2023'
             halign: 'center'
             valign: 'middle'
             font_size: 30
