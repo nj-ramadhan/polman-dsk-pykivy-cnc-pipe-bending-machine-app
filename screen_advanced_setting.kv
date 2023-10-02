@@ -14,7 +14,7 @@
 				id: bt_shutdown
 				icon: "power"
 				text: " "
-				font_size: 22
+				font_size: 32
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
@@ -26,7 +26,7 @@
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
-                    font_size: 30
+                    font_size: 64
                     color: 0, 0, 0
                     
             Image:
@@ -55,7 +55,7 @@
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
-				
+
 			BoxLayout:
 				orientation: "horizontal"
 				canvas.before:
@@ -68,83 +68,230 @@
 				GridLayout:
 					cols:2
 					row_force_default: True
-					row_default_height: 55
-					padding:20
-					spacing:20
+					row_default_height: 45
+					padding:40
+					spacing:40
 					size_hint_x: 0.4
 
 					Label:
-						text: "Shape"
+						text: "Pipe Head Pos"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						hint_text: "Input Shape"
+						id: input_pipe_length
+						hint_text: "Input Pipe Head Pos (mm)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Length"
+						text: "Start Mode"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_length
-						hint_text: "Input Length"
+						id: input_pipe_diameter
+						hint_text: "Input Start Mode"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Diameter"
+						text: "Calculate First Line Segment"
 						bold: True
-						font_size: 16
+						font_size: 22
+						color: 0, 0, 0
+
+					BoxLayout:
+						orientation: "horizontal"
+						canvas.before:
+							Color:
+								rgba: 0.5, 0, 0, 1
+							Line:
+								width: 2
+								rectangle: self.x, self.y, self.width, self.height
+
+					Label:
+						text: "When Job Has Finished"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0						
+
+					BoxLayout:
+						orientation: "horizontal"
+						canvas.before:
+							Color:
+								rgba: 0.5, 0, 0, 1
+							Line:
+								width: 2
+								rectangle: self.x, self.y, self.width, self.height				
+
+					Label:
+						text: "Pipe Receive Pos (X-axis)"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0						
+
+					MDTextField:
+						id: input_receive_pos_x
+						hint_text: "Input Pipe Receive Pos X-axis (mm)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()							
+
+					Label:
+						text: "Pipe Receive Pos (B-axis)"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0						
+
+					MDTextField:
+						id: input_receive_pos_b
+						hint_text: "Input Receive Pos B-axis (mm)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()					
+
+					Label:
+						text: "Production Quantity"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0						
+
+					MDTextField:
+						id: input_receive_pos_b
+						hint_text: "Input Production Quantity"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()		
+
+				GridLayout:
+					cols:2
+					row_force_default: True
+					row_default_height: 45
+					padding:40
+					spacing:40
+					size_hint_x: 0.4
+
+					Label:
+						text: "Pressure Die Semi Clamp Time"
+						bold: True
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_diameter
-						hint_text: "Input Diameter"
+						id: input_advanced_press_semiclamp_time
+						hint_text: "Input Pressure Die Semi Clamp Time (sec)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Thickness"
+						text: "Pressure Die Semi Open Time"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_thickness
-						hint_text: "Input Thickness"
+						id: input_advanced_press_semiopen_time
+						hint_text: "Input Pressure Die Semi Open Time (sec)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Material"
+						text: "Clamp Die Semi Clamp Time"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
-					MDDropDownItem:
-						id: drop_item
-						pos_hint: {'center_x': .5, 'center_y': .5}
-						text: 'Material Type' 
-							
-				# illustration pipe
-				BoxLayout:
-					id: tube_illustration
-					size_hint_x: 0.6
-					# padding:10
+					MDTextField:
+						id: input_advanced_clamp_semiclamp_time
+						hint_text: "Input Clamp Die Semi Clamp Time (sec)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()
 
+					Label:
+						text: "Spring Back Angle (20)"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDTextField:
+						id: input_advanced_springback_20
+						hint_text: "Input Spring Back Angle 20 (degree)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+					Label:
+						text: "Spring Back Angle (120)"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDTextField:
+						id: input_advanced_springback_120
+						hint_text: "Input Spring Back Angle 120 (degree)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+					Label:
+						text: "Max Bending Angle"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDTextField:
+						id: input_advanced_max_bend
+						hint_text: "Input Max Bending Angle (degree)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()	
+
+					Label:
+						text: "Pressure Die Start Angle"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDTextField:
+						id: input_advanced_press_start_angle
+						hint_text: "Input Pressure Die Start Angle (degree)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()	
+
+					Label:
+						text: "Pressure Die Stop Angle"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDTextField:
+						id: input_advanced_press_stop_angle
+						hint_text: "Input Pressure Die Stop Angle (degree)"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()	
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
@@ -154,18 +301,18 @@
 			spacing:10
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_tube_setting
+				id: bt_screen_pipe_setting
 				icon: "cogs"
-				text: "TUBE SETTING"
-				font_size: 22
+				text: "PIPE SETTING"
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_tube_setting()
+				on_press: root.screen_pipe_setting()
 			
 			MDFillRoundFlatIconButton:
 				id: bt_screen_machine_setting
 				icon: "cogs"
 				text: "MACHINE SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_machine_setting()
 
@@ -173,26 +320,22 @@
 				id: bt_screen_advanced_setting
 				icon: "cogs"
 				text: "ADVANCED SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_advanced_setting()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_data
+				id: bt_screen_operate
 				icon: "human"
 				text: "OPERATION MODE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_data()
+				on_press: root.screen_operate()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_graph
+				id: bt_screen_compile
 				icon: "file"
 				text: "COMPILE FILE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_graph()
-
-
-
-
+				on_press: root.screen_compile()

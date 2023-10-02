@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<ScreenGraph>:
+<ScreenPipeSetting>:
     BoxLayout:
         orientation: "vertical"
 		# header layout
@@ -14,7 +14,7 @@
 				id: bt_shutdown
 				icon: "power"
 				text: " "
-				font_size: 22
+				font_size: 32
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
@@ -26,7 +26,7 @@
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
-                    font_size: 30
+                    font_size: 64
                     color: 0, 0, 0
                     
             Image:
@@ -39,19 +39,18 @@
                 id: logo
                 source:'asset/logo_polman.png'
                 size_hint_x: 0.125
-                allow_stretch: True    
-						
-		# graph layout
+                allow_stretch: True  
+
 		# setting layout
 		BoxLayout:
-			id: layout_tube_setting
+			id: layout_pipe_setting
 			orientation: "vertical"
 			size_hint_y: 0.5
 			padding:10
 			spacing:10
 
 			Label:
-				text: "TUBE SETTING"
+				text: "PIPE SETTING"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
@@ -69,83 +68,58 @@
 				GridLayout:
 					cols:2
 					row_force_default: True
-					row_default_height: 55
-					padding:20
-					spacing:20
+					row_default_height: 45
+					padding:40
+					spacing:40
 					size_hint_x: 0.4
-
-					Label:
-						text: "Shape"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
-
-					MDTextField:
-						hint_text: "Input Shape"
-						bold: True
-						font_size: 16
-						input_filter: 'float'
-						on_text_validate: root.update()
 
 					Label:
 						text: "Length"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_length
-						hint_text: "Input Length"
+						id: input_pipe_length
+						hint_text: "Input Length (mm)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
 						text: "Diameter"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_diameter
-						hint_text: "Input Diameter"
+						id: input_pipe_diameter
+						hint_text: "Input Diameter (mm)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
 						text: "Thickness"
 						bold: True
-						font_size: 16
+						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_thickness
-						hint_text: "Input Thickness"
+						id: input_pipe_thickness
+						hint_text: "Input Thickness (mm)"
 						bold: True
-						font_size: 16
+						font_size: 22
 						input_filter: 'float'
-						on_text_validate: root.update()
-
-					Label:
-						text: "Material"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
-
-					MDDropDownItem:
-						id: drop_item
-						pos_hint: {'center_x': .5, 'center_y': .5}
-						text: 'Material Type' 
-							
+						on_text_validate: root.update()					
+						
 				# illustration pipe
 				BoxLayout:
-					id: tube_bended_illustration
+					id: pipe_illustration
 					size_hint_x: 0.6
 					# padding:10
-
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
@@ -155,18 +129,18 @@
 			spacing:10
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_tube_setting
+				id: bt_screen_pipe_setting
 				icon: "cogs"
-				text: "TUBE SETTING"
-				font_size: 22
+				text: "PIPE SETTING"
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_tube_setting()
+				on_press: root.screen_pipe_setting()
 			
 			MDFillRoundFlatIconButton:
 				id: bt_screen_machine_setting
 				icon: "cogs"
 				text: "MACHINE SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_machine_setting()
 
@@ -174,25 +148,25 @@
 				id: bt_screen_advanced_setting
 				icon: "cogs"
 				text: "ADVANCED SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_advanced_setting()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_data
+				id: bt_screen_operate
 				icon: "human"
 				text: "OPERATION MODE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_data()
+				on_press: root.screen_operate()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_graph
+				id: bt_screen_compile
 				icon: "file"
 				text: "COMPILE FILE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_graph()
+				on_press: root.screen_compile()
 
 
 

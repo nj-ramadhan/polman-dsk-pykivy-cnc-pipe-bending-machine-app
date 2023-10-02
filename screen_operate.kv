@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<ScreenMachineSetting>:
+<ScreenOperate>:
     BoxLayout:
         orientation: "vertical"
 		# header layout
@@ -39,22 +39,23 @@
                 id: logo
                 source:'asset/logo_polman.png'
                 size_hint_x: 0.125
-                allow_stretch: True                 
-		
-		# setting layout
+                allow_stretch: True    
+
+		# manual operate layout
 		BoxLayout:
-			id: layout_machine_setting
+			id: layout_operate_manual
 			orientation: "vertical"
-			size_hint_y: 0.5
+			size_hint_y: 0.3
 			padding:10
 			spacing:10
 
 			Label:
-				text: "MACHINE SETTING"
+				text: "MACHINE MANUAL OPERATION"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
+
 			BoxLayout:
 				orientation: "horizontal"
 				canvas.before:
@@ -67,122 +68,66 @@
 				GridLayout:
 					cols:2
 					row_force_default: True
-					row_default_height: 45
+					row_default_height: 50
 					padding:40
 					spacing:40
 					size_hint_x: 0.4
 
 					Label:
-						text: "Effective Length"
+						text: "Feeding (Y-axis)"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_machine_eff_length
-						hint_text: "Input Effective Length (mm)"
+						id: input_operate_feeding
+						hint_text: "Input Feeding (mm)"
 						bold: True
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Pipe Support Interference Pos"
+						text: "Bending Angle (C-axis)"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_machine_supp_pos
-						hint_text: "Input Pipe Support Interference Pos (mm)"
+						id: input_operate_bending
+						hint_text: "Input Bending Angle (degree)"
 						bold: True
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Clamping Die Front Limit Delay Time"
+						text: "Turning Angle (B-axis)"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_machine_clamp_front_delay
-						hint_text: "Input Clamping Die Front Limit Delay Time (sec)"
+						id: input_operate_turning
+						hint_text: "Input Turning Angle (degree)"
 						bold: True
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Clamping Die Rear Limit Delay Time"
+						text: "Horizontal (X-axis)"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_machine_clamp_rear_delay
-						hint_text: "Input Clamping Die Rear Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()					
-
-					Label:
-						text: "Pressure Die Front Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_machine_press_front_delay
-						hint_text: "Input Pressure Die Front Limit Delay Time (sec)"
+						id: input_operate_horizontal
+						hint_text: "Input Horizontal (mm)"
 						bold: True
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
-
-					Label:
-						text: "Pressure Die Rear Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_machine_press_rear_delay
-						hint_text: "Input Pressure Die Rear Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()		
-
-					Label:
-						text: "Collet Clamping Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_machine_collet_clamp_delay
-						hint_text: "Input Collet Clamping Delay Time (sec)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-					Label:
-						text: "Collet Opening Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_machine_collet_open_delay
-						hint_text: "Input Collet Opening Delay Time (sec)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()		
 
 				# machine illustration
 				Image:
@@ -190,6 +135,64 @@
 					source:'asset/logo_rafindo.png'
 					size_hint_x: 0.125
 					allow_stretch: True  
+
+		# manual operate layout
+		BoxLayout:
+			id: layout_operate_auto
+			orientation: "vertical"
+			size_hint_y: 0.2
+			padding:10
+			spacing:10
+
+			Label:
+				text: "MACHINE AUTO OPERATION"
+				bold: True
+				font_size: 32
+				color: 0, 0, 0
+				size_hint_y: 0.1
+
+			BoxLayout:
+				orientation: "horizontal"
+				canvas.before:
+					Color:
+						rgba: 0.5, 0, 0, 1
+					Line:
+						width: 2
+						rectangle: self.x, self.y, self.width, self.height
+
+				GridLayout:
+					cols:2
+					row_force_default: True
+					row_default_height: 50
+					padding:40
+					spacing:40
+					size_hint_x: 0.4
+
+					Label:
+						text: "Select Compiled File (G-code)"
+						bold: True
+						font_size: 22
+						color: 0, 0, 0
+
+					MDRoundFlatIconButton:
+						text: "Open File"
+						icon: "folder"
+						on_release: root.file_manager_open()
+
+					MDTextField:
+						id: input_file_dir
+						hint_text: "Input File Directory"
+						bold: True
+						font_size: 22
+						input_filter: 'float'
+						on_text_validate: root.update()					
+
+
+				# illustration pipe
+				BoxLayout:
+					id: pipe_bended_illustration
+					size_hint_x: 0.6
+					# padding:10
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:

@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<ScreenTubeSetting>:
+<ScreenCompile>:
     BoxLayout:
         orientation: "vertical"
 		# header layout
@@ -14,7 +14,7 @@
 				id: bt_shutdown
 				icon: "power"
 				text: " "
-				font_size: 22
+				font_size: 32
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
@@ -26,7 +26,7 @@
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
-                    font_size: 30
+                    font_size: 64
                     color: 0, 0, 0
                     
             Image:
@@ -39,18 +39,19 @@
                 id: logo
                 source:'asset/logo_polman.png'
                 size_hint_x: 0.125
-                allow_stretch: True  
-
+                allow_stretch: True    
+						
+		# graph layout
 		# setting layout
 		BoxLayout:
-			id: layout_tube_setting
+			id: layout_pipe_setting
 			orientation: "vertical"
 			size_hint_y: 0.5
 			padding:10
 			spacing:10
 
 			Label:
-				text: "TUBE SETTING"
+				text: "COMPILE FILE"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
@@ -66,7 +67,7 @@
 						rectangle: self.x, self.y, self.width, self.height
 
 				GridLayout:
-					cols:2
+					cols:4
 					row_force_default: True
 					row_default_height: 55
 					padding:20
@@ -74,76 +75,159 @@
 					size_hint_x: 0.4
 
 					Label:
-						text: "Shape"
+						text: "Step No."
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+
+					Label:
+						text: "Offset Length"
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+					
+					Label:
+						text: "Bending Angle"
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+					
+					Label:
+						text: "Turning Angle"
+						bold: True
+						font_size: 16
+						color: 0, 0, 0
+					
+					Label:
+						text: "1"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 
 					MDTextField:
-						hint_text: "Input Shape"
+						id: input_step_length0
+						hint_text: "Offset Length 1"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+
+					MDTextField:
+						id: input_step_bend0
+						hint_text: "Bending Angle 1"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+					MDTextField:
+						id: input_step_turn0
+						hint_text: "Turning Angle 1"
 						bold: True
 						font_size: 16
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Length"
+						text: "2"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_length
-						hint_text: "Input Length"
+						id: input_step_length1
+						hint_text: "Offset Length 2"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+
+					MDTextField:
+						id: input_step_bend1
+						hint_text: "Bending Angle 2"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+					MDTextField:
+						id: input_step_turn1
+						hint_text: "Turning Angle 2"
 						bold: True
 						font_size: 16
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Diameter"
+						text: "3"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_diameter
-						hint_text: "Input Diameter"
+						id: input_step_length2
+						hint_text: "Offset Length 3"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+
+					MDTextField:
+						id: input_step_bend2
+						hint_text: "Bending Angle 3"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
+					MDTextField:
+						id: input_step_turn2
+						hint_text: "Turning Angle 3"
 						bold: True
 						font_size: 16
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					Label:
-						text: "Thickness"
+						text: "4"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 
 					MDTextField:
-						id: input_tube_thickness
-						hint_text: "Input Thickness"
+						id: input_step_length3
+						hint_text: "Offset Length 4"
 						bold: True
 						font_size: 16
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
-						text: "Material"
+
+					MDTextField:
+						id: input_step_bend3
+						hint_text: "Bending Angle 4"
 						bold: True
 						font_size: 16
-						color: 0, 0, 0
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-					MDDropDownItem:
-						id: drop_item
-						pos_hint: {'center_x': .5, 'center_y': .5}
-						text: 'Material Type' 
-							
+					MDTextField:
+						id: input_step_turn3
+						hint_text: "Turning Angle 4"
+						bold: True
+						font_size: 16
+						input_filter: 'float'
+						on_text_validate: root.update()
+
 				# illustration pipe
 				BoxLayout:
-					id: tube_illustration
+					id: pipe_bended_illustration
 					size_hint_x: 0.6
 					# padding:10
+
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
@@ -153,18 +237,18 @@
 			spacing:10
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_tube_setting
+				id: bt_screen_pipe_setting
 				icon: "cogs"
-				text: "TUBE SETTING"
-				font_size: 22
+				text: "PIPE SETTING"
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_tube_setting()
+				on_press: root.screen_pipe_setting()
 			
 			MDFillRoundFlatIconButton:
 				id: bt_screen_machine_setting
 				icon: "cogs"
 				text: "MACHINE SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_machine_setting()
 
@@ -172,26 +256,22 @@
 				id: bt_screen_advanced_setting
 				icon: "cogs"
 				text: "ADVANCED SETTING"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
 				on_press: root.screen_advanced_setting()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_data
+				id: bt_screen_operate
 				icon: "human"
 				text: "OPERATION MODE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_data()
+				on_press: root.screen_operate()
 
 			MDFillRoundFlatIconButton:
-				id: bt_screen_graph
+				id: bt_screen_compile
 				icon: "file"
 				text: "COMPILE FILE"
-				font_size: 22
+				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_graph()
-
-
-
-
+				on_press: root.screen_compile()
