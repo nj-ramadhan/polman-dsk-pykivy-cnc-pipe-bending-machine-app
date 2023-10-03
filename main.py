@@ -257,6 +257,27 @@ class ScreenMachineSetting(BoxLayout):
     def __init__(self, **kwargs):
         super(ScreenMachineSetting, self).__init__(**kwargs)
 
+    def update(self):
+        global machine_die_radius
+
+    def update_image(self, image_num):
+        if image_num == 0:
+            self.ids.machine_image.source = 'asset/machine_setting_eff_length.png'
+        elif image_num == 1:
+            self.ids.machine_image.source = 'asset/machine_setting_supp_pos.png'
+        elif image_num == 2:
+            self.ids.machine_image.source = 'asset/machine_setting_clamp_front_delay.png'
+        elif image_num == 3:
+            self.ids.machine_image.source = 'asset/machine_setting_clamp_rear_delay.png'
+        elif image_num == 4:
+            self.ids.machine_image.source = 'asset/machine_setting_press_front_delay.png'
+        elif image_num == 5:
+            self.ids.machine_image.source = 'asset/machine_setting_press_rear_delay.png'
+        elif image_num == 6:
+            self.ids.machine_image.source = 'asset/machine_setting_collet_clamp_delay.png'
+        elif image_num == 7:
+            self.ids.machine_image.source = 'asset/machine_setting_collet_open_delay.png'
+        
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
 

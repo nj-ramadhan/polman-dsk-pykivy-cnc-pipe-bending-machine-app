@@ -14,7 +14,7 @@
 				id: bt_shutdown
 				icon: "power"
 				text: " "
-				font_size: 32
+				font_size: 64
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
@@ -70,7 +70,7 @@
 					row_default_height: 45
 					padding:40
 					spacing:40
-					size_hint_x: 0.4
+					size_hint_x: 0.6
 
 					Label:
 						text: "Effective Length"
@@ -85,6 +85,7 @@
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
+						on_focus: root.update_image(0)
 
 					Label:
 						text: "Pipe Support Interference Pos"
@@ -99,6 +100,7 @@
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
+						on_focus: root.update_image(1)
 
 					Label:
 						text: "Clamping Die Front Limit Delay Time"
@@ -113,6 +115,7 @@
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
+						on_focus: root.update_image(2)
 
 					Label:
 						text: "Clamping Die Rear Limit Delay Time"
@@ -126,7 +129,8 @@
 						bold: True
 						font_size: 22
 						input_filter: 'float'
-						on_text_validate: root.update()					
+						on_text_validate: root.update()	
+						on_focus: root.update_image(3)				
 
 					Label:
 						text: "Pressure Die Front Limit Delay Time"
@@ -141,6 +145,7 @@
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
+						on_focus: root.update_image(4)
 
 					Label:
 						text: "Pressure Die Rear Limit Delay Time"
@@ -154,7 +159,8 @@
 						bold: True
 						font_size: 22
 						input_filter: 'float'
-						on_text_validate: root.update()		
+						on_text_validate: root.update()
+						on_focus: root.update_image(5)		
 
 					Label:
 						text: "Collet Clamping Delay Time"
@@ -169,6 +175,7 @@
 						font_size: 22
 						input_filter: 'float'
 						on_text_validate: root.update()
+						on_focus: root.update_image(6)
 
 					Label:
 						text: "Collet Opening Delay Time"
@@ -182,13 +189,14 @@
 						bold: True
 						font_size: 22
 						input_filter: 'float'
-						on_text_validate: root.update()		
+						on_text_validate: root.update()
+						on_focus: root.update_image(7)
 
 				# machine illustration
 				Image:
-					id: machine
-					source:'asset/logo_rafindo.png'
-					size_hint_x: 0.125
+					id: machine_image
+					source:'asset/machine_setting_eff_length.png'
+					size_hint_x: 0.4
 					allow_stretch: True  
 
 		# MDRectangleFlatIconButton: navigation layout
