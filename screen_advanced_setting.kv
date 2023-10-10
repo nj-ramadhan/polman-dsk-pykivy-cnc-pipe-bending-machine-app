@@ -176,7 +176,7 @@
 				GridLayout:
 					cols:2
 					row_force_default: True
-					row_default_height: 45
+					row_default_height: 40
 					padding:40
 					spacing:40
 					size_hint_x: 0.4
@@ -296,7 +296,7 @@
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
 			orientation: "horizontal"
-			size_hint_y: 0.06
+			size_hint_y: 0.04
 			padding:10
 			spacing:10
 
@@ -330,7 +330,7 @@
 				text: "OPERATION MODE"
 				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_operate()
+				on_press: root.screen_operate_auto()
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_compile

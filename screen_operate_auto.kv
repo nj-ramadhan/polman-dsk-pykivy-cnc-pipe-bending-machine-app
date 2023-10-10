@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<ScreenOperate>:
+<ScreenOperateAuto>:
     BoxLayout:
         orientation: "vertical"
 		# header layout
@@ -41,106 +41,11 @@
                 size_hint_x: 0.125
                 allow_stretch: True    
 
-		# manual operate layout
-		BoxLayout:
-			id: layout_operate_manual
-			orientation: "vertical"
-			size_hint_y: 0.3
-			padding:10
-			spacing:10
-
-			Label:
-				text: "MACHINE MANUAL OPERATION"
-				bold: True
-				font_size: 32
-				color: 0, 0, 0
-				size_hint_y: 0.1
-
-			BoxLayout:
-				orientation: "horizontal"
-				canvas.before:
-					Color:
-						rgba: 0.5, 0, 0, 1
-					Line:
-						width: 2
-						rectangle: self.x, self.y, self.width, self.height
-
-				GridLayout:
-					cols:2
-					row_force_default: True
-					row_default_height: 50
-					padding:40
-					spacing:40
-					size_hint_x: 0.6
-
-					Label:
-						text: "Feeding (Y-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_operate_feeding
-						hint_text: "Input Feeding (mm)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-					Label:
-						text: "Bending Angle (C-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_operate_bending
-						hint_text: "Input Bending Angle (degree)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-					Label:
-						text: "Turning Angle (B-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_operate_turning
-						hint_text: "Input Turning Angle (degree)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-					Label:
-						text: "Horizontal (X-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_operate_horizontal
-						hint_text: "Input Horizontal (mm)"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-				# machine illustration
-				Image:
-					id: machine
-					source:'asset/machine_operation.png'
-					size_hint_x: 0.4
-					allow_stretch: True  
-
-		# manual operate layout
+		# auto operate layout
 		BoxLayout:
 			id: layout_operate_auto
 			orientation: "vertical"
-			size_hint_y: 0.2
+			size_hint_y: 0.44
 			padding:10
 			spacing:10
 
@@ -161,7 +66,7 @@
 						rectangle: self.x, self.y, self.width, self.height
 
 				GridLayout:
-					cols:2
+					cols:3
 					row_force_default: True
 					row_default_height: 50
 					padding:40
@@ -174,30 +79,53 @@
 						font_size: 22
 						color: 0, 0, 0
 
-					MDRoundFlatIconButton:
-						text: "Open File"
-						icon: "folder"
-						on_release: root.file_manager_open()
-
 					MDTextField:
 						id: input_file_dir
 						hint_text: "Input File Directory"
 						bold: True
 						font_size: 22
 						input_filter: 'float'
-						on_text_validate: root.update()					
+						on_text_validate: root.update()	
+
+					MDRoundFlatIconButton:
+						text: "Open File"
+						icon: "folder"
+						on_release: root.file_manager_open()			
 
 
 				# illustration pipe
 				BoxLayout:
 					id: pipe_bended_illustration
 					size_hint_x: 0.6
-					# padding:10
+					padding:10
+
+		# MDRectangleFlatIconButton: navigation operation
+		BoxLayout:
+			orientation: "horizontal"
+			size_hint_y: 0.045
+			padding:10
+			spacing:10
+
+			MDFillRoundFlatIconButton:
+				id: bt_screen_manual
+				icon: "hand"
+				text: "MANUAL OPERATION"
+				font_size: 28
+				size_hint_x: 0.5
+				on_press: root.screen_operate_manual()
+			
+			MDFillRoundFlatIconButton:
+				id: bt_screen_auto
+				icon: "play"
+				text: "AUTOMATIC OPERATION"
+				font_size: 28
+				size_hint_x: 0.5
+				on_press: root.screen_operate_auto()	
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
 			orientation: "horizontal"
-			size_hint_y: 0.06
+			size_hint_y: 0.04
 			padding:10
 			spacing:10
 
@@ -231,7 +159,7 @@
 				text: "OPERATION MODE"
 				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_operate()
+				on_press: root.screen_operate_auto()
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_compile

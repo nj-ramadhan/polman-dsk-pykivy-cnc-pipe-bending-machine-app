@@ -119,12 +119,12 @@
 				BoxLayout:
 					id: pipe_illustration
 					size_hint_x: 0.6
-					# padding:10
+					padding:10
 
 		# MDRectangleFlatIconButton: navigation layout
 		BoxLayout:
 			orientation: "horizontal"
-			size_hint_y: 0.06
+			size_hint_y: 0.04
 			padding:10
 			spacing:10
 
@@ -158,7 +158,7 @@
 				text: "OPERATION MODE"
 				font_size: 28
 				size_hint_x: 0.25
-				on_press: root.screen_operate()
+				on_press: root.screen_operate_auto()
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_compile

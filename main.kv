@@ -5,7 +5,8 @@
 #:include screen_pipe_setting.kv
 #:include screen_machine_setting.kv
 #:include screen_advanced_setting.kv
-#:include screen_operate.kv
+#:include screen_operate_manual.kv
+#:include screen_operate_auto.kv
 #:include screen_compile.kv
 
 ScreenManager:
@@ -37,11 +38,17 @@ ScreenManager:
             screen_manager: screen_manager
 
     Screen:
-        name: 'screen_operate'
-        ScreenOperate:
-            id: screen_operate
+        name: 'screen_operate_manual'
+        ScreenOperateManual:
+            id: screen_operate_manual
             screen_manager: screen_manager
-         
+
+    Screen:
+        name: 'screen_operate_auto'
+        ScreenOperateAuto:
+            id: screen_operate_auto
+            screen_manager: screen_manager
+
     Screen:
         name: 'screen_compile'
         ScreenCompile:
