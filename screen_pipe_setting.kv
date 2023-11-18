@@ -1,10 +1,10 @@
 #:kivy 2.1.0
 
 <ScreenPipeSetting>:
-    BoxLayout:
+    MDBoxLayout:
         orientation: "vertical"
 		# header layout
-        BoxLayout:
+        MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
@@ -18,11 +18,11 @@
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
-            BoxLayout:
+            MDBoxLayout:
                 orientation: "vertical"
                 padding: 0, 15
 
-                Label:
+                MDLabel:
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
@@ -42,21 +42,21 @@
                 allow_stretch: True  
 
 		# setting layout
-		BoxLayout:
+		MDBoxLayout:
 			id: layout_pipe_setting
 			orientation: "vertical"
 			size_hint_y: 0.5
 			padding:10
 			spacing:10
 
-			Label:
+			MDLabel:
 				text: "PIPE SETTING"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
 				
-			BoxLayout:
+			MDBoxLayout:
 				orientation: "horizontal"
 				canvas.before:
 					Color:
@@ -65,7 +65,7 @@
 						width: 2
 						rectangle: self.x, self.y, self.width, self.height
 
-				GridLayout:
+				MDGridLayout:
 					cols:2
 					row_force_default: True
 					row_default_height: 45
@@ -73,7 +73,7 @@
 					spacing:40
 					size_hint_x: 0.4
 
-					Label:
+					MDLabel:
 						text: "Length"
 						bold: True
 						font_size: 22
@@ -87,7 +87,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Diameter"
 						bold: True
 						font_size: 22
@@ -101,7 +101,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Thickness"
 						bold: True
 						font_size: 22
@@ -116,13 +116,13 @@
 						on_text_validate: root.update()					
 						
 				# illustration pipe
-				BoxLayout:
+				MDBoxLayout:
 					id: pipe_illustration
 					size_hint_x: 0.6
 					padding:10
 
 		# MDRectangleFlatIconButton: navigation layout
-		BoxLayout:
+		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.04
 			padding:10

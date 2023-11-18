@@ -1,10 +1,10 @@
 #:kivy 2.1.0
 
 <ScreenCompile>:
-    BoxLayout:
+    MDBoxLayout:
         orientation: "vertical"
 		# header layout
-        BoxLayout:
+        MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
@@ -18,11 +18,11 @@
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
-            BoxLayout:
+            MDBoxLayout:
                 orientation: "vertical"
                 padding: 0, 15
 
-                Label:
+                MDLabel:
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
@@ -42,21 +42,21 @@
                 allow_stretch: True    
 						
 		# setting layout
-		BoxLayout:
+		MDBoxLayout:
 			id: layout_pipe_setting
 			orientation: "vertical"
 			size_hint_y: 0.44
 			padding:10
 			spacing:10
 
-			Label:
+			MDLabel:
 				text: "COMPILE FILE"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
 				
-			BoxLayout:
+			MDBoxLayout:
 				orientation: "horizontal"
 				canvas.before:
 					Color:
@@ -65,7 +65,7 @@
 						width: 2
 						rectangle: self.x, self.y, self.width, self.height
 
-				GridLayout:
+				MDGridLayout:
 					cols:4
 					row_force_default: True
 					row_default_height: 35
@@ -73,31 +73,31 @@
 					spacing:20
 					size_hint_x: 0.4
 
-					Label:
+					MDLabel:
 						text: "Step No."
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 
-					Label:
+					MDLabel:
 						text: "Offset Length"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 					
-					Label:
+					MDLabel:
 						text: "Bending Angle"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 					
-					Label:
+					MDLabel:
 						text: "Turning Angle"
 						bold: True
 						font_size: 16
 						color: 0, 0, 0
 					
-					Label:
+					MDLabel:
 						text: "1"
 						bold: True
 						font_size: 16
@@ -128,7 +128,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "2"
 						bold: True
 						font_size: 16
@@ -159,7 +159,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "3"
 						bold: True
 						font_size: 16
@@ -190,7 +190,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "4"
 						bold: True
 						font_size: 16
@@ -221,7 +221,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "5"
 						bold: True
 						font_size: 16
@@ -252,7 +252,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "6"
 						bold: True
 						font_size: 16
@@ -283,7 +283,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "7"
 						bold: True
 						font_size: 16
@@ -314,7 +314,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "8"
 						bold: True
 						font_size: 16
@@ -345,7 +345,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "9"
 						bold: True
 						font_size: 16
@@ -376,7 +376,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "10"
 						bold: True
 						font_size: 16
@@ -408,13 +408,13 @@
 						on_text_validate: root.update()
 
 				# illustration pipe
-				BoxLayout:
+				MDBoxLayout:
 					id: pipe_bended_illustration
 					size_hint_x: 0.6
 					padding:10
 
 		# MDRectangleFlatIconButton: navigation operation
-		BoxLayout:
+		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.045
 			padding:10
@@ -437,7 +437,7 @@
 				on_press: root.reset()
 
 		# MDRectangleFlatIconButton: navigation layout
-		BoxLayout:
+		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.04
 			padding:10

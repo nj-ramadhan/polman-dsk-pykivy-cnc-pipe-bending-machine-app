@@ -1,10 +1,10 @@
 #:kivy 2.1.0
 
 <ScreenMachineSetting>:
-    BoxLayout:
+    MDBoxLayout:
         orientation: "vertical"
 		# header layout
-        BoxLayout:
+        MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
@@ -18,11 +18,11 @@
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
-            BoxLayout:
+            MDBoxLayout:
                 orientation: "vertical"
                 padding: 0, 15
 
-                Label:
+                MDLabel:
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
@@ -42,20 +42,20 @@
                 allow_stretch: True                 
 		
 		# setting layout
-		BoxLayout:
+		MDBoxLayout:
 			id: layout_machine_setting
 			orientation: "vertical"
 			size_hint_y: 0.5
 			padding:10
 			spacing:10
 
-			Label:
+			MDLabel:
 				text: "MACHINE SETTING"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
-			BoxLayout:
+			MDBoxLayout:
 				orientation: "horizontal"
 				canvas.before:
 					Color:
@@ -64,7 +64,7 @@
 						width: 2
 						rectangle: self.x, self.y, self.width, self.height
 
-				GridLayout:
+				MDGridLayout:
 					cols:2
 					row_force_default: True
 					row_default_height: 40
@@ -72,7 +72,7 @@
 					spacing:40
 					size_hint_x: 0.6
 
-					Label:
+					MDLabel:
 						text: "Effective Length"
 						bold: True
 						font_size: 22
@@ -87,7 +87,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(0)
 
-					Label:
+					MDLabel:
 						text: "Pipe Support Interference Pos"
 						bold: True
 						font_size: 22
@@ -102,7 +102,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(1)
 
-					Label:
+					MDLabel:
 						text: "Clamping Die Front Limit Delay Time"
 						bold: True
 						font_size: 22
@@ -117,7 +117,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(2)
 
-					Label:
+					MDLabel:
 						text: "Clamping Die Rear Limit Delay Time"
 						bold: True
 						font_size: 22
@@ -132,7 +132,7 @@
 						on_text_validate: root.update()	
 						on_focus: root.update_image(3)				
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Front Limit Delay Time"
 						bold: True
 						font_size: 22
@@ -147,7 +147,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(4)
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Rear Limit Delay Time"
 						bold: True
 						font_size: 22
@@ -162,7 +162,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(5)		
 
-					Label:
+					MDLabel:
 						text: "Collet Clamping Delay Time"
 						bold: True
 						font_size: 22
@@ -177,7 +177,7 @@
 						on_text_validate: root.update()
 						on_focus: root.update_image(6)
 
-					Label:
+					MDLabel:
 						text: "Collet Opening Delay Time"
 						bold: True
 						font_size: 22
@@ -200,7 +200,7 @@
 					allow_stretch: True  
 
 		# MDRectangleFlatIconButton: navigation layout
-		BoxLayout:
+		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.04
 			padding:10

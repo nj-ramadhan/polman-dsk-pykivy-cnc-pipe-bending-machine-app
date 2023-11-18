@@ -7,7 +7,7 @@ from kivymd.toast import toast
 from kivymd.uix.datatables import MDDataTable
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.uix.boxlayout import BoxLayout
+from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.filemanager import MDFileManager
 from kivy.clock import Clock
 from kivy.config import Config
@@ -113,7 +113,7 @@ flag_autosave_graph = False
 count_mounting = 0
 inject_state = 0
 
-class ScreenSplash(BoxLayout):
+class ScreenSplash(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     screen_pipe_setting = ObjectProperty(None)
     app_window = ObjectProperty(None)
@@ -137,7 +137,7 @@ class ScreenSplash(BoxLayout):
             self.screen_manager.current = 'screen_pipe_setting'
             return False
 
-class ScreenPipeSetting(BoxLayout):
+class ScreenPipeSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -251,7 +251,7 @@ class ScreenPipeSetting(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h now")
 
-class ScreenMachineSetting(BoxLayout):
+class ScreenMachineSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -298,7 +298,7 @@ class ScreenMachineSetting(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h now")
 
-class ScreenAdvancedSetting(BoxLayout):
+class ScreenAdvancedSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -324,7 +324,7 @@ class ScreenAdvancedSetting(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h now")
 
-class ScreenOperateManual(BoxLayout):
+class ScreenOperateManual(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):      
@@ -353,7 +353,7 @@ class ScreenOperateManual(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h now")
 
-class ScreenOperateAuto(BoxLayout):
+class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -457,7 +457,7 @@ class ScreenOperateAuto(BoxLayout):
         toast("shutting down system")
         os.system("shutdown -h now")
 
-class ScreenCompile(BoxLayout):
+class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     global flag_run
     global step_length

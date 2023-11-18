@@ -1,10 +1,10 @@
 #:kivy 2.1.0
 
 <ScreenAdvancedSetting>:
-    BoxLayout:
+    MDBoxLayout:
         orientation: "vertical"
 		# header layout
-        BoxLayout:
+        MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
@@ -18,11 +18,11 @@
 				size_hint_x: 0.15
 				on_press: root.exec_shutdown()
 
-            BoxLayout:
+            MDBoxLayout:
                 orientation: "vertical"
                 padding: 0, 15
 
-                Label:
+                MDLabel:
                     id: subtitle            
                     text: "Pipe Bending CNC Machine"
                     bold: True
@@ -42,21 +42,21 @@
                 allow_stretch: True                  
 		
 		# setting layout
-		BoxLayout:
+		MDBoxLayout:
 			id: layout_advanced_setting
 			orientation: "vertical"
 			size_hint_y: 0.5
 			padding:10
 			spacing:10
 
-			Label:
+			MDLabel:
 				text: "ADVANCED SETTING"
 				bold: True
 				font_size: 32
 				color: 0, 0, 0
 				size_hint_y: 0.1
 
-			BoxLayout:
+			MDBoxLayout:
 				orientation: "horizontal"
 				canvas.before:
 					Color:
@@ -65,7 +65,7 @@
 						width: 2
 						rectangle: self.x, self.y, self.width, self.height
 
-				GridLayout:
+				MDGridLayout:
 					cols:2
 					row_force_default: True
 					row_default_height: 45
@@ -73,7 +73,7 @@
 					spacing:40
 					size_hint_x: 0.4
 
-					Label:
+					MDLabel:
 						text: "Pipe Head Pos"
 						bold: True
 						font_size: 22
@@ -87,7 +87,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Start Mode"
 						bold: True
 						font_size: 22
@@ -101,13 +101,13 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Calculate First Line Segment"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0
 
-					BoxLayout:
+					MDBoxLayout:
 						orientation: "horizontal"
 						canvas.before:
 							Color:
@@ -116,13 +116,13 @@
 								width: 2
 								rectangle: self.x, self.y, self.width, self.height
 
-					Label:
+					MDLabel:
 						text: "When Job Has Finished"
 						bold: True
 						font_size: 22
 						color: 0, 0, 0						
 
-					BoxLayout:
+					MDBoxLayout:
 						orientation: "horizontal"
 						canvas.before:
 							Color:
@@ -131,7 +131,7 @@
 								width: 2
 								rectangle: self.x, self.y, self.width, self.height				
 
-					Label:
+					MDLabel:
 						text: "Pipe Receive Pos (X-axis)"
 						bold: True
 						font_size: 22
@@ -145,7 +145,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()							
 
-					Label:
+					MDLabel:
 						text: "Pipe Receive Pos (B-axis)"
 						bold: True
 						font_size: 22
@@ -159,7 +159,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()					
 
-					Label:
+					MDLabel:
 						text: "Production Quantity"
 						bold: True
 						font_size: 22
@@ -173,7 +173,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()		
 
-				GridLayout:
+				MDGridLayout:
 					cols:2
 					row_force_default: True
 					row_default_height: 40
@@ -181,7 +181,7 @@
 					spacing:40
 					size_hint_x: 0.4
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Semi Clamp Time"
 						bold: True
 						font_size: 22
@@ -195,7 +195,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Semi Open Time"
 						bold: True
 						font_size: 22
@@ -209,7 +209,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Clamp Die Semi Clamp Time"
 						bold: True
 						font_size: 22
@@ -223,7 +223,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Spring Back Angle (20)"
 						bold: True
 						font_size: 22
@@ -237,7 +237,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Spring Back Angle (120)"
 						bold: True
 						font_size: 22
@@ -251,7 +251,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 
-					Label:
+					MDLabel:
 						text: "Max Bending Angle"
 						bold: True
 						font_size: 22
@@ -265,7 +265,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()	
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Start Angle"
 						bold: True
 						font_size: 22
@@ -279,7 +279,7 @@
 						input_filter: 'float'
 						on_text_validate: root.update()	
 
-					Label:
+					MDLabel:
 						text: "Pressure Die Stop Angle"
 						bold: True
 						font_size: 22
@@ -294,7 +294,7 @@
 						on_text_validate: root.update()	
 
 		# MDRectangleFlatIconButton: navigation layout
-		BoxLayout:
+		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.04
 			padding:10

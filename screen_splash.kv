@@ -1,10 +1,10 @@
 #:kivy 2.1.0
 
 <ScreenSplash>:
-    BoxLayout:
+    MDBoxLayout:
         orientation: 'vertical'
         padding: 25 , 25
-        Label:
+        MDLabel:
             text: 'Pipe Bending CNC Machine'
             halign: 'center'
             valign: 'middle'
@@ -14,7 +14,7 @@
             size_hint_y: 0.2
             color: 0, 0, 0
 
-        BoxLayout:
+        MDBoxLayout:
             orientation: 'horizontal'
             padding: 25 , 25
             size_hint_y: 0.2
@@ -30,7 +30,7 @@
                 allow_stretch: True
 
 
-        Label:
+        MDLabel:
             text: ''
             size_hint_y: 0.03
 
@@ -42,7 +42,7 @@
             max: 100
             value: 1
 
-        Label:
+        MDLabel:
             id: progress_bar_label
             text: 'Loading.. [0 %]'
             halign: 'center'
@@ -53,7 +53,7 @@
             size_hint_y: .1
             color: 0, 0, 0
 
-        Label:
+        MDLabel:
             text: 'Developed by Polman Bandung & Rafindo Raya, Copyrights @2023'
             halign: 'center'
             valign: 'middle'
