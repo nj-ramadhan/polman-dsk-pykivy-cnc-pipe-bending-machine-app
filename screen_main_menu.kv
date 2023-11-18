@@ -53,14 +53,15 @@
 				text: "MAIN MENU"
 				bold: True
 				font_size: 32
+				valign: "middle"
 				color: 0, 0, 0
 			
 		MDGridLayout:
 			id: layout_main_menu
 			size_hint_y: 0.54
 			cols:4
-			padding:150
-			spacing:150
+			padding:100
+			spacing:100
 
 			MDCard:
 				id: bt_screen_pipe_setting
@@ -103,12 +104,12 @@
 
 				MDRelativeLayout:
 					Image:
-						source:'asset/logo_operate.png'
+						source:'asset/logo_operate_machine.png'
 						pos_hint: {"center_x": .5, "center_y": .5}
 						allow_stretch: True 
 
 					MDLabel:
-						text: "OPERATE"
+						text: "OPERATE MACHINE"
 						adaptive_size: True
 						pos: "12dp", "12dp"
 						bold: True
@@ -120,12 +121,81 @@
 
 				MDRelativeLayout:
 					Image:
-						source:'asset/logo_operate.png'
+						source:'asset/logo_compile_program.png'
 						pos_hint: {"center_x": .5, "center_y": .5}
 						allow_stretch: True 
 
 					MDLabel:
-						text: "OPERATE"
+						text: "COMPILE PROGRAM"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+
+			MDCard:
+				id: bt_screen_pipe_setting
+				ripple_behavior: True
+				on_press: root.screen_pipe_setting()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_pipe_setting.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "PIPE SETTING"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_machine_setting
+				ripple_behavior: True
+				on_press: root.screen_machine_setting()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_machine_setting.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "MACHINE SETTING"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_operate_auto
+				ripple_behavior: True
+				on_press: root.screen_operate_auto()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_operate_machine.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "OPERATE MACHINE"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_compile
+				ripple_behavior: True
+				on_press: root.screen_compile()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_compile_program.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "COMPILE PROGRAM"
 						adaptive_size: True
 						pos: "12dp", "12dp"
 						bold: True

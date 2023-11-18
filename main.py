@@ -33,6 +33,12 @@ colors = {
         "A700": "#EE2222",
     },
 
+    "Gray": {
+        "200": "#999999",
+        "500": "#999999",
+        "700": "#999999",
+    },
+
     "Blue": {
         "200": "#196BA5",
         "500": "#196BA5",
@@ -142,6 +148,9 @@ class ScreenMainMenu(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
+
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
 
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
@@ -258,6 +267,9 @@ class ScreenPipeSetting(MDBoxLayout):
     def menu_callback(self, text_item):
         print(text_item)
 
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
+
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
 
@@ -305,6 +317,9 @@ class ScreenMachineSetting(MDBoxLayout):
         elif image_num == 7:
             self.ids.machine_image.source = 'asset/machine_setting_collet_open_delay.png'
         
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
+
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
 
@@ -331,6 +346,9 @@ class ScreenAdvancedSetting(MDBoxLayout):
     def __init__(self, **kwargs):
         super(ScreenAdvancedSetting, self).__init__(**kwargs)
 
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
+
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
 
@@ -356,6 +374,9 @@ class ScreenOperateManual(MDBoxLayout):
 
     def __init__(self, **kwargs):      
         super(ScreenOperateManual, self).__init__(**kwargs)
+
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
 
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
@@ -460,6 +481,9 @@ class ScreenOperateAuto(MDBoxLayout):
         # self.ax.axis('off')
         self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
    
+
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
 
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
@@ -688,6 +712,9 @@ class ScreenCompile(MDBoxLayout):
             print("error saving graph")
             toast("error saving graph")
                 
+    def screen_main_menu(self):
+        self.screen_manager.current = 'screen_main_menu'
+
     def screen_pipe_setting(self):
         self.screen_manager.current = 'screen_pipe_setting'
 
@@ -715,6 +742,7 @@ class PipeBendingCNCApp(MDApp):
     def build(self):
         self.theme_cls.colors = colors
         self.theme_cls.primary_palette = "Blue"
+        self.theme_cls.accent_palette = "Gray"
         self.icon = 'asset/logo.ico'
         Window.fullscreen = 'auto'
         Window.borderless = True
