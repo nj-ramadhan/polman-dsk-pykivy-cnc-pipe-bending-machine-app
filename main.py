@@ -115,7 +115,7 @@ inject_state = 0
 
 class ScreenSplash(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-    screen_pipe_setting = ObjectProperty(None)
+    screen_main_menu = ObjectProperty(None)
     app_window = ObjectProperty(None)
     
     def __init__(self, **kwargs):
@@ -134,8 +134,35 @@ class ScreenSplash(MDBoxLayout):
             self.ids.progress_bar.value = 100
             self.ids.progress_bar_label.text = 'Loading.. [{:} %]'.format(100)
             time.sleep(0.5)
-            self.screen_manager.current = 'screen_pipe_setting'
+            self.screen_manager.current = 'screen_main_menu'
             return False
+        
+class ScreenMainMenu(MDBoxLayout):
+    screen_manager = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(ScreenMainMenu, self).__init__(**kwargs)
+
+    def screen_pipe_setting(self):
+        self.screen_manager.current = 'screen_pipe_setting'
+
+    def screen_machine_setting(self):
+        self.screen_manager.current = 'screen_machine_setting'
+
+    def screen_advanced_setting(self):
+        self.screen_manager.current = 'screen_advanced_setting'
+
+    def screen_operate_auto(self):
+        self.screen_manager.current = 'screen_operate_auto'
+
+    def screen_compile(self):
+        self.screen_manager.current = 'screen_compile'
+
+    def exec_shutdown(self):
+        # os.system("shutdown /s /t 1") #for windows os
+        toast("shutting down system")
+        os.system("shutdown -h now")
+
 
 class ScreenPipeSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)

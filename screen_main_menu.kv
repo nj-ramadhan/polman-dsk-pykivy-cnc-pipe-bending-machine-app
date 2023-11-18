@@ -1,0 +1,131 @@
+#:kivy 2.1.0
+
+<ScreenMainMenu>:
+    MDBoxLayout:
+        orientation: "vertical"
+		# header layout
+        MDBoxLayout:
+            id: header_layout
+            orientation: "horizontal"
+            padding: 20
+			size_hint_y: 0.1
+
+			MDFillRoundFlatIconButton:
+				id: bt_shutdown
+				icon: "power"
+				text: " "
+				font_size: 64
+				size_hint_x: 0.15
+				on_press: root.exec_shutdown()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: 0, 15
+
+                MDLabel:
+                    id: subtitle            
+                    text: "Pipe Bending CNC Machine"
+					halign: "center"
+					valign: "middle"
+                    bold: True
+                    font_size: 64
+                    color: 0, 0, 0
+                    
+            Image:
+                id: logo
+                source:'asset/logo_rafindo.png'
+                size_hint_x: 0.125
+                allow_stretch: True                   
+
+            Image:
+                id: logo
+                source:'asset/logo_polman.png'
+                size_hint_x: 0.125
+                allow_stretch: True  
+
+		# setting layout
+		MDBoxLayout:
+			id: layout_main_menu_label
+			orientation: "vertical"
+			size_hint_y: 0.02
+
+			MDLabel:
+				text: "MAIN MENU"
+				bold: True
+				font_size: 32
+				color: 0, 0, 0
+			
+		MDGridLayout:
+			id: layout_main_menu
+			size_hint_y: 0.54
+			cols:4
+			padding:150
+			spacing:150
+
+			MDCard:
+				id: bt_screen_pipe_setting
+				ripple_behavior: True
+				on_press: root.screen_pipe_setting()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_pipe_setting.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "PIPE SETTING"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_machine_setting
+				ripple_behavior: True
+				on_press: root.screen_machine_setting()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_machine_setting.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "MACHINE SETTING"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_operate_auto
+				ripple_behavior: True
+				on_press: root.screen_operate_auto()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_operate.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "OPERATE"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
+
+			MDCard:
+				id: bt_screen_compile
+				ripple_behavior: True
+				on_press: root.screen_compile()
+
+				MDRelativeLayout:
+					Image:
+						source:'asset/logo_operate.png'
+						pos_hint: {"center_x": .5, "center_y": .5}
+						allow_stretch: True 
+
+					MDLabel:
+						text: "OPERATE"
+						adaptive_size: True
+						pos: "12dp", "12dp"
+						bold: True
