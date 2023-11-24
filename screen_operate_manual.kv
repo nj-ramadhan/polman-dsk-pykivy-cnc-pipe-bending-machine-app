@@ -60,75 +60,73 @@
 			id: layout_operate_manual
 			orientation: "vertical"
 			size_hint_y: 0.80
-			padding:10
-			spacing:10
+			padding:20
+			spacing:40
 
-			MDBoxLayout:
-				orientation: "horizontal"
+			# machine illustration
+			Image:
+				id: machine
+				source:'asset/machine_operation.png'
+				allow_stretch: True
+				size_hint_y: 0.4
 
-				MDGridLayout:
-					cols:2
-					padding:10
-					spacing:10
-					size_hint_x: 0.6
+			MDGridLayout:
+				cols:2
+				spacing:20
+				size_hint_y: 0.6
+				row_default_height: 50
+				row_force_default: True
 
-					MDLabel:
-						text: "Feeding (Y-axis)"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Feeding (Y-axis)"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_operate_feeding
-						hint_text: "Input Feeding (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+				MDTextField:
+					id: input_operate_feeding
+					hint_text: "Input Feeding (mm)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
-					MDLabel:
-						text: "Bending Angle (C-axis)"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Bending Angle (C-axis)"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_operate_bending
-						hint_text: "Input Bending Angle (degree)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+				MDTextField:
+					id: input_operate_bending
+					hint_text: "Input Bending Angle (degree)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
-					MDLabel:
-						text: "Turning Angle (B-axis)"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Turning Angle (B-axis)"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_operate_turning
-						hint_text: "Input Turning Angle (degree)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+				MDTextField:
+					id: input_operate_turning
+					hint_text: "Input Turning Angle (degree)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
-					MDLabel:
-						text: "Horizontal (X-axis)"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Horizontal (X-axis)"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_operate_horizontal
-						hint_text: "Input Horizontal (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
-
-				# machine illustration
-				Image:
-					id: machine
-					source:'asset/machine_operation.png'
-					size_hint_x: 0.4
-					allow_stretch: True  
+				MDTextField:
+					id: input_operate_horizontal
+					hint_text: "Input Horizontal (mm)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.05
-			padding:10
-			spacing:10
+			padding:20
+			spacing:20
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_manual

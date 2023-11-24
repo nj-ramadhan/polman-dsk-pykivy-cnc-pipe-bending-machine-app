@@ -60,14 +60,20 @@
 			id: layout_operate_auto
 			orientation: "vertical"
 			size_hint_y: 0.80
-			padding:10
-			spacing:10
+			padding:20
+			spacing:40
+
+			# illustration pipe
+			MDBoxLayout:
+				id: pipe_bended_illustration
+				size_hint_y: 0.4
 
 			MDGridLayout:
 				cols:3
-				padding:10
-				spacing:10
-				size_hint_x: 0.4
+				spacing:20
+				size_hint_y: 0.6
+				row_default_height: 50
+				row_force_default: True
 
 				MDLabel:
 					text: "Select Compiled File (G-code)"
@@ -85,18 +91,14 @@
 					icon: "folder"
 					on_release: root.file_manager_open()			
 
-				# illustration pipe
-				MDBoxLayout:
-					id: pipe_bended_illustration
-					size_hint_x: 0.6
-					padding:10
+
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.05
-			padding:10
-			spacing:10
+			padding:20
+			spacing:20
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_manual

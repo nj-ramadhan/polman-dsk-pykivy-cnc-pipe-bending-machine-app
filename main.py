@@ -404,15 +404,10 @@ class ScreenOperateManual(MDBoxLayout):
 class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
-        global dt_time
-        global dt_cycle
-        
+    def __init__(self, **kwargs):       
         super(ScreenOperateAuto, self).__init__(**kwargs)
-        Clock.schedule_once(self.delayed_init)
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_manager, select_path=self.select_path
-        )
+        # Clock.schedule_once(self.delayed_init)
+        self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser("~"))  # output manager to the screen
@@ -520,7 +515,7 @@ class ScreenCompile(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
-        Clock.schedule_once(self.delayed_init)
+        # Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
         self.reset()
@@ -746,8 +741,8 @@ class PipeBendingCNCApp(MDApp):
         self.icon = 'asset/logo.ico'
         # Window.fullscreen = 'auto'
         # Window.borderless = True
-        # Window.size = 900, 1440
-        Window.size = 450, 720
+        Window.size = 900, 1440
+        # Window.size = 450, 720
         Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')

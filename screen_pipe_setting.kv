@@ -60,56 +60,55 @@
 			id: layout_pipe_setting
 			orientation: "vertical"
 			size_hint_y: 0.85
-			padding:10
-			spacing:10
+			padding:20
+			spacing:20
 
+			# illustration pipe
 			MDBoxLayout:
-				orientation: "horizontal"
+				id: pipe_illustration
+				size_hint_y: 0.4
 
-				MDGridLayout:
-					cols:2
-					padding:10
-					spacing:10
-					size_hint_x: 0.6
+			MDGridLayout:
+				cols:2
+				spacing:20
+				size_hint_y: 0.6
+				row_default_height: 50
+				row_force_default: True
 
-					MDLabel:
-						text: "Length"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Length"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_pipe_length
-						hint_text: "Input Length (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+				MDTextField:
+					id: input_pipe_length
+					hint_text: "Input Length (mm)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
-					MDLabel:
-						text: "Diameter"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Diameter"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_pipe_diameter
-						hint_text: "Input Diameter (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+				MDTextField:
+					id: input_pipe_diameter
+					hint_text: "Input Diameter (mm)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()
 
-					MDLabel:
-						text: "Thickness"
-						font_style: 'Body1'
+				MDLabel:
+					text: "Thickness"
+					font_style: 'Body1'
 
-					MDTextField:
-						id: input_pipe_thickness
-						hint_text: "Input Thickness (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()					
+				MDTextField:
+					id: input_pipe_thickness
+					hint_text: "Input Thickness (mm)"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()					
 						
-				# illustration pipe
-				MDBoxLayout:
-					id: pipe_illustration
-					size_hint_x: 0.4
-					padding:10
+
 
 
 
