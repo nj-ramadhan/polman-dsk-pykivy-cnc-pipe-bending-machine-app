@@ -3,58 +3,65 @@
 <ScreenCompile>:
     MDBoxLayout:
         orientation: "vertical"
+
 		# header layout
         MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
 			size_hint_y: 0.1
-
-			MDFillRoundFlatIconButton:
-				id: bt_shutdown
-				icon: "power"
-				text: " "
-				font_size: 64
-				size_hint_x: 0.15
-				on_press: root.exec_shutdown()
-
-            MDBoxLayout:
-                orientation: "vertical"
-                padding: 0, 15
-
-                MDLabel:
-                    id: subtitle            
-                    text: "Pipe Bending CNC Machine"
-                    bold: True
-                    font_size: 64
-                    color: 0, 0, 0
                     
             Image:
                 id: logo
                 source:'asset/logo_rafindo.png'
-                size_hint_x: 0.125
-                allow_stretch: True                   
+                size_hint_x: 0.25
+                allow_stretch: True 
 
+			MDLabel:
+				id: subtitle            
+				text: "PIPE BENDING CNC MACHINE"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H5'
+				color: 0, 0, 0
+                  
             Image:
                 id: logo
                 source:'asset/logo_polman.png'
-                size_hint_x: 0.125
-                allow_stretch: True    
-						
-		# setting layout
+                size_hint_x: 0.25
+                allow_stretch: True  
+
+		# title layout
 		MDBoxLayout:
-			id: layout_pipe_setting
-			orientation: "vertical"
-			size_hint_y: 0.44
-			padding:10
-			spacing:10
+			id: layout_title
+			orientation: "horizontal"
+			size_hint_y: 0.05
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "menu"
+				size_hint_x: 0.1
+				on_press: root.screen_main_menu()
 
 			MDLabel:
-				text: "COMPILE FILE"
-				bold: True
-				font_size: 32
-				color: 0, 0, 0
-				size_hint_y: 0.1
+				text: "COMPILE PROGRAM"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H6'
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "power"
+				size_hint_x: 0.1
+				on_press: root.exec_shutdown()
+						
+		# compile layout
+		MDBoxLayout:
+			id: layout_compile
+			orientation: "vertical"
+			size_hint_y: 0.80
+			padding:10
+			spacing:10
 				
 			MDBoxLayout:
 				orientation: "horizontal"
@@ -69,45 +76,34 @@
 					cols:4
 					row_force_default: True
 					row_default_height: 35
-					padding:20
-					spacing:20
+					padding:10
+					spacing:10
 					size_hint_x: 0.4
 
 					MDLabel:
 						text: "Step No."
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDLabel:
 						text: "Offset Length"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 					
 					MDLabel:
 						text: "Bending Angle"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 					
 					MDLabel:
 						text: "Turning Angle"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 					
 					MDLabel:
 						text: "1"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length0
 						hint_text: "Offset Length 1"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -115,30 +111,25 @@
 					MDTextField:
 						id: input_step_bend0
 						hint_text: "Bending Angle 1"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn0
 						hint_text: "Turning Angle 1"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "2"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length1
 						hint_text: "Offset Length 2"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -146,30 +137,25 @@
 					MDTextField:
 						id: input_step_bend1
 						hint_text: "Bending Angle 2"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn1
 						hint_text: "Turning Angle 2"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "3"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length2
 						hint_text: "Offset Length 3"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -177,30 +163,25 @@
 					MDTextField:
 						id: input_step_bend2
 						hint_text: "Bending Angle 3"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn2
 						hint_text: "Turning Angle 3"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "4"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length3
 						hint_text: "Offset Length 4"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -208,30 +189,25 @@
 					MDTextField:
 						id: input_step_bend3
 						hint_text: "Bending Angle 4"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn3
 						hint_text: "Turning Angle 4"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "5"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length4
 						hint_text: "Offset Length 5"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -239,30 +215,25 @@
 					MDTextField:
 						id: input_step_bend4
 						hint_text: "Bending Angle 5"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn4
 						hint_text: "Turning Angle 5"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "6"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length5
 						hint_text: "Offset Length 6"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -270,30 +241,25 @@
 					MDTextField:
 						id: input_step_bend5
 						hint_text: "Bending Angle 6"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn5
 						hint_text: "Turning Angle 6"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "7"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length6
 						hint_text: "Offset Length 7"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -301,30 +267,25 @@
 					MDTextField:
 						id: input_step_bend6
 						hint_text: "Bending Angle 7"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn6
 						hint_text: "Turning Angle 7"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "8"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length7
 						hint_text: "Offset Length 8"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -332,30 +293,25 @@
 					MDTextField:
 						id: input_step_bend7
 						hint_text: "Bending Angle 8"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn7
 						hint_text: "Turning Angle 8"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "9"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length8
 						hint_text: "Offset Length 9"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -363,30 +319,25 @@
 					MDTextField:
 						id: input_step_bend8
 						hint_text: "Bending Angle 9"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn8
 						hint_text: "Turning Angle 9"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "10"
-						bold: True
-						font_size: 16
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_step_length9
 						hint_text: "Offset Length 10"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -394,16 +345,15 @@
 					MDTextField:
 						id: input_step_bend9
 						hint_text: "Bending Angle 10"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDTextField:
 						id: input_step_turn9
 						hint_text: "Turning Angle 10"
-						bold: True
-						font_size: 16
+						font_style: 'Body1'
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
@@ -416,7 +366,7 @@
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
 			orientation: "horizontal"
-			size_hint_y: 0.045
+			size_hint_y: 0.05
 			padding:10
 			spacing:10
 
@@ -424,7 +374,7 @@
 				id: bt_save
 				icon: "pen"
 				text: "SAVE"
-				font_size: 28
+				font_style: 'Button'
 				size_hint_x: 0.5
 				on_press: root.save()
 			
@@ -432,61 +382,6 @@
 				id: bt_reset
 				icon: "reload"
 				text: "RESET"
-				font_size: 28
+				font_style: 'Button'
 				size_hint_x: 0.5
 				on_press: root.reset()
-
-		# MDRectangleFlatIconButton: navigation layout
-		MDBoxLayout:
-			orientation: "horizontal"
-			size_hint_y: 0.04
-			padding:10
-			spacing:10
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_main_menu
-				icon: "menu"
-				text: "MAIN MENU"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_main_menu()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_pipe_setting
-				icon: "cogs"
-				text: "PIPE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_pipe_setting()
-			
-			MDFillRoundFlatIconButton:
-				id: bt_screen_machine_setting
-				icon: "cogs"
-				text: "MACHINE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_machine_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_advanced_setting
-				icon: "cogs"
-				text: "ADVANCED SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_advanced_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_operate
-				icon: "human"
-				text: "OPERATION MODE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_operate_auto()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_compile
-				icon: "file"
-				text: "COMPILE FILE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_compile()

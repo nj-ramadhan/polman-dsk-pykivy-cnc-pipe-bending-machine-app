@@ -3,58 +3,66 @@
 <ScreenMachineSetting>:
     MDBoxLayout:
         orientation: "vertical"
+
 		# header layout
         MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
 			size_hint_y: 0.1
-
-			MDFillRoundFlatIconButton:
-				id: bt_shutdown
-				icon: "power"
-				text: " "
-				font_size: 64
-				size_hint_x: 0.15
-				on_press: root.exec_shutdown()
-
-            MDBoxLayout:
-                orientation: "vertical"
-                padding: 0, 15
-
-                MDLabel:
-                    id: subtitle            
-                    text: "Pipe Bending CNC Machine"
-                    bold: True
-                    font_size: 64
-                    color: 0, 0, 0
                     
             Image:
                 id: logo
                 source:'asset/logo_rafindo.png'
-                size_hint_x: 0.125
-                allow_stretch: True                   
+                size_hint_x: 0.25
+                allow_stretch: True 
 
+			MDLabel:
+				id: subtitle            
+				text: "PIPE BENDING CNC MACHINE"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H5'
+				color: 0, 0, 0
+                  
             Image:
                 id: logo
                 source:'asset/logo_polman.png'
-                size_hint_x: 0.125
-                allow_stretch: True                 
+                size_hint_x: 0.25
+                allow_stretch: True  
+
+		# title layout
+		MDBoxLayout:
+			id: layout_title
+			orientation: "horizontal"
+			size_hint_y: 0.05
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "menu"
+				size_hint_x: 0.1
+				on_press: root.screen_main_menu()
+
+			MDLabel:
+				text: "MACHINE SETTING"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H6'
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "power"
+				size_hint_x: 0.1
+				on_press: root.exec_shutdown()          
 		
 		# setting layout
 		MDBoxLayout:
 			id: layout_machine_setting
 			orientation: "vertical"
-			size_hint_y: 0.5
+			size_hint_y: 0.85
 			padding:10
 			spacing:10
 
-			MDLabel:
-				text: "MACHINE SETTING"
-				bold: True
-				font_size: 32
-				color: 0, 0, 0
-				size_hint_y: 0.1
 			MDBoxLayout:
 				orientation: "horizontal"
 				canvas.before:
@@ -68,126 +76,102 @@
 					cols:2
 					row_force_default: True
 					row_default_height: 40
-					padding:40
-					spacing:40
+					padding:10
+					spacing:10
 					size_hint_x: 0.6
 
 					MDLabel:
 						text: "Effective Length"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_eff_length
 						hint_text: "Input Effective Length (mm)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(0)
 
 					MDLabel:
 						text: "Pipe Support Interference Pos"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_supp_pos
 						hint_text: "Input Pipe Support Interference Pos (mm)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(1)
 
 					MDLabel:
 						text: "Clamping Die Front Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_clamp_front_delay
 						hint_text: "Input Clamping Die Front Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(2)
 
 					MDLabel:
 						text: "Clamping Die Rear Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_clamp_rear_delay
 						hint_text: "Input Clamping Die Rear Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()	
 						on_focus: root.update_image(3)				
 
 					MDLabel:
 						text: "Pressure Die Front Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_press_front_delay
 						hint_text: "Input Pressure Die Front Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(4)
 
 					MDLabel:
 						text: "Pressure Die Rear Limit Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_press_rear_delay
 						hint_text: "Input Pressure Die Rear Limit Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(5)		
 
 					MDLabel:
 						text: "Collet Clamping Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_collet_clamp_delay
 						hint_text: "Input Collet Clamping Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(6)
 
 					MDLabel:
 						text: "Collet Opening Delay Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_machine_collet_open_delay
 						hint_text: "Input Collet Opening Delay Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(7)
@@ -198,58 +182,3 @@
 					source:'asset/machine_setting_eff_length.png'
 					size_hint_x: 0.4
 					allow_stretch: True  
-
-		# MDRectangleFlatIconButton: navigation layout
-		MDBoxLayout:
-			orientation: "horizontal"
-			size_hint_y: 0.04
-			padding:10
-			spacing:10
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_main_menu
-				icon: "menu"
-				text: "MAIN MENU"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_main_menu()
-				
-			MDFillRoundFlatIconButton:
-				id: bt_screen_pipe_setting
-				icon: "cogs"
-				text: "PIPE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_pipe_setting()
-			
-			MDFillRoundFlatIconButton:
-				id: bt_screen_machine_setting
-				icon: "cogs"
-				text: "MACHINE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_machine_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_advanced_setting
-				icon: "cogs"
-				text: "ADVANCED SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_advanced_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_operate
-				icon: "human"
-				text: "OPERATION MODE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_operate_auto()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_compile
-				icon: "file"
-				text: "COMPILE FILE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_compile()

@@ -3,95 +3,87 @@
 <ScreenOperateAuto>:
     MDBoxLayout:
         orientation: "vertical"
+
 		# header layout
         MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
 			size_hint_y: 0.1
-
-			MDFillRoundFlatIconButton:
-				id: bt_shutdown
-				icon: "power"
-				text: " "
-				font_size: 64
-				size_hint_x: 0.15
-				on_press: root.exec_shutdown()
-
-            MDBoxLayout:
-                orientation: "vertical"
-                padding: 0, 15
-
-                MDLabel:
-                    id: subtitle            
-                    text: "Pipe Bending CNC Machine"
-                    bold: True
-                    font_size: 64
-                    color: 0, 0, 0
                     
             Image:
                 id: logo
                 source:'asset/logo_rafindo.png'
-                size_hint_x: 0.125
-                allow_stretch: True                   
+                size_hint_x: 0.25
+                allow_stretch: True 
 
+			MDLabel:
+				id: subtitle            
+				text: "PIPE BENDING CNC MACHINE"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H5'
+				color: 0, 0, 0
+                  
             Image:
                 id: logo
                 source:'asset/logo_polman.png'
-                size_hint_x: 0.125
-                allow_stretch: True    
+                size_hint_x: 0.25
+                allow_stretch: True  
+
+		# title layout
+		MDBoxLayout:
+			id: layout_title
+			orientation: "horizontal"
+			size_hint_y: 0.05
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "menu"
+				size_hint_x: 0.1
+				on_press: root.screen_main_menu()
+
+			MDLabel:
+				text: "OPERATE AUTO"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H6'
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "power"
+				size_hint_x: 0.1
+				on_press: root.exec_shutdown()
 
 		# auto operate layout
 		MDBoxLayout:
 			id: layout_operate_auto
 			orientation: "vertical"
-			size_hint_y: 0.44
+			size_hint_y: 0.80
 			padding:10
 			spacing:10
 
-			MDLabel:
-				text: "MACHINE AUTO OPERATION"
-				bold: True
-				font_size: 32
-				color: 0, 0, 0
-				size_hint_y: 0.1
+			MDGridLayout:
+				cols:3
+				padding:10
+				spacing:10
+				size_hint_x: 0.4
 
-			MDBoxLayout:
-				orientation: "horizontal"
-				canvas.before:
-					Color:
-						rgba: 0.5, 0, 0, 1
-					Line:
-						width: 2
-						rectangle: self.x, self.y, self.width, self.height
+				MDLabel:
+					text: "Select Compiled File (G-code)"
+					font_style: 'Body1'
 
-				MDGridLayout:
-					cols:3
-					row_force_default: True
-					row_default_height: 50
-					padding:40
-					spacing:40
-					size_hint_x: 0.4
+				MDTextField:
+					id: input_file_dir
+					hint_text: "Input File Directory"
+					font_style: 'Body1'
+					input_filter: 'float'
+					on_text_validate: root.update()	
 
-					MDLabel:
-						text: "Select Compiled File (G-code)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
-
-					MDTextField:
-						id: input_file_dir
-						hint_text: "Input File Directory"
-						bold: True
-						font_size: 22
-						input_filter: 'float'
-						on_text_validate: root.update()	
-
-					MDRoundFlatIconButton:
-						text: "Open File"
-						icon: "folder"
-						on_release: root.file_manager_open()			
-
+				MDRoundFlatIconButton:
+					text: "Open File"
+					icon: "folder"
+					on_release: root.file_manager_open()			
 
 				# illustration pipe
 				MDBoxLayout:
@@ -102,7 +94,7 @@
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
 			orientation: "horizontal"
-			size_hint_y: 0.045
+			size_hint_y: 0.05
 			padding:10
 			spacing:10
 
@@ -110,7 +102,7 @@
 				id: bt_screen_manual
 				icon: "hand"
 				text: "MANUAL OPERATION"
-				font_size: 28
+				font_style: 'Button'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_manual()
 			
@@ -118,61 +110,6 @@
 				id: bt_screen_auto
 				icon: "play"
 				text: "AUTOMATIC OPERATION"
-				font_size: 28
+				font_style: 'Button'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_auto()	
-
-		# MDRectangleFlatIconButton: navigation layout
-		MDBoxLayout:
-			orientation: "horizontal"
-			size_hint_y: 0.04
-			padding:10
-			spacing:10
-			
-			MDFillRoundFlatIconButton:
-				id: bt_screen_main_menu
-				icon: "menu"
-				text: "MAIN MENU"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_main_menu()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_pipe_setting
-				icon: "cogs"
-				text: "PIPE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_pipe_setting()
-			
-			MDFillRoundFlatIconButton:
-				id: bt_screen_machine_setting
-				icon: "cogs"
-				text: "MACHINE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_machine_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_advanced_setting
-				icon: "cogs"
-				text: "ADVANCED SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_advanced_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_operate
-				icon: "human"
-				text: "OPERATION MODE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_operate_auto()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_compile
-				icon: "file"
-				text: "COMPILE FILE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_compile()

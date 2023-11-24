@@ -3,20 +3,20 @@
 <ScreenSplash>:
     MDBoxLayout:
         orientation: 'vertical'
-        padding: 25 , 25
+        padding: 20
+        spacing: 20
+
         MDLabel:
-            text: 'Pipe Bending CNC Machine'
+            text: 'PIPE BENDING CNC MACHINE'
             halign: 'center'
             valign: 'middle'
-            font_size: 64
-            padding: 10 , 10
-            bold: True
+            font_style: 'H4'
             size_hint_y: 0.2
-            color: 0, 0, 0
 
         MDBoxLayout:
             orientation: 'horizontal'
-            padding: 25 , 25
+            spacing: 50
+            padding: 100
             size_hint_y: 0.2
 
             Image:
@@ -29,16 +29,10 @@
                 source:'asset/logo_polman.png'
                 allow_stretch: True
 
-
-        MDLabel:
-            text: ''
-            size_hint_y: 0.03
-
         MDProgressBar:
             id: progress_bar
             padding: 100
-            spacing: 200
-            size_hint_y: .03
+            size_hint_y: 0.02
             max: 100
             value: 1
 
@@ -47,18 +41,12 @@
             text: 'Loading.. [0 %]'
             halign: 'center'
             valign: 'middle'
-            font_size: 50
-            padding: 2 , 2
-            bold: 'true'
-            size_hint_y: .1
-            color: 0, 0, 0
+            font_style: 'H5'
+            size_hint_y: 0.1
 
         MDLabel:
             text: 'Developed by Polman Bandung & Rafindo Raya, Copyrights @2023'
             halign: 'center'
             valign: 'middle'
-            font_size: 30
-            padding: 2 , 2
-            bold: 'true'
-            size_hint_y: .1
-            color: 0, 0, 0
+            font_style: 'H6'
+            size_hint_y: 0.1

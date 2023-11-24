@@ -3,199 +3,278 @@
 <ScreenMainMenu>:
     MDBoxLayout:
         orientation: "vertical"
+
 		# header layout
         MDBoxLayout:
             id: header_layout
             orientation: "horizontal"
             padding: 20
 			size_hint_y: 0.1
-
-			MDFillRoundFlatIconButton:
-				id: bt_shutdown
-				icon: "power"
-				text: " "
-				font_size: 64
-				size_hint_x: 0.15
-				on_press: root.exec_shutdown()
-
-            MDBoxLayout:
-                orientation: "vertical"
-                padding: 0, 15
-
-                MDLabel:
-                    id: subtitle            
-                    text: "Pipe Bending CNC Machine"
-					halign: "center"
-					valign: "middle"
-                    bold: True
-                    font_size: 64
-                    color: 0, 0, 0
                     
             Image:
                 id: logo
                 source:'asset/logo_rafindo.png'
-                size_hint_x: 0.125
-                allow_stretch: True                   
+                size_hint_x: 0.25
+                allow_stretch: True 
 
+			MDLabel:
+				id: subtitle            
+				text: "PIPE BENDING CNC MACHINE"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H5'
+				color: 0, 0, 0
+                  
             Image:
                 id: logo
                 source:'asset/logo_polman.png'
-                size_hint_x: 0.125
+                size_hint_x: 0.25
                 allow_stretch: True  
 
-		# setting layout
+		# title layout
 		MDBoxLayout:
-			id: layout_main_menu_label
-			orientation: "vertical"
-			size_hint_y: 0.02
+			id: layout_title
+			orientation: "horizontal"
+			size_hint_y: 0.05
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "menu"
+				size_hint_x: 0.1
+				on_press: root.screen_main_menu()
 
 			MDLabel:
 				text: "MAIN MENU"
-				bold: True
-				font_size: 32
+				halign: "center"
 				valign: "middle"
-				color: 0, 0, 0
-			
+				font_style: 'H6'
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "power"
+				size_hint_x: 0.1
+				on_press: root.exec_shutdown()
+
+		# main menu layout
 		MDGridLayout:
 			id: layout_main_menu
-			size_hint_y: 0.54
+			size_hint_y: 0.85
+			padding:20
+			spacing:20
 			cols:4
-			padding:100
-			spacing:100
 
 			MDCard:
 				id: bt_screen_pipe_setting
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_pipe_setting()
+				padding:20
+				spacing:10
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_pipe_setting.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
+				Image:
+					source:'asset/logo_pipe_setting.png'
+					allow_stretch: True 
 
-					MDLabel:
-						text: "PIPE SETTING"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "PIPE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_machine_setting
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_machine_setting()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_machine_setting.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_machine_setting.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
-
-					MDLabel:
-						text: "MACHINE SETTING"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "MACHINE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_operate_auto
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_operate_auto()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_operate_machine.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_operate_machine.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
-
-					MDLabel:
-						text: "OPERATE MACHINE"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "OPERATE MACHINE"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_compile
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_compile()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_compile_program.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_compile_program.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
-
-					MDLabel:
-						text: "COMPILE PROGRAM"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
-
+				MDLabel:
+					text: "COMPILE PROGRAM"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_pipe_setting
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_pipe_setting()
+				padding:20
+				spacing:10
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_pipe_setting.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
+				Image:
+					source:'asset/logo_pipe_setting.png'
+					allow_stretch: True 
 
-					MDLabel:
-						text: "PIPE SETTING"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "PIPE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_machine_setting
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_machine_setting()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_machine_setting.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_machine_setting.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
-
-					MDLabel:
-						text: "MACHINE SETTING"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "MACHINE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_operate_auto
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_operate_auto()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_operate_machine.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_operate_machine.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
-
-					MDLabel:
-						text: "OPERATE MACHINE"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+				MDLabel:
+					text: "OPERATE MACHINE"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
 			MDCard:
 				id: bt_screen_compile
 				ripple_behavior: True
+				orientation: "vertical"
 				on_press: root.screen_compile()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_compile_program.png'
+					allow_stretch: True 
 
-				MDRelativeLayout:
-					Image:
-						source:'asset/logo_compile_program.png'
-						pos_hint: {"center_x": .5, "center_y": .5}
-						allow_stretch: True 
+				MDLabel:
+					text: "COMPILE PROGRAM"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
 
-					MDLabel:
-						text: "COMPILE PROGRAM"
-						adaptive_size: True
-						pos: "12dp", "12dp"
-						bold: True
+			MDCard:
+				id: bt_screen_pipe_setting
+				ripple_behavior: True
+				orientation: "vertical"
+				on_press: root.screen_pipe_setting()
+				padding:20
+				spacing:10
+
+				Image:
+					source:'asset/logo_pipe_setting.png'
+					allow_stretch: True 
+
+				MDLabel:
+					text: "PIPE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
+
+			MDCard:
+				id: bt_screen_machine_setting
+				ripple_behavior: True
+				orientation: "vertical"
+				on_press: root.screen_machine_setting()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_machine_setting.png'
+					allow_stretch: True 
+
+				MDLabel:
+					text: "MACHINE SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
+
+			MDCard:
+				id: bt_screen_operate_auto
+				ripple_behavior: True
+				orientation: "vertical"
+				on_press: root.screen_operate_auto()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_operate_machine.png'
+					allow_stretch: True 
+
+				MDLabel:
+					text: "OPERATE MACHINE"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
+
+			MDCard:
+				id: bt_screen_compile
+				ripple_behavior: True
+				orientation: "vertical"
+				on_press: root.screen_compile()
+				padding:20
+				spacing:10
+				
+				Image:
+					source:'asset/logo_compile_program.png'
+					allow_stretch: True 
+
+				MDLabel:
+					text: "COMPILE PROGRAM"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'

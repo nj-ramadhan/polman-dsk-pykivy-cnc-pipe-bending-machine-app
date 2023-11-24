@@ -9,52 +9,58 @@
             orientation: "horizontal"
             padding: 20
 			size_hint_y: 0.1
-
-			MDFillRoundFlatIconButton:
-				id: bt_shutdown
-				icon: "power"
-				text: " "
-				font_size: 64
-				size_hint_x: 0.15
-				on_press: root.exec_shutdown()
-
-            MDBoxLayout:
-                orientation: "vertical"
-                padding: 0, 15
-
-                MDLabel:
-                    id: subtitle            
-                    text: "Pipe Bending CNC Machine"
-                    bold: True
-                    font_size: 64
-                    color: 0, 0, 0
                     
             Image:
                 id: logo
                 source:'asset/logo_rafindo.png'
-                size_hint_x: 0.125
-                allow_stretch: True                   
+                size_hint_x: 0.25
+                allow_stretch: True 
 
+			MDLabel:
+				id: subtitle            
+				text: "PIPE BENDING CNC MACHINE"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H5'
+				color: 0, 0, 0
+                  
             Image:
                 id: logo
                 source:'asset/logo_polman.png'
-                size_hint_x: 0.125
-                allow_stretch: True                  
+                size_hint_x: 0.25
+                allow_stretch: True  
+
+		# title layout
+		MDBoxLayout:
+			id: layout_title
+			orientation: "horizontal"
+			size_hint_y: 0.05
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "menu"
+				size_hint_x: 0.1
+				on_press: root.screen_main_menu()
+
+			MDLabel:
+				text: "ADVANCED SETTING"
+				halign: "center"
+				valign: "middle"
+				font_style: 'H6'
+
+			MDIconButton:
+				id: bt_shutdown
+				icon: "power"
+				size_hint_x: 0.1
+				on_press: root.exec_shutdown()            
 		
 		# setting layout
 		MDBoxLayout:
 			id: layout_advanced_setting
 			orientation: "vertical"
-			size_hint_y: 0.5
+			size_hint_y: 0.80
 			padding:10
 			spacing:10
-
-			MDLabel:
-				text: "ADVANCED SETTING"
-				bold: True
-				font_size: 32
-				color: 0, 0, 0
-				size_hint_y: 0.1
 
 			MDBoxLayout:
 				orientation: "horizontal"
@@ -69,43 +75,35 @@
 					cols:2
 					row_force_default: True
 					row_default_height: 45
-					padding:40
-					spacing:40
+					padding:10
+					spacing:10
 					size_hint_x: 0.4
 
 					MDLabel:
 						text: "Pipe Head Pos"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_pipe_length
 						hint_text: "Input Pipe Head Pos (mm)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Start Mode"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_pipe_diameter
 						hint_text: "Input Start Mode"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Calculate First Line Segment"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDBoxLayout:
 						orientation: "horizontal"
@@ -118,9 +116,7 @@
 
 					MDLabel:
 						text: "When Job Has Finished"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0						
+						font_style: 'Body1'					
 
 					MDBoxLayout:
 						orientation: "horizontal"
@@ -133,217 +129,129 @@
 
 					MDLabel:
 						text: "Pipe Receive Pos (X-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0						
+						font_style: 'Body1'			
 
 					MDTextField:
 						id: input_receive_pos_x
 						hint_text: "Input Pipe Receive Pos X-axis (mm)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()							
 
 					MDLabel:
 						text: "Pipe Receive Pos (B-axis)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0						
+						font_style: 'Body1'			
 
 					MDTextField:
 						id: input_receive_pos_b
 						hint_text: "Input Receive Pos B-axis (mm)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()					
 
 					MDLabel:
 						text: "Production Quantity"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0						
+						font_style: 'Body1'			
 
 					MDTextField:
 						id: input_receive_pos_b
 						hint_text: "Input Production Quantity"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()		
 
 				MDGridLayout:
 					cols:2
 					row_force_default: True
-					row_default_height: 40
-					padding:40
-					spacing:40
+					row_default_height: 20
+					padding:10
+					spacing:10
 					size_hint_x: 0.4
 
 					MDLabel:
 						text: "Pressure Die Semi Clamp Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_press_semiclamp_time
 						hint_text: "Input Pressure Die Semi Clamp Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Pressure Die Semi Open Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_press_semiopen_time
 						hint_text: "Input Pressure Die Semi Open Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Clamp Die Semi Clamp Time"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_clamp_semiclamp_time
 						hint_text: "Input Clamp Die Semi Clamp Time (sec)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Spring Back Angle (20)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_springback_20
 						hint_text: "Input Spring Back Angle 20 (degree)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Spring Back Angle (120)"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_springback_120
 						hint_text: "Input Spring Back Angle 120 (degree)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
 					MDLabel:
 						text: "Max Bending Angle"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_max_bend
 						hint_text: "Input Max Bending Angle (degree)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()	
 
 					MDLabel:
 						text: "Pressure Die Start Angle"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_press_start_angle
 						hint_text: "Input Pressure Die Start Angle (degree)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()	
 
 					MDLabel:
 						text: "Pressure Die Stop Angle"
-						bold: True
-						font_size: 22
-						color: 0, 0, 0
+						font_style: 'Body1'
 
 					MDTextField:
 						id: input_advanced_press_stop_angle
 						hint_text: "Input Pressure Die Stop Angle (degree)"
-						bold: True
-						font_size: 22
+						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()	
-
-		# MDRectangleFlatIconButton: navigation layout
-		MDBoxLayout:
-			orientation: "horizontal"
-			size_hint_y: 0.04
-			padding:10
-			spacing:10
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_main_menu
-				icon: "menu"
-				text: "MAIN MENU"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_main_menu()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_pipe_setting
-				icon: "cogs"
-				text: "PIPE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_pipe_setting()
-			
-			MDFillRoundFlatIconButton:
-				id: bt_screen_machine_setting
-				icon: "cogs"
-				text: "MACHINE SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_machine_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_advanced_setting
-				icon: "cogs"
-				text: "ADVANCED SETTING"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_advanced_setting()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_operate
-				icon: "human"
-				text: "OPERATION MODE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_operate_auto()
-
-			MDFillRoundFlatIconButton:
-				id: bt_screen_compile
-				icon: "file"
-				text: "COMPILE FILE"
-				font_size: 28
-				size_hint_x: 0.25
-				on_press: root.screen_compile()

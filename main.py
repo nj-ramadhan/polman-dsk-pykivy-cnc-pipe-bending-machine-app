@@ -168,9 +168,9 @@ class ScreenMainMenu(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h now")
 
 
 class ScreenPipeSetting(MDBoxLayout):
@@ -744,9 +744,10 @@ class PipeBendingCNCApp(MDApp):
         self.theme_cls.primary_palette = "Blue"
         self.theme_cls.accent_palette = "Gray"
         self.icon = 'asset/logo.ico'
-        Window.fullscreen = 'auto'
-        Window.borderless = True
-        # Window.size = 1366, 768
+        # Window.fullscreen = 'auto'
+        # Window.borderless = True
+        # Window.size = 900, 1440
+        Window.size = 450, 720
         Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')
