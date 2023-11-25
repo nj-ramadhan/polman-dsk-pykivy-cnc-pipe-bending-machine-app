@@ -39,7 +39,7 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "menu"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
 
 			MDLabel:
@@ -51,14 +51,14 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "power"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.exec_shutdown()            
 		
 		# setting layout
 		MDBoxLayout:
 			id: layout_advanced_setting
-			orientation: "horizontal"
-			size_hint_y: 0.80
+			orientation: "vertical"
+			size_hint_y: 0.85
 			padding:20
 			spacing:20
 			

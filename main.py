@@ -215,7 +215,7 @@ class ScreenPipeSetting(MDBoxLayout):
             self.fig = plt.figure()
             self.ax = self.fig.add_subplot(111, projection='3d')
             self.fig.set_facecolor("#eeeeee")
-            self.fig.tight_layout()
+            # self.fig.tight_layout()
 
             pipe_length = float(self.ids.input_pipe_length.text)
             pipe_diameter = float(self.ids.input_pipe_diameter.text)
@@ -430,6 +430,7 @@ class ScreenOperateAuto(MDBoxLayout):
 
         self.manager_open = False
         self.file_manager.close()
+        self.show_graph()
 
     def events(self, instance, keyboard, keycode, text, modifiers):
         '''Called when buttons are pressed on the mobile device.'''
@@ -439,7 +440,7 @@ class ScreenOperateAuto(MDBoxLayout):
                 self.file_manager.back()
         return True
     
-    def delayed_init(self, dt):
+    def show_graph(self):
         global pipe_diameter
         global machine_die_radius
 
@@ -450,7 +451,7 @@ class ScreenOperateAuto(MDBoxLayout):
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
         self.fig.set_facecolor("#eeeeee")
-        self.fig.tight_layout()
+        # self.fig.tight_layout()
 
         offset_length = step_length
         bend_angle = step_bend / 180 * np.pi
@@ -474,6 +475,7 @@ class ScreenOperateAuto(MDBoxLayout):
         # self.ax.set_ylim([-100, 100])
         # self.ax.set_zlim([-100, 100])
         # self.ax.axis('off')
+        self.ids.pipe_bended_illustration.clear_widgets()
         self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
    
 
@@ -567,7 +569,7 @@ class ScreenCompile(MDBoxLayout):
             self.fig = plt.figure()
             self.ax = self.fig.add_subplot(111, projection='3d')
             self.fig.set_facecolor("#eeeeee")
-            self.fig.tight_layout()
+            # self.fig.tight_layout()
 
             offset_length = step_length
             bend_angle = step_bend / 180 * np.pi
@@ -738,12 +740,12 @@ class PipeBendingCNCApp(MDApp):
         self.theme_cls.colors = colors
         self.theme_cls.primary_palette = "Blue"
         self.theme_cls.accent_palette = "Gray"
-        self.icon = 'asset/logo.ico'
-        # Window.fullscreen = 'auto'
+        self.icon = 'asset/logo.png'
+        Window.fullscreen = 'auto'
         # Window.borderless = True
-        Window.size = 900, 1440
+        # Window.size = 900, 1440
         # Window.size = 450, 720
-        Window.allow_screensaver = True
+        # Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')
 

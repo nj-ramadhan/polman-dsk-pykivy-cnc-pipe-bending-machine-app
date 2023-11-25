@@ -40,7 +40,7 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "menu"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
 
 			MDLabel:
@@ -52,7 +52,7 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "power"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.exec_shutdown()
 
 		# main menu layout
@@ -139,16 +139,16 @@
 				id: bt_screen_pipe_setting
 				ripple_behavior: True
 				orientation: "vertical"
-				on_press: root.screen_pipe_setting()
+				on_press: root.screen_advanced_setting()
 				padding:20
 				spacing:10
 
 				Image:
-					source:'asset/logo_pipe_setting.png'
+					source:'asset/logo_machine_setting.png'
 					allow_stretch: True 
 
 				MDLabel:
-					text: "PIPE SETTING"
+					text: "ADVANCED SETTING"
 					halign: "center"
 					valign: "middle"
 					font_style: 'Button'

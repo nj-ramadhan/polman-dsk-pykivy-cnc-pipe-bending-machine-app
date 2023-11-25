@@ -40,7 +40,7 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "menu"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
 
 			MDLabel:
@@ -52,7 +52,7 @@
 			MDIconButton:
 				id: bt_shutdown
 				icon: "power"
-				size_hint_x: 0.1
+				size_hint_x: 0.2
 				on_press: root.exec_shutdown()
 
 		# auto operate layout
@@ -61,18 +61,18 @@
 			orientation: "vertical"
 			size_hint_y: 0.80
 			padding:20
-			spacing:40
+			spacing:20
 
 			# illustration pipe
 			MDBoxLayout:
 				id: pipe_bended_illustration
-				size_hint_y: 0.4
+				size_hint_y: 0.6
 
 			MDGridLayout:
 				cols:3
 				spacing:20
-				size_hint_y: 0.6
-				row_default_height: 50
+				size_hint_y: 0.4
+				row_default_height: 40
 				row_force_default: True
 
 				MDLabel:
