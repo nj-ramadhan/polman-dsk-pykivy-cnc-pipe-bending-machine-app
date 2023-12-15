@@ -9,7 +9,6 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.filemanager import MDFileManager
-from kivy.uix.vkeyboard import VKeyboard
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.metrics import dp
@@ -24,6 +23,8 @@ from pathlib import Path
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 import time
+
+Config.set('kivy', 'keyboard_mode', 'dock')
 
 plt.style.use('bmh')
 
@@ -200,14 +201,12 @@ class ScreenPipeSetting(MDBoxLayout):
         self.ax.plot_surface(Xr, Yr, Zr, color='gray')
         self.ax.set_box_aspect(aspect=(1, 1, 1))
 
-        keyboardWidget = VKeyboard()
         # self.ax.set_xlim([0, 6000])
         # self.ax.set_ylim([-100, 100])
         # self.ax.set_zlim([-100, 100])
         # self.ax.axis('off')
 
         self.ids.pipe_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
-        # self.ids.layout_keyboard.add_widget(keyboardWidget)
 
     def update(self):
         global pipe_length
