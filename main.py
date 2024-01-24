@@ -111,6 +111,7 @@ dt_constant = 1
 dt_time = 500
 dt_cycle = 1
 
+data_base = np.zeros([3, 10])
 dt_measure = np.zeros(6)
 dt_current = np.zeros(10)
 dt_voltage = np.zeros(10)
@@ -156,7 +157,6 @@ class ScreenSplash(MDBoxLayout):
 class ScreenMainMenu(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     modbus_client = ModbusTcpClient('192.168.1.111')
-    
     
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
@@ -490,82 +490,142 @@ class ScreenOperateManual(MDBoxLayout):
 
 class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-
     def __init__(self, **kwargs):       
         super(ScreenOperateAuto, self).__init__(**kwargs)
         # Clock.schedule_once(self.delayed_init)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
 
     def file_manager_open(self):
-        self.file_manager.show(os.path.expanduser("~"))  # output manager to the screen
+        self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
         self.manager_open = True
 
     def select_path(self, path: str):
-        '''
-        It will be called when you click on the file name
-        or the catalog selection button.
-
-        :param path: path to the selected directory or file;
-        '''
-
-        self.ids.input_file_dir.text = path
-        self.exit_manager()
-        toast(path)
+        try:
+            self.ids.input_file_dir.text = path
+            self.exit_manager(path)
+        except:
+            toast("error select file path")
 
     def exit_manager(self, *args):
+        global data_base
         '''Called when the user reaches the root of the directory tree.'''
+        data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
+        data_base = data_set.T
+        print(data_base)
+        self.show_graph()
 
         self.manager_open = False
         self.file_manager.close()
-        self.show_graph()
-
-    def events(self, instance, keyboard, keycode, text, modifiers):
-        '''Called when buttons are pressed on the mobile device.'''
-
-        if keyboard in (1001, 27):
-            if self.manager_open:
-                self.file_manager.back()
-        return True
-    
+        
     def show_graph(self):
-        global pipe_diameter
-        global machine_die_radius
+        global data_base
+        try:
+            step_length = data_base[0,:]
+            step_bend = data_base[1,:] 
+            step_turn = data_base[2,:] 
 
+            print(data_base)
+            print(data_base[0,:])
+
+            print(step_length)
+            print(step_bend)
+            print(step_turn)
+
+            self.ids.pipe_bended_illustration.clear_widgets()
+
+            self.fig = plt.figure()
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.fig.set_facecolor("#eeeeee")
+            # self.fig.tight_layout()
+
+            offset_length = step_length
+            bend_angle = step_bend / 180 * np.pi
+            turn_angle = step_turn / 180 * np.pi
+            pipe_radius = pipe_diameter / 2
+
+            Uo = np.linspace(0, 2 * np.pi, 30)
+            Yo = np.linspace(0, 0, 5)
+            Uo, Yo = np.meshgrid(Uo, Yo)
+            Xo = pipe_radius * np.cos(Uo) - machine_die_radius
+            Zo = pipe_radius * np.sin(Uo)
+            
+            X0, Y0, Z0 = self.simulate(Xo, Yo, Zo, offset_length[0], bend_angle[0], turn_angle[0])
+            X1, Y1, Z1 = self.simulate(X0, Y0, Z0, offset_length[1], bend_angle[1], turn_angle[1])
+            X2, Y2, Z2 = self.simulate(X1, Y1, Z1, offset_length[2], bend_angle[2], turn_angle[2])
+            X3, Y3, Z3 = self.simulate(X2, Y2, Z2, offset_length[3], bend_angle[3], turn_angle[3])
+            X4, Y4, Z4 = self.simulate(X3, Y3, Z3, offset_length[4], bend_angle[4], turn_angle[4])
+            X5, Y5, Z5 = self.simulate(X4, Y4, Z4, offset_length[5], bend_angle[5], turn_angle[5])
+            X6, Y6, Z6 = self.simulate(X5, Y5, Z5, offset_length[6], bend_angle[6], turn_angle[6])
+            X7, Y7, Z7 = self.simulate(X6, Y6, Z6, offset_length[7], bend_angle[7], turn_angle[7])
+            X8, Y8, Z8 = self.simulate(X7, Y7, Z7, offset_length[8], bend_angle[8], turn_angle[8])
+            X9, Y9, Z9 = self.simulate(X8, Y8, Z8, offset_length[9], bend_angle[9], turn_angle[9])
+
+            self.ax.plot_surface(X9, Y9, Z9, color='gray', alpha=1)
+            # self.ax.set_box_aspect(aspect=(1, 1, 1))
+            self.ax.set_aspect('equal')
+            # self.ax.set_xlim([0, 6000])
+            # self.ax.set_ylim([-100, 100])
+            # self.ax.set_zlim([-100, 100])
+            # self.ax.axis('off')
+            self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))   
+        except:
+            toast("error update pipe illustration")
+   
+    def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
+        global flag_run
         global step_length
         global step_bend
         global step_turn
 
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(111, projection='3d')
-        self.fig.set_facecolor("#eeeeee")
-        # self.fig.tight_layout()
+        global pipe_diameter
+        global machine_die_radius
 
-        offset_length = step_length
-        bend_angle = step_bend / 180 * np.pi
-        turn_angle = step_turn / 180 * np.pi
         pipe_radius = pipe_diameter / 2
+        # step 1 : create straight pipe
+        # straight pipe
+        Ua = np.linspace(0, 2 * np.pi, 30)
+        Ya = np.linspace(offset_length, 0, 5)
+        Ua, Ya = np.meshgrid(Ua, Ya)
+        Xa = pipe_radius * np.cos(Ua) - machine_die_radius
+        Za = pipe_radius * np.sin(Ua)
+        # combine become one object with previous mesh
+        Xa = np.append(prev_X, Xa, axis=0)
+        Ya = np.append(prev_Y + offset_length, Ya, axis=0)
+        Za = np.append(prev_Z, Za, axis=0)
 
-        Uo = np.linspace(0, 2 * np.pi, 30)
-        Yo = np.linspace(0, 0, 5)
-        Uo, Yo = np.meshgrid(Uo, Yo)
-        Xo = pipe_radius * np.cos(Uo) - machine_die_radius
-        Zo = pipe_radius * np.sin(Uo)
+        # step 2 : create bended pipe
+        # theta: poloidal angle; phi: toroidal angle 
+        theta = np.linspace(0, 2 * np.pi, 30) 
+        phi   = np.linspace(0, bend_angle, 30) 
+        theta, phi = np.meshgrid(theta, phi) 
+        # torus parametrization 
+        Xb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.cos(phi)
+        Yb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.sin(phi)
+        Zb = pipe_radius * np.sin(theta) 
 
-        screen_compile = ScreenCompile()
-        
-        X0, Y0, Z0 = screen_compile.simulate(Xo, Yo, Zo, offset_length[0], bend_angle[0], turn_angle[0])
+        # step 3 : combine become one object
+        Xc = np.append(Xa, Xb, axis=0)
+        Yc = np.append(Ya, Yb, axis=0)
+        Zc = np.append(Za, Zb, axis=0)
 
-        self.ax.plot_surface(X0, Y0, Z0, color='gray', alpha=1)
-        # self.ax.set_box_aspect(aspect=(1, 1, 1))
-        self.ax.set_aspect('equal')
-        # self.ax.set_xlim([0, 6000])
-        # self.ax.set_ylim([-100, 100])
-        # self.ax.set_zlim([-100, 100])
-        # self.ax.axis('off')
-        self.ids.pipe_bended_illustration.clear_widgets()
-        self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
-   
+        # step 4 : rotate  object at Z axis (C axis)
+        Xd = np.cos(bend_angle) * Xc + np.sin(bend_angle) * Yc
+        Yd = -np.sin(bend_angle) * Xc + np.cos(bend_angle) * Yc
+        Zd = Zc
 
+        # step 5 : translate to origin, rotate  object at Y axis (B axis), translate back to previous position
+        # translate
+        Xe = Xd + machine_die_radius
+        Ze = Zd
+        # rotate
+        Xf = np.cos(turn_angle) * Xe + -np.sin(turn_angle) * Ze
+        Zf = np.sin(turn_angle) * Xe + np.cos(turn_angle) * Ze
+        # translate back
+        Xf = Xf - machine_die_radius
+        Yf = Yd
+
+        return Xf, Yf, Zf
+    
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -594,14 +654,6 @@ class ScreenOperateAuto(MDBoxLayout):
 
 class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-    global flag_run
-    global step_length
-    global step_bend
-    global step_turn
-
-    global pipe_diameter
-    global machine_die_radius
-
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
         # Clock.schedule_once(self.delayed_init)
@@ -610,6 +662,13 @@ class ScreenCompile(MDBoxLayout):
         self.reset()
 
     def update(self):
+        global step_length
+        global step_bend
+        global step_turn
+
+        global pipe_diameter
+        global machine_die_radius
+        global data_base
         try:
             step_length[0] = float(self.ids.input_step_length0.text)
             step_bend[0] = float(self.ids.input_step_bend0.text)
@@ -650,6 +709,13 @@ class ScreenCompile(MDBoxLayout):
             step_length[9] = float(self.ids.input_step_length9.text)
             step_bend[9] = float(self.ids.input_step_bend9.text)
             step_turn[9] = float(self.ids.input_step_turn9.text)
+
+            for i in range(0,9):
+                data_base[0,i] = step_length[i]
+                data_base[1,i] = step_bend[i]
+                data_base[2,i] = step_turn[i]
+
+            print(data_base)
 
             self.ids.pipe_bended_illustration.clear_widgets()
 
@@ -692,6 +758,14 @@ class ScreenCompile(MDBoxLayout):
             toast("error update pipe illustration")
 
     def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
+        global step_length
+        global step_bend
+        global step_turn
+
+        global pipe_diameter
+        global machine_die_radius
+        global data_base
+    
         pipe_radius = pipe_diameter / 2
         # step 1 : create straight pipe
         # straight pipe
@@ -739,6 +813,10 @@ class ScreenCompile(MDBoxLayout):
         return Xf, Yf, Zf
 
     def reset(self):
+        global step_length
+        global step_bend
+        global step_turn
+
         step_length = np.zeros(10)
         step_bend = np.zeros(10)
         step_turn = np.zeros(10)
@@ -787,14 +865,17 @@ class ScreenCompile(MDBoxLayout):
 
     def save(self):
         try:
-            now = datetime.now().strftime("/%d_%m_%Y_%H_%M_%S.jpg")
-            disk = str(DISK_ADDRESS) + now
-            self.fig.savefig(disk)
-            print("sucessfully save graph")
-            toast("sucessfully save graph")
+            name_file_now = datetime.now().strftime("\data\%d_%m_%Y_%H_%M_%S.gcode")
+            cwd = os.getcwd()
+            disk = cwd + name_file_now
+            print(disk)
+            with open(disk,"wb") as f:
+                np.savetxt(f, data_base.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm]")
+            print("sucessfully save data")
+            toast("sucessfully save data")
         except:
-            print("error saving graph")
-            toast("error saving graph")
+            print("error saving data")
+            toast("error saving data")
                 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'

@@ -66,287 +66,305 @@
 			# illustration pipe
 			MDBoxLayout:
 				id: pipe_bended_illustration
-				size_hint_y: 0.4
+				size_hint_y: 0.6
 
 			MDScrollView:
 				id: layout_textfield_view
-				size_hint_y: 0.6
+				size_hint_y: 0.4
+				
+				StackLayout:
+					padding: 5
+					size_hint_y: None
+					# height: self.minimum_height
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "Step No."
+							font_style: 'Body1'
 
-				MDGridLayout:
-					cols:4
-					spacing:20
-					size_hint_y: 0.6
-					row_default_height: 40
-					row_force_default: True
-					height: self.minimum_height
+						MDLabel:
+							text: "Offset Length"
+							font_style: 'Body1'
+						
+						MDLabel:
+							text: "Bending Angle"
+							font_style: 'Body1'
+						
+						MDLabel:
+							text: "Turning Angle"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "Step No."
-						font_style: 'Body1'
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "1"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "Offset Length"
-						font_style: 'Body1'
-					
-					MDLabel:
-						text: "Bending Angle"
-						font_style: 'Body1'
-					
-					MDLabel:
-						text: "Turning Angle"
-						font_style: 'Body1'
-					
-					MDLabel:
-						text: "1"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length0
+							hint_text: "Offset Length 1"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length0
-						hint_text: "Offset Length 1"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend0
+							hint_text: "Bending Angle 1"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend0
-						hint_text: "Bending Angle 1"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn0
+							hint_text: "Turning Angle 1"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn0
-						hint_text: "Turning Angle 1"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "2"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "2"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length1
+							hint_text: "Offset Length 2"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length1
-						hint_text: "Offset Length 2"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend1
+							hint_text: "Bending Angle 2"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend1
-						hint_text: "Bending Angle 2"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn1
+							hint_text: "Turning Angle 2"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn1
-						hint_text: "Turning Angle 2"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "3"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "3"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length2
+							hint_text: "Offset Length 3"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length2
-						hint_text: "Offset Length 3"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend2
+							hint_text: "Bending Angle 3"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend2
-						hint_text: "Bending Angle 3"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn2
+							hint_text: "Turning Angle 3"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn2
-						hint_text: "Turning Angle 3"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "4"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "4"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length3
+							hint_text: "Offset Length 4"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length3
-						hint_text: "Offset Length 4"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend3
+							hint_text: "Bending Angle 4"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend3
-						hint_text: "Bending Angle 4"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn3
+							hint_text: "Turning Angle 4"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn3
-						hint_text: "Turning Angle 4"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "5"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "5"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length4
+							hint_text: "Offset Length 5"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length4
-						hint_text: "Offset Length 5"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend4
+							hint_text: "Bending Angle 5"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend4
-						hint_text: "Bending Angle 5"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn4
+							hint_text: "Turning Angle 5"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn4
-						hint_text: "Turning Angle 5"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "6"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "6"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length5
+							hint_text: "Offset Length 6"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length5
-						hint_text: "Offset Length 6"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend5
+							hint_text: "Bending Angle 6"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend5
-						hint_text: "Bending Angle 6"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn5
+							hint_text: "Turning Angle 6"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn5
-						hint_text: "Turning Angle 6"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "7"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "7"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length6
+							hint_text: "Offset Length 7"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length6
-						hint_text: "Offset Length 7"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend6
+							hint_text: "Bending Angle 7"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend6
-						hint_text: "Bending Angle 7"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn6
+							hint_text: "Turning Angle 7"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn6
-						hint_text: "Turning Angle 7"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "8"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "8"
-						font_style: 'Body1'
+						MDTextField:
+							id: input_step_length7
+							hint_text: "Offset Length 8"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_length7
-						hint_text: "Offset Length 8"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend7
+							hint_text: "Bending Angle 8"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend7
-						hint_text: "Bending Angle 8"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn7
+							hint_text: "Turning Angle 8"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn7
-						hint_text: "Turning Angle 8"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "9"
+							font_style: 'Body1'
 
-					MDLabel:
-						text: "9"
-						font_style: 'Body1'
-
-					MDTextField:
-						id: input_step_length8
-						hint_text: "Offset Length 9"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_length8
+							hint_text: "Offset Length 9"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
 
-					MDTextField:
-						id: input_step_bend8
-						hint_text: "Bending Angle 9"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend8
+							hint_text: "Bending Angle 9"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn8
-						hint_text: "Turning Angle 9"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn8
+							hint_text: "Turning Angle 9"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDLabel:
-						text: "10"
-						font_style: 'Body1'
+					MDBoxLayout:
+						orientation: "horizontal"
+						MDLabel:
+							text: "10"
+							font_style: 'Body1'
 
-					MDTextField:
-						id: input_step_length9
-						hint_text: "Offset Length 10"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_length9
+							hint_text: "Offset Length 10"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_bend9
-						hint_text: "Bending Angle 10"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_bend9
+							hint_text: "Bending Angle 10"
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
-					MDTextField:
-						id: input_step_turn9
-						hint_text: "Turning Angle 10"
-						font_style: 'Body1'
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+						MDTextField:
+							id: input_step_turn9
+							hint_text: "Turning Angle 10"
+							font_style: 'Body1'
+							font_style: 'Body1'
+							input_filter: 'float'
+							on_text_validate: root.update()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
