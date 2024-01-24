@@ -9,6 +9,7 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.filemanager import MDFileManager
+from kivy.uix.vkeyboard import VKeyboard
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.metrics import dp
@@ -23,6 +24,7 @@ from pathlib import Path
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 import time
+from pymodbus.client import ModbusTcpClient
 
 Config.set('kivy', 'keyboard_mode', 'dock')
 
@@ -118,6 +120,11 @@ flag_dongle = True
 flag_autosave_data = False
 flag_autosave_graph = False
 
+flag_cylinder_press = False
+flag_cylinder_clamp = False
+flag_cylinder_table_shift = False
+flag_cylinder_table_up = False
+
 count_mounting = 0
 inject_state = 0
 
@@ -142,14 +149,42 @@ class ScreenSplash(MDBoxLayout):
             self.ids.progress_bar.value = 100
             self.ids.progress_bar_label.text = 'Loading.. [{:} %]'.format(100)
             time.sleep(0.5)
+            Clock.unschedule(self.update_progress_bar)
             self.screen_manager.current = 'screen_main_menu'
             return False
         
 class ScreenMainMenu(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-
+    modbus_client = ModbusTcpClient('192.168.1.111')
+    
+    
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
+        self.scrOpManual = ScreenOperateManual()
+        Clock.schedule_once(self.delayed_init, 10)
+        
+    def delayed_init(self, dt):
+        Clock.schedule_interval(self.regular_check, 1)
+
+    def regular_check(self, dt):
+        global flag_cylinder_press, flag_cylinder_clamp, flag_cylinder_table_up, flag_cylinder_table_shift
+
+
+
+        # try:
+        #     self.modbus_client.connect()
+        #     self.modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
+
+        #     self.modbus_client.write_coils(1536, [False, False, False, False, True, True, True, True], slave=1)
+
+        #     self.modbus_client.write_coils(1536, [False, False, False, False, False, False, False, False], slave=1)
+
+        #     reading_coil = self.modbus_client.read_coils(1536, 8, slave=1)
+        #     print(reading_coil.bits)
+        #     self.modbus_client.close()
+        # except:
+        #     toast("error communication to PLC Slave")
+        
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -181,6 +216,14 @@ class ScreenPipeSetting(MDBoxLayout):
     def __init__(self, **kwargs):
         super(ScreenPipeSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
+        # self.setup_keyboard()
+
+    def setup_keyboard(self):
+        # kb = Window.request_keyboard(self.__keyboard__close, self)
+        keyboard = Window.request_keyboard(self._keyboard_close, self)
+        if keyboard.widget:
+            vkeyboard = self._keyboard.widget
+            vkeyboard.layout = 'numeric.json'
 
     def delayed_init(self, dt):
         global pipe_length
@@ -289,9 +332,9 @@ class ScreenPipeSetting(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h 1")
 
 class ScreenMachineSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
@@ -339,9 +382,9 @@ class ScreenMachineSetting(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h 1")
 
 class ScreenAdvancedSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
@@ -368,15 +411,56 @@ class ScreenAdvancedSetting(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h 1")
 
 class ScreenOperateManual(MDBoxLayout):
     screen_manager = ObjectProperty(None)
 
     def __init__(self, **kwargs):      
         super(ScreenOperateManual, self).__init__(**kwargs)
+
+    def exec_press(self):
+        global flag_cylinder_press
+
+        if flag_cylinder_press:
+            flag_cylinder_press = False
+            self.ids.bt_press.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_press = True
+            self.ids.bt_press.md_bg_color = "#ee2222"
+
+    def exec_clamp(self):
+        global flag_cylinder_clamp
+
+        if flag_cylinder_clamp:
+            flag_cylinder_clamp = False
+            self.ids.bt_clamp.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_clamp = True
+            self.ids.bt_clamp.md_bg_color = "#ee2222"
+
+    def exec_table_up(self):
+        global flag_cylinder_table_up
+
+        if flag_cylinder_table_up:
+            flag_cylinder_table_up = False
+            self.ids.bt_table_up.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_table_up = True
+            self.ids.bt_table_up.md_bg_color = "#ee2222"
+
+    def exec_table_shift(self):
+        global flag_cylinder_table_shift
+
+        if flag_cylinder_table_shift:
+            flag_cylinder_table_shift = False
+            self.ids.bt_table_shift.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_table_shift = True
+            self.ids.bt_table_shift.md_bg_color = "#ee2222"
+
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -400,9 +484,9 @@ class ScreenOperateManual(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h 1")
 
 class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
@@ -504,9 +588,9 @@ class ScreenOperateAuto(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h now")
+        # os.system("shutdown -h 1")
 
 class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
@@ -731,9 +815,9 @@ class ScreenCompile(MDBoxLayout):
         self.screen_manager.current = 'screen_compile'
 
     def exec_shutdown(self):
-        # os.system("shutdown /s /t 1") #for windows os
+        os.system("shutdown /s /t 1") #for windows os
         toast("shutting down system")
-        os.system("shutdown -h 1")
+        # os.system("shutdown -h 1")
 
 class PipeBendingCNCApp(MDApp):
     def __init__(self, **kwargs):
@@ -745,15 +829,36 @@ class PipeBendingCNCApp(MDApp):
         self.theme_cls.accent_palette = "Gray"
         self.icon = 'asset/logo.png'
         Window.fullscreen = 'auto'
-        # Window.borderless = True
+        Window.borderless = False
         # Window.size = 900, 1440
         # Window.size = 450, 720
         # Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')
+        # keyboard = VKeyboard(on_key_up = self.key_up)
 
         return screen
 
+    # def key_up(self, keyboard, keycode, *args):
+    #     if isinstance(keycode, tuple):
+    #         keycode = keycode[1]
+
+		# Tracking what was already in the label
+        # thing = self.label.text
+		
+		# # Run some logic
+		# if thing == "Type Something!":
+		# 	thing = ''
+		# # Backspace
+		# if keycode == 'backspace':
+		# 	thing = thing[:-1]
+		# 	keycode = ''
+		# # Spacebar
+		# if keycode == 'spacebar':
+		# 	keycode = " " 
+
+		# # Update the label
+		# self.label.text = f'{thing}{keycode}'
 
 if __name__ == '__main__':
     PipeBendingCNCApp().run()

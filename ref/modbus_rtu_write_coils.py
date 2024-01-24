@@ -1,5 +1,5 @@
 from pymodbus.client import ModbusSerialClient
-client = ModbusSerialClient('COM9', baudrate=19200, bytesize=8, parity="N", stopbits=2, timeout=1, strict=False)
+client = ModbusSerialClient('COM3', baudrate=19200, bytesize=8, parity="N", stopbits=2, timeout=1, strict=False)
 
 # discrete_inputs = client.read_discrete_inputs(1, 14)   # start reading from address 0 
 # discrete_inputs.setBit(3, 1)                       # set address 3 to value 1 

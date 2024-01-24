@@ -1,5 +1,5 @@
 Kivy==2.2.1
-kivymd==1.1.1
+kivymd==1.2.0
 matplotlib==3.7.2
 numpy==1.25.1
 paho_mqtt==1.6.1

@@ -70,105 +70,110 @@
 				allow_stretch: True  
 				size_hint_y: 0.6
 
-			MDGridLayout:
-				cols:2
-				spacing:20
+			MDScrollView:
+				id: layout_textfield_view
 				size_hint_y: 0.4
-				row_default_height: 40
-				row_force_default: True
 
-				MDLabel:
-					text: "Effective Length"
-					font_style: 'Body1'
+				MDGridLayout:
+					cols:2
+					spacing:20
+					size_hint_y: 0.4
 
-				MDTextField:
-					id: input_machine_eff_length
-					hint_text: "Input Effective Length (mm)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(0)
+					row_default_height: 40
+					row_force_default: True
 
-				MDLabel:
-					text: "Pipe Support Interference Pos"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Effective Length"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_supp_pos
-					hint_text: "Input Pipe Support Interference Pos (mm)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(1)
+					MDTextField:
+						id: input_machine_eff_length
+						hint_text: "Input Effective Length (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(0)
 
-				MDLabel:
-					text: "Clamping Die Front Limit Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pipe Support Interference Pos"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_clamp_front_delay
-					hint_text: "Input Clamping Die Front Limit Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(2)
+					MDTextField:
+						id: input_machine_supp_pos
+						hint_text: "Input Pipe Support Interference Pos (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(1)
 
-				MDLabel:
-					text: "Clamping Die Rear Limit Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Clamping Die Front Limit Delay Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_clamp_rear_delay
-					hint_text: "Input Clamping Die Rear Limit Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()	
-					on_focus: root.update_image(3)				
+					MDTextField:
+						id: input_machine_clamp_front_delay
+						hint_text: "Input Clamping Die Front Limit Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(2)
 
-				MDLabel:
-					text: "Pressure Die Front Limit Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Clamping Die Rear Limit Delay Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_press_front_delay
-					hint_text: "Input Pressure Die Front Limit Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(4)
+					MDTextField:
+						id: input_machine_clamp_rear_delay
+						hint_text: "Input Clamping Die Rear Limit Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()	
+						on_focus: root.update_image(3)				
 
-				MDLabel:
-					text: "Pressure Die Rear Limit Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Front Limit Delay Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_press_rear_delay
-					hint_text: "Input Pressure Die Rear Limit Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(5)		
+					MDTextField:
+						id: input_machine_press_front_delay
+						hint_text: "Input Pressure Die Front Limit Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(4)
 
-				MDLabel:
-					text: "Collet Clamping Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Rear Limit Delay Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_collet_clamp_delay
-					hint_text: "Input Collet Clamping Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(6)
+					MDTextField:
+						id: input_machine_press_rear_delay
+						hint_text: "Input Pressure Die Rear Limit Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(5)		
 
-				MDLabel:
-					text: "Collet Opening Delay Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Collet Clamping Delay Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_machine_collet_open_delay
-					hint_text: "Input Collet Opening Delay Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
-					on_focus: root.update_image(7)
+					MDTextField:
+						id: input_machine_collet_clamp_delay
+						hint_text: "Input Collet Clamping Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(6)
+
+					MDLabel:
+						text: "Collet Opening Delay Time"
+						font_style: 'Body1'
+
+					MDTextField:
+						id: input_machine_collet_open_delay
+						hint_text: "Input Collet Opening Delay Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(7)

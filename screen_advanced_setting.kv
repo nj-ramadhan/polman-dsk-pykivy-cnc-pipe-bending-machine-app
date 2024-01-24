@@ -55,192 +55,194 @@
 				on_press: root.exec_shutdown()            
 		
 		# setting layout
-		MDBoxLayout:
+		MDScrollView:
 			id: layout_advanced_setting
-			orientation: "vertical"
 			size_hint_y: 0.85
-			padding:20
-			spacing:20
-			
-			MDGridLayout:
-				cols:2
+
+			MDBoxLayout:
+				orientation: "vertical"
+				padding:20
 				spacing:20
-				size_hint_x: 0.5
-				row_default_height: 50
-				row_force_default: True
+				
+				MDGridLayout:
+					cols:2
+					spacing:20
+					size_hint_x: 0.5
+					row_default_height: 50
+					row_force_default: True
 
-				MDLabel:
-					text: "Pipe Head Pos"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pipe Head Pos"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_pipe_length
-					hint_text: "Input Pipe Head Pos (mm)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_pipe_length
+						hint_text: "Input Pipe Head Pos (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Start Mode"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Start Mode"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_pipe_diameter
-					hint_text: "Input Start Mode"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_pipe_diameter
+						hint_text: "Input Start Mode"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Calculate First Line Segment"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Calculate First Line Segment"
+						font_style: 'Body1'
 
-				MDBoxLayout:
-					orientation: "horizontal"
-					canvas.before:
-						Color:
-							rgba: 0.5, 0, 0, 1
-						Line:
-							width: 2
-							rectangle: self.x, self.y, self.width, self.height
+					MDBoxLayout:
+						orientation: "horizontal"
+						canvas.before:
+							Color:
+								rgba: 0.5, 0, 0, 1
+							Line:
+								width: 2
+								rectangle: self.x, self.y, self.width, self.height
 
-				MDLabel:
-					text: "When Job Has Finished"
-					font_style: 'Body1'					
+					MDLabel:
+						text: "When Job Has Finished"
+						font_style: 'Body1'					
 
-				MDBoxLayout:
-					orientation: "horizontal"
-					canvas.before:
-						Color:
-							rgba: 0.5, 0, 0, 1
-						Line:
-							width: 2
-							rectangle: self.x, self.y, self.width, self.height				
+					MDBoxLayout:
+						orientation: "horizontal"
+						canvas.before:
+							Color:
+								rgba: 0.5, 0, 0, 1
+							Line:
+								width: 2
+								rectangle: self.x, self.y, self.width, self.height				
 
-				MDLabel:
-					text: "Pipe Receive Pos (X-axis)"
-					font_style: 'Body1'			
+					MDLabel:
+						text: "Pipe Receive Pos (X-axis)"
+						font_style: 'Body1'			
 
-				MDTextField:
-					id: input_receive_pos_x
-					hint_text: "Input Pipe Receive Pos X-axis (mm)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()							
+					MDTextField:
+						id: input_receive_pos_x
+						hint_text: "Input Pipe Receive Pos X-axis (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()							
 
-				MDLabel:
-					text: "Pipe Receive Pos (B-axis)"
-					font_style: 'Body1'			
+					MDLabel:
+						text: "Pipe Receive Pos (B-axis)"
+						font_style: 'Body1'			
 
-				MDTextField:
-					id: input_receive_pos_b
-					hint_text: "Input Receive Pos B-axis (mm)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()					
+					MDTextField:
+						id: input_receive_pos_b
+						hint_text: "Input Receive Pos B-axis (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()					
 
-				MDLabel:
-					text: "Production Quantity"
-					font_style: 'Body1'			
+					MDLabel:
+						text: "Production Quantity"
+						font_style: 'Body1'			
 
-				MDTextField:
-					id: input_receive_pos_b
-					hint_text: "Input Production Quantity"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()		
+					MDTextField:
+						id: input_receive_pos_b
+						hint_text: "Input Production Quantity"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()		
 
-			MDGridLayout:
-				cols:2
-				spacing:20
-				size_hint_x: 0.5
-				row_default_height: 50
-				row_force_default: True
+				MDGridLayout:
+					cols:2
+					spacing:20
+					size_hint_x: 0.5
+					row_default_height: 50
+					row_force_default: True
 
-				MDLabel:
-					text: "Pressure Die Semi Clamp Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Semi Clamp Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_press_semiclamp_time
-					hint_text: "Input Pressure Die Semi Clamp Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_advanced_press_semiclamp_time
+						hint_text: "Input Pressure Die Semi Clamp Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Pressure Die Semi Open Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Semi Open Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_press_semiopen_time
-					hint_text: "Input Pressure Die Semi Open Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_advanced_press_semiopen_time
+						hint_text: "Input Pressure Die Semi Open Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Clamp Die Semi Clamp Time"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Clamp Die Semi Clamp Time"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_clamp_semiclamp_time
-					hint_text: "Input Clamp Die Semi Clamp Time (sec)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_advanced_clamp_semiclamp_time
+						hint_text: "Input Clamp Die Semi Clamp Time (sec)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Spring Back Angle (20)"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Spring Back Angle (20)"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_springback_20
-					hint_text: "Input Spring Back Angle 20 (degree)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_advanced_springback_20
+						hint_text: "Input Spring Back Angle 20 (degree)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Spring Back Angle (120)"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Spring Back Angle (120)"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_springback_120
-					hint_text: "Input Spring Back Angle 120 (degree)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()
+					MDTextField:
+						id: input_advanced_springback_120
+						hint_text: "Input Spring Back Angle 120 (degree)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
 
-				MDLabel:
-					text: "Max Bending Angle"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Max Bending Angle"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_max_bend
-					hint_text: "Input Max Bending Angle (degree)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()	
+					MDTextField:
+						id: input_advanced_max_bend
+						hint_text: "Input Max Bending Angle (degree)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()	
 
-				MDLabel:
-					text: "Pressure Die Start Angle"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Start Angle"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_press_start_angle
-					hint_text: "Input Pressure Die Start Angle (degree)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()	
+					MDTextField:
+						id: input_advanced_press_start_angle
+						hint_text: "Input Pressure Die Start Angle (degree)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()	
 
-				MDLabel:
-					text: "Pressure Die Stop Angle"
-					font_style: 'Body1'
+					MDLabel:
+						text: "Pressure Die Stop Angle"
+						font_style: 'Body1'
 
-				MDTextField:
-					id: input_advanced_press_stop_angle
-					hint_text: "Input Pressure Die Stop Angle (degree)"
-					font_style: 'Body1'
-					input_filter: 'float'
-					on_text_validate: root.update()	
+					MDTextField:
+						id: input_advanced_press_stop_angle
+						hint_text: "Input Pressure Die Stop Angle (degree)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()	
