@@ -9,7 +9,6 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.filemanager import MDFileManager
-from kivy.uix.vkeyboard import VKeyboard
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.metrics import dp
@@ -26,7 +25,7 @@ from kivy.properties import StringProperty
 import time
 from pymodbus.client import ModbusTcpClient
 
-Config.set('kivy', 'keyboard_mode', 'dock')
+# Config.set('kivy', 'keyboard_mode', 'dock')
 
 plt.style.use('bmh')
 
@@ -125,6 +124,7 @@ flag_cylinder_press = False
 flag_cylinder_clamp = False
 flag_cylinder_table_shift = False
 flag_cylinder_table_up = False
+flag_jog = False
 
 count_mounting = 0
 inject_state = 0
@@ -216,14 +216,6 @@ class ScreenPipeSetting(MDBoxLayout):
     def __init__(self, **kwargs):
         super(ScreenPipeSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
-        # self.setup_keyboard()
-
-    def setup_keyboard(self):
-        # kb = Window.request_keyboard(self.__keyboard__close, self)
-        keyboard = Window.request_keyboard(self._keyboard_close, self)
-        if keyboard.widget:
-            vkeyboard = self._keyboard.widget
-            vkeyboard.layout = 'numeric.json'
 
     def delayed_init(self, dt):
         global pipe_length
@@ -461,6 +453,15 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_table_shift = True
             self.ids.bt_table_shift.md_bg_color = "#ee2222"
 
+    def exec_jog(self):
+        global flag_jog
+
+        if flag_jog:
+            flag_jog = False
+            self.ids.bt_jog.md_bg_color = "#196BA5"
+        else:
+            flag_jog = True
+            self.ids.bt_jog.md_bg_color = "#ee2222"
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -865,9 +866,13 @@ class ScreenCompile(MDBoxLayout):
 
     def save(self):
         try:
+            name_file = "\data\\" + self.ids.input_file_name.text + ".gcode"
             name_file_now = datetime.now().strftime("\data\%d_%m_%Y_%H_%M_%S.gcode")
             cwd = os.getcwd()
-            disk = cwd + name_file_now
+            if self.ids.input_file_name.text == "":
+                disk = cwd + name_file_now
+            else:
+                disk = cwd + name_file
             print(disk)
             with open(disk,"wb") as f:
                 np.savetxt(f, data_base.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm]")
@@ -916,30 +921,9 @@ class PipeBendingCNCApp(MDApp):
         # Window.allow_screensaver = True
 
         screen = Builder.load_file('main.kv')
-        # keyboard = VKeyboard(on_key_up = self.key_up)
 
         return screen
 
-    # def key_up(self, keyboard, keycode, *args):
-    #     if isinstance(keycode, tuple):
-    #         keycode = keycode[1]
-
-		# Tracking what was already in the label
-        # thing = self.label.text
-		
-		# # Run some logic
-		# if thing == "Type Something!":
-		# 	thing = ''
-		# # Backspace
-		# if keycode == 'backspace':
-		# 	thing = thing[:-1]
-		# 	keycode = ''
-		# # Spacebar
-		# if keycode == 'spacebar':
-		# 	keycode = " " 
-
-		# # Update the label
-		# self.label.text = f'{thing}{keycode}'
 
 if __name__ == '__main__':
     PipeBendingCNCApp().run()

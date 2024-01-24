@@ -38,7 +38,7 @@
 			size_hint_y: 0.05
 
 			MDIconButton:
-				id: bt_shutdown
+				id: bt_menu
 				icon: "menu"
 				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
@@ -66,29 +66,59 @@
 			# illustration pipe
 			MDBoxLayout:
 				id: pipe_bended_illustration
-				size_hint_y: 0.6
+				size_hint_y: 0.5
 
 			MDGridLayout:
 				cols:3
 				spacing:20
+				padding: 20
 				size_hint_y: 0.4
-				row_default_height: 40
-				row_force_default: True
 
 				MDLabel:
-					text: "Select Compiled File (G-code)"
+					text: "Realtime Feeding Data"
 					font_style: 'Body1'
+
+				MDLabel:
+					text: "Realtime Bending Data"
+					font_style: 'Body1'
+
+				MDLabel:
+					text: "Realtime Turning Data"
+					font_style: 'Body1'
+
+				MDLabel:
+					id: lb_real_feed
+					text: "000.00"
+					font_style: 'H3'
+
+				MDLabel:
+					id: lb_real_bend
+					text: "000.00"
+					font_style: 'H3'
+
+				MDLabel:
+					id: lb_real_turn
+					text: "000.00"
+					font_style: 'H3'
+
+			MDBoxLayout:
+				orientation: "horizontal"
+				spacing:20
+				padding: 20
+				size_hint_y: 0.1
 
 				MDTextField:
 					id: input_file_dir
-					hint_text: "Input File Directory"
+					hint_text: "Select Compiled File (G-code)"
 					font_style: 'Body1'
-					input_filter: 'float'
+					size_hint_x: 0.8
 					on_text_validate: root.update()	
 
-				MDRoundFlatIconButton:
-					text: "Open File"
+				MDFillRoundFlatIconButton:
 					icon: "folder"
+					text: "OPEN FILE"
+					font_style: 'H6'
+					size_hint_x: 0.2
 					on_release: root.file_manager_open()			
 
 		# MDRectangleFlatIconButton: navigation operation
@@ -100,9 +130,9 @@
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_manual
-				icon: "hand"
+				icon: "play"
 				text: "MANUAL OPERATION"
-				font_style: 'Button'
+				font_style: 'H6'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_manual()
 			
@@ -110,6 +140,6 @@
 				id: bt_screen_auto
 				icon: "play"
 				text: "AUTOMATIC OPERATION"
-				font_style: 'Button'
+				font_style: 'H6'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_auto()	

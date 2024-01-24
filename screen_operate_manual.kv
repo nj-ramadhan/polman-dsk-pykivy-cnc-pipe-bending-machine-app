@@ -38,7 +38,7 @@
 			size_hint_y: 0.05
 
 			MDIconButton:
-				id: bt_shutdown
+				id: bt_menu
 				icon: "menu"
 				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
@@ -68,54 +68,99 @@
 				id: machine
 				source:'asset/machine_operation.png'
 				allow_stretch: True
-				size_hint_y: 0.6
+				size_hint_y: 0.5
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.4
+				size_hint_y: 0.5
 				spacing: 20
+				padding: 20
+
+				MDBoxLayout:
+					orientation: "vertical"
+					size_hint_x: 0.4
+					padding:20
+				
+					MDGridLayout:
+						cols:2
+						spacing:20
+						size_hint_y: 0.5
+
+						MDFillRoundFlatButton:
+							id: bt_press
+							text: "PRESS"
+							font_style: 'H6'
+							size_hint_x: 0.5
+							on_press: root.exec_press()
+
+						MDFillRoundFlatButton:
+							id: bt_clamp
+							text: "CLAMP"
+							font_style: 'H6'
+							size_hint_x: 0.5
+							on_press: root.exec_clamp()
+
+						MDFillRoundFlatButton:
+							id: bt_table_up
+							text: "TABLE UP"
+							font_style: 'H6'
+							size_hint_x: 0.5
+							on_press: root.exec_table_up()
+
+						MDFillRoundFlatButton:
+							id: bt_table_shift
+							text: "TABLE SHIFT"
+							font_style: 'H6'
+							size_hint_x: 0.5
+							on_press: root.exec_table_shift()
+
+					MDFillRoundFlatButton:
+						id: bt_jog
+						text: "JOG"
+						font_style: 'H6'
+						size_hint_x: 1
+						size_hint_y: 0.25
+						on_press: root.exec_jog()
+
+					MDGridLayout:
+						cols:3
+						spacing:20
+						size_hint_y: 0.25
+
+						MDFillRoundFlatButton:
+							id: bt_jog_feeding
+							text: "JOG FEEDING"
+							font_style: 'H6'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_feeding()
+
+						MDFillRoundFlatButton:
+							id: bt_jog_bending
+							text: "JOG BENDING"
+							font_style: 'H6'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_bending()
+
+						MDFillRoundFlatButton:
+							id: bt_jog_turning
+							text: "JOG TURNING"
+							font_style: 'H6'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_turning()
+
+					MDFillRoundFlatButton:
+						id: bt_origin
+						text: "ORIGIN"
+						font_style: 'H6'
+						size_hint_x: 1
+						size_hint_y: 0.25
+						on_press: root.exec_origin()
 
 				MDGridLayout:
-					cols:2
+					cols:3
 					spacing:20
-					size_hint_x:0.3
-					row_default_height: 40
-					row_force_default: True
-
-					MDFillRoundFlatButton:
-						id: bt_press
-						text: "Press"
-						font_style: 'Body1'
-						size_hint_x: 60
-						on_press: root.exec_press()
-
-					MDFillRoundFlatButton:
-						id: bt_clamp
-						text: "Clamp"
-						font_style: 'Body1'
-						size_hint_x: 60
-						on_press: root.exec_clamp()
-
-					MDFillRoundFlatButton:
-						id: bt_table_up
-						text: "Table Up"
-						font_style: 'Body1'
-						size_hint_x: 60
-						on_press: root.exec_table_up()
-
-					MDFillRoundFlatButton:
-						id: bt_table_shift
-						text: "Table Shift"
-						font_style: 'Body1'
-						size_hint_x: 60
-						on_press: root.exec_table_shift()
-
-				MDGridLayout:
-					cols:2
-					spacing:20
-					size_hint_x:0.7
-					row_default_height: 40
-					row_force_default: True
+					padding:20
+					size_hint_x:0.6
 
 					MDLabel:
 						text: "Feeding (Y-axis)"
@@ -127,6 +172,13 @@
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+					
+					MDFillRoundFlatButton:
+						id: bt_operate_feeding
+						text: "EXECUTE"
+						font_style: 'H6'
+						size_hint_x: 0.3
+						on_press: root.exec_operate_feeding()
 
 					MDLabel:
 						text: "Bending Angle (C-axis)"
@@ -138,6 +190,13 @@
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+					
+					MDFillRoundFlatButton:
+						id: bt_operate_bending
+						text: "EXECUTE"
+						font_style: 'H6'
+						size_hint_x: 0.3
+						on_press: root.exec_operate_bending()
 
 					MDLabel:
 						text: "Turning Angle (B-axis)"
@@ -149,17 +208,13 @@
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
-
-					MDLabel:
-						text: "Horizontal (X-axis)"
-						font_style: 'Body1'
-
-					MDTextField:
-						id: input_operate_horizontal
-						hint_text: "Input Horizontal (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-						on_text_validate: root.update()
+					
+					MDFillRoundFlatButton:
+						id: bt_operate_turning
+						text: "EXECUTE"
+						font_style: 'H6'
+						size_hint_x: 0.3
+						on_press: root.exec_operate_turning()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
@@ -170,9 +225,9 @@
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_manual
-				icon: "hand"
+				icon: "play"
 				text: "MANUAL OPERATION"
-				font_style: 'Button'
+				font_style: 'H6'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_manual()
 			
@@ -180,7 +235,7 @@
 				id: bt_screen_auto
 				icon: "play"
 				text: "AUTOMATIC OPERATION"
-				font_style: 'Button'
+				font_style: 'H6'
 				size_hint_x: 0.5
 				on_press: root.screen_operate_auto()		
 

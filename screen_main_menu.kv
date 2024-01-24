@@ -38,7 +38,7 @@
 			size_hint_y: 0.05
 
 			MDIconButton:
-				id: bt_shutdown
+				id: bt_menu
 				icon: "menu"
 				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
@@ -58,10 +58,11 @@
 		# main menu layout
 		MDGridLayout:
 			id: layout_main_menu
+			cols:2
 			size_hint_y: 0.85
 			padding:20
 			spacing:20
-			cols:2
+			
 
 			MDCard:
 				id: bt_screen_pipe_setting
@@ -69,7 +70,7 @@
 				orientation: "vertical"
 				on_press: root.screen_pipe_setting()
 				padding:20
-				spacing:10
+				spacing:20
 
 				Image:
 					source:'asset/logo_pipe_setting.png'
@@ -87,7 +88,7 @@
 				orientation: "vertical"
 				on_press: root.screen_machine_setting()
 				padding:20
-				spacing:10
+				spacing:20
 				
 				Image:
 					source:'asset/logo_machine_setting.png'
@@ -105,7 +106,7 @@
 				orientation: "vertical"
 				on_press: root.screen_operate_auto()
 				padding:20
-				spacing:10
+				spacing:20
 				
 				Image:
 					source:'asset/logo_operate_machine.png'
@@ -123,7 +124,7 @@
 				orientation: "vertical"
 				on_press: root.screen_compile()
 				padding:20
-				spacing:10
+				spacing:20
 				
 				Image:
 					source:'asset/logo_compile_program.png'
@@ -141,7 +142,7 @@
 				orientation: "vertical"
 				on_press: root.screen_advanced_setting()
 				padding:20
-				spacing:10
+				spacing:20
 
 				Image:
 					source:'asset/logo_machine_setting.png'

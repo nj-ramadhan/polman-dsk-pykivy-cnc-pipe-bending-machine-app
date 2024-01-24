@@ -38,7 +38,7 @@
 			size_hint_y: 0.05
 
 			MDIconButton:
-				id: bt_shutdown
+				id: bt_menu
 				icon: "menu"
 				size_hint_x: 0.2
 				on_press: root.screen_main_menu()
@@ -68,19 +68,19 @@
 				id: machine_image
 				source:'asset/machine_setting_eff_length.png'
 				allow_stretch: True  
-				size_hint_y: 0.6
+				size_hint_y: 0.5
+
 
 			MDScrollView:
-				id: layout_textfield_view
-				size_hint_y: 0.4
-
+				id: layout_machine_setting
+				size_hint_y: 0.5
+				
 				MDGridLayout:
 					cols:2
-					spacing:20
-					size_hint_y: 0.4
-
-					row_default_height: 40
-					row_force_default: True
+					padding:20
+					size_hint_y: None
+					height: self.minimum_height
+					width: self.minimum_width
 
 					MDLabel:
 						text: "Effective Length"
