@@ -103,21 +103,22 @@
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				spacing:20
-				padding: 20
+				spacing: 20
+				padding: 0, 20
 				size_hint_y: 0.1
 
-				MDTextField:
-					id: input_file_dir
-					hint_text: "Select Compiled File (G-code)"
-					font_style: 'Body1'
-					size_hint_x: 0.8
+				MDFillRoundFlatIconButton:
+					icon: "reload"
+					text: "RELOAD DATA"
+					font_style: 'H6'
+					size_hint_x: 0.5
+					on_release: root.reload()
 
 				MDFillRoundFlatIconButton:
 					icon: "folder"
 					text: "OPEN FILE"
 					font_style: 'H6'
-					size_hint_x: 0.2
+					size_hint_x: 0.5
 					on_release: root.file_manager_open()			
 
 		# MDRectangleFlatIconButton: navigation operation

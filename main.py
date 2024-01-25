@@ -211,9 +211,9 @@ class ScreenPipeSetting(MDBoxLayout):
         self.ids.input_pipe_diameter.text = str(val_pipe_diameter)
         self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
 
-        self.update()
+        self.update_graph()
 
-    def update(self):
+    def update_graph(self):
         global val_pipe_length
         global val_pipe_diameter
         global val_pipe_thickness
@@ -536,16 +536,10 @@ class ScreenOperateAuto(MDBoxLayout):
         super(ScreenOperateAuto, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
 
-    def reset(self):
-        global val_feed_step
-        global val_bend_step
-        global val_turn_step
-
-        val_feed_step = np.zeros(10)
-        val_bend_step = np.zeros(10)
-        val_turn_step = np.zeros(10)
-
-        self.show_graph()
+    def reload(self):
+        global data_base_process
+        print(data_base_process)
+        self.update_graph()
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -553,7 +547,7 @@ class ScreenOperateAuto(MDBoxLayout):
 
     def select_path(self, path: str):
         try:
-            self.ids.input_file_dir.text = path
+            # self.ids.input_file_dir.text = path
             self.exit_manager(path)
         except:
             toast("error select file path")
@@ -561,27 +555,30 @@ class ScreenOperateAuto(MDBoxLayout):
     def exit_manager(self, *args):
         global data_base_process
         '''Called when the user reaches the root of the directory tree.'''
-        data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
-        data_base_process = data_set.T
-        print(data_base_process)
-        self.show_graph()
+        try:
+            data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
+            data_base_process = data_set.T
+            self.update_graph()
 
-        self.manager_open = False
-        self.file_manager.close()
+            self.manager_open = False
+            self.file_manager.close()
+        except:
+            toast("error open file")
         
-    def show_graph(self):
+    def update_graph(self):
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
+
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
+
         global data_base_process
         try:
             val_feed_step = data_base_process[0,:]
             val_bend_step = data_base_process[1,:] 
             val_turn_step = data_base_process[2,:] 
-
-            print(data_base_process)
-            print(data_base_process[0,:])
-
-            print(val_feed_step)
-            print(val_bend_step)
-            print(val_turn_step)
 
             self.ids.pipe_bended_illustration.clear_widgets()
 
@@ -621,7 +618,7 @@ class ScreenOperateAuto(MDBoxLayout):
             # self.ax.axis('off')
             self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))   
         except:
-            toast("error update pipe illustration")
+            toast("error update pipe bending process illustration")
    
     def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
         global flag_run
@@ -708,8 +705,33 @@ class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
+        self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
 
-    def update(self):
+    def file_manager_open(self):
+        self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
+        self.manager_open = True
+
+    def select_path(self, path: str):
+        try:
+            # self.ids.input_file_dir.text = path
+            self.exit_manager(path)
+        except:
+            toast("error select file path")
+
+    def exit_manager(self, *args):
+        global data_base_process
+        '''Called when the user reaches the root of the directory tree.'''
+        try:
+            data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
+            data_base_process = data_set.T
+            self.update_data()
+
+            self.manager_open = False
+            self.file_manager.close()
+        except:
+            toast("error open file")
+
+    def update_data(self):
         global val_pipe_length
         global val_pipe_diameter
         global val_pipe_thickness
@@ -717,8 +739,64 @@ class ScreenCompile(MDBoxLayout):
         global val_feed_step
         global val_bend_step
         global val_turn_step
+        
+        global data_base_process
 
-        global val_machine_die_radius
+        val_feed_step = data_base_process[0,:]
+        val_bend_step = data_base_process[1,:] 
+        val_turn_step = data_base_process[2,:] 
+    
+        self.ids.input_step_length0.text = str(val_feed_step[0])
+        self.ids.input_step_bend0.text = str(val_bend_step[0])
+        self.ids.input_step_turn0.text = str(val_turn_step[0])
+
+        self.ids.input_step_length1.text = str(val_feed_step[1])
+        self.ids.input_step_bend1.text = str(val_bend_step[1])
+        self.ids.input_step_turn1.text = str(val_turn_step[1])
+
+        self.ids.input_step_length2.text = str(val_feed_step[2])
+        self.ids.input_step_bend2.text = str(val_bend_step[2])
+        self.ids.input_step_turn2.text = str(val_turn_step[2])
+
+        self.ids.input_step_length3.text = str(val_feed_step[3])
+        self.ids.input_step_bend3.text = str(val_bend_step[3])
+        self.ids.input_step_turn3.text = str(val_turn_step[3])
+
+        self.ids.input_step_length4.text = str(val_feed_step[4])
+        self.ids.input_step_bend4.text = str(val_bend_step[4])
+        self.ids.input_step_turn4.text = str(val_turn_step[4])
+
+        self.ids.input_step_length5.text = str(val_feed_step[5])
+        self.ids.input_step_bend5.text = str(val_bend_step[5])
+        self.ids.input_step_turn5.text = str(val_turn_step[5])
+
+        self.ids.input_step_length6.text = str(val_feed_step[6])
+        self.ids.input_step_bend6.text = str(val_bend_step[6])
+        self.ids.input_step_turn6.text = str(val_turn_step[6])
+
+        self.ids.input_step_length7.text = str(val_feed_step[7])
+        self.ids.input_step_bend7.text = str(val_bend_step[7])
+        self.ids.input_step_turn7.text = str(val_turn_step[7])
+
+        self.ids.input_step_length8.text = str(val_feed_step[8])
+        self.ids.input_step_bend8.text = str(val_bend_step[8])
+        self.ids.input_step_turn8.text = str(val_turn_step[8])
+
+        self.ids.input_step_length9.text = str(val_feed_step[9])
+        self.ids.input_step_bend9.text = str(val_bend_step[9])
+        self.ids.input_step_turn9.text = str(val_turn_step[9]) 
+
+        self.update_graph()
+
+    def update_graph(self):
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
+
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
+        
         global data_base_process
         try:
             val_feed_step[0] = float(self.ids.input_step_length0.text)
@@ -766,7 +844,9 @@ class ScreenCompile(MDBoxLayout):
                 data_base_process[1,i] = val_bend_step[i]
                 data_base_process[2,i] = val_turn_step[i]
 
-            print(data_base_process)
+            val_feed_step = data_base_process[0,:]
+            val_bend_step = data_base_process[1,:] 
+            val_turn_step = data_base_process[2,:] 
 
             self.ids.pipe_bended_illustration.clear_widgets()
 
@@ -804,17 +884,19 @@ class ScreenCompile(MDBoxLayout):
             # self.ax.set_ylim([-100, 100])
             # self.ax.set_zlim([-100, 100])
             # self.ax.axis('off')
-            self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
+            self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))   
         except:
-            toast("error update process illustration")
+            toast("error update pipe bending process illustration")
 
     def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
+
         global val_feed_step
         global val_bend_step
         global val_turn_step
-
-        global val_pipe_diameter
-        global val_machine_die_radius
+        
         global data_base_process
     
         pipe_radius = val_pipe_diameter / 2
@@ -864,13 +946,21 @@ class ScreenCompile(MDBoxLayout):
         return Xf, Yf, Zf
 
     def reset(self):
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
+
         global val_feed_step
         global val_bend_step
         global val_turn_step
+        
+        global data_base_process
 
         val_feed_step = np.zeros(10)
         val_bend_step = np.zeros(10)
         val_turn_step = np.zeros(10)
+
+        data_base_process = np.zeros([3, 10])
 
         self.ids.input_step_length0.text = str(val_feed_step[0])
         self.ids.input_step_bend0.text = str(val_bend_step[0])
@@ -912,7 +1002,7 @@ class ScreenCompile(MDBoxLayout):
         self.ids.input_step_bend9.text = str(val_bend_step[9])
         self.ids.input_step_turn9.text = str(val_turn_step[9]) 
 
-        self.update()
+        self.update_graph()
 
     def save(self):
         try:

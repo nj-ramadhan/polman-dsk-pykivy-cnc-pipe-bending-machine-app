@@ -80,7 +80,14 @@
 					id: input_file_name
 					hint_text: "Input File Name"
 					font_style: 'Body1'
-					size_hint_x: 0.8
+					size_hint_x: 0.6
+
+				MDFillRoundFlatIconButton:
+					icon: "folder"
+					text: "OPEN FILE"
+					font_style: 'H6'
+					size_hint_x: 0.2
+					on_release: root.file_manager_open()
 
 			MDBoxLayout:
 				orientation: "horizontal"
@@ -393,12 +400,12 @@
 
 			MDFillRoundFlatIconButton:
 				id: bt_save
-				icon: "pen"
+				icon: "file"
 				text: "SAVE"
 				font_style: 'H6'
 				size_hint_x: 0.5
 				on_press: root.save()
-			
+
 			MDFillRoundFlatIconButton:
 				id: bt_reset
 				icon: "reload"
