@@ -114,47 +114,51 @@
 							size_hint_x: 0.5
 							on_press: root.exec_table_shift()
 
-					MDFillRoundFlatButton:
-						id: bt_jog
-						text: "JOG"
-						font_style: 'H6'
-						size_hint_x: 1
-						size_hint_y: 0.25
-						on_press: root.exec_jog()
-
 					MDGridLayout:
 						cols:3
 						spacing:20
 						size_hint_y: 0.25
 
 						MDFillRoundFlatButton:
-							id: bt_jog_feeding
-							text: "JOG FEEDING"
+							id: bt_jog_feed
+							text: "FEEDING"
 							font_style: 'H6'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_feeding()
+							on_press: root.exec_jog_feed()
+							on_release: root.stop_jog_feed()
 
 						MDFillRoundFlatButton:
-							id: bt_jog_bending
-							text: "JOG BENDING"
+							id: bt_jog_bend
+							text: "BENDING"
 							font_style: 'H6'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_bending()
+							on_press: root.exec_jog_bend()
+							on_release: root.stop_jog_bend()
 
 						MDFillRoundFlatButton:
-							id: bt_jog_turning
-							text: "JOG TURNING"
+							id: bt_jog_turn
+							text: "TURNING"
 							font_style: 'H6'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_turning()
+							on_press: root.exec_jog_turn()
+							on_release: root.stop_jog_turn()
+					
+					MDFillRoundFlatButton:
+						id: bt_jog_enable
+						text: "JOG"
+						font_style: 'H6'
+						size_hint_x: 1
+						spacing:30
+						on_press: root.exec_jog_enable()
 
 					MDFillRoundFlatButton:
 						id: bt_origin
 						text: "ORIGIN"
 						font_style: 'H6'
 						size_hint_x: 1
-						size_hint_y: 0.25
+						spacing:30
 						on_press: root.exec_origin()
+						on_release: root.stop_origin()
 
 				MDGridLayout:
 					cols:3
@@ -167,54 +171,54 @@
 						font_style: 'Body1'
 
 					MDTextField:
-						id: input_operate_feeding
+						id: input_operate_feed
 						hint_text: "Input Feeding (mm)"
 						font_style: 'Body1'
 						input_filter: 'float'
-						on_text_validate: root.update()
 					
 					MDFillRoundFlatButton:
-						id: bt_operate_feeding
+						id: bt_operate_feed
 						text: "EXECUTE"
 						font_style: 'H6'
 						size_hint_x: 0.3
-						on_press: root.exec_operate_feeding()
+						on_press: root.exec_operate_feed()
+						on_release: root.stop_operate_feed()
 
 					MDLabel:
 						text: "Bending Angle (C-axis)"
 						font_style: 'Body1'
 
 					MDTextField:
-						id: input_operate_bending
+						id: input_operate_bend
 						hint_text: "Input Bending Angle (degree)"
 						font_style: 'Body1'
 						input_filter: 'float'
-						on_text_validate: root.update()
 					
 					MDFillRoundFlatButton:
-						id: bt_operate_bending
+						id: bt_operate_bend
 						text: "EXECUTE"
 						font_style: 'H6'
 						size_hint_x: 0.3
-						on_press: root.exec_operate_bending()
+						on_press: root.exec_operate_bend()
+						on_release: root.stop_operate_bend()
 
 					MDLabel:
 						text: "Turning Angle (B-axis)"
 						font_style: 'Body1'
 
 					MDTextField:
-						id: input_operate_turning
+						id: input_operate_turn
 						hint_text: "Input Turning Angle (degree)"
 						font_style: 'Body1'
 						input_filter: 'float'
-						on_text_validate: root.update()
 					
 					MDFillRoundFlatButton:
-						id: bt_operate_turning
+						id: bt_operate_turn
 						text: "EXECUTE"
 						font_style: 'H6'
 						size_hint_x: 0.3
-						on_press: root.exec_operate_turning()
+						on_press: root.exec_operate_turn()
+						on_release: root.stop_operate_turn()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:

@@ -1,31 +1,20 @@
-import numpy as np
-import kivy
-import sys
-import os
-from kivymd.app import MDApp
-from kivymd.toast import toast
-from kivymd.uix.datatables import MDDataTable
+from kivy.clock import Clock
 from kivy.lang import Builder
+from kivy.config import Config
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.filemanager import MDFileManager
-from kivy.clock import Clock
-from kivy.config import Config
-from kivy.metrics import dp
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from matplotlib.figure import Figure
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-from matplotlib.ticker import AutoMinorLocator
-from datetime import datetime
-from pathlib import Path
+from kivymd.app import MDApp
+from kivymd.toast import toast
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
-import time
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from pymodbus.client import ModbusTcpClient
-
-# Config.set('kivy', 'keyboard_mode', 'dock')
+from datetime import datetime
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+import os
 
 plt.style.use('bmh')
 
@@ -65,69 +54,67 @@ colors = {
     },
 }
 
-DEBUG = True
-    
-STEPS = 51
-# MAX_POINT_WENNER = 500
-MAX_POINT = 10000
-ELECTRODES_NUM = 48
+val_pipe_length = 6000.0
+val_pipe_diameter = 60.3
+val_pipe_thickness = 3.0
 
-PIN_ENABLE = 23 #16
-PIN_POLARITY = 24 #18
+val_machine_eff_length = 200.
+val_machine_supp_pos = 200.
+val_machine_clamp_front_delay = 5.
+val_machine_clamp_rear_delay = 5.
+val_machine_press_front_delay = 5.
+val_machine_press_rear_delay = 5.
+val_machine_collet_clamp_delay = 5.
+val_machine_collet_open_delay = 5.
+val_machine_die_radius = 100.0
 
-C_OFFSET = 2.52
-C_GAIN = 5.0
+val_advanced_pipe_head = 200.
+val_advanced_start_mode = 0.
+val_advanced_first_line = 0.
+val_advanced_finish_job = 0.
+val_advanced_receive_pos_x = 0.
+val_advanced_receive_pos_b = 1000.
+val_advanced_prod_qty = 0.
+val_advanced_press_semiclamp_time = 5.
+val_advanced_press_semiopen_time = 5.
+val_advanced_clamp_semiclamp_time = 5.
+val_advanced_springback_20 = 5.
+val_advanced_springback_120 = 5.
+val_advanced_max_bend = 180.
+val_advanced_press_start_angle = 0.
+val_advanced_press_stop_angle = 180.
 
-P_OFFSET = 0.00
-P_GAIN = 1.0
-# SHUNT_OHMS = 0.1
-# MAX_EXPECTED_AMPS = 0.1
-# 
-# PIN_FWD = 16
-# PIN_REV = 18
+val_feed_present = 0.
+val_bend_preset = 0.
+val_turn_preset = 0.
+val_feed_set = 0.
+val_bend_set = 0.
+val_turn_set = 0.
 
-USERNAME = 'pipe_bending_cnc'
-# DISK_ADDRESS = Path("/media/pi/RESDONGLE/")
-DISK_ADDRESS = Path("/media/" + USERNAME + "/RESDONGLE/")
-SERIAL_NUMBER = "2301212112233412"
+val_feed_step = np.zeros(10)
+val_bend_step = np.zeros(10)
+val_turn_step = np.zeros(10)
+data_base_process = np.zeros([3, 10])
 
-pipe_length = 6000.
-pipe_diameter = 60.3
-pipe_thickness = 3.
-
-machine_die_radius = 100.
-
-step_length = np.zeros(10)
-step_bend = np.zeros(10)
-step_turn = np.zeros(10)
-
-checks_mode = []
-checks_config = []
-dt_mode = ""
-dt_config = ""
-dt_distance = 1
-dt_constant = 1
-dt_time = 500
-dt_cycle = 1
-
-data_base = np.zeros([3, 10])
-dt_measure = np.zeros(6)
-dt_current = np.zeros(10)
-dt_voltage = np.zeros(10)
+flag_mode = False
 flag_run = False
-flag_measure = False
-flag_dongle = True
-flag_autosave_data = False
-flag_autosave_graph = False
+flag_alarm = False
+flag_reset = False
 
 flag_cylinder_press = False
 flag_cylinder_clamp = False
-flag_cylinder_table_shift = False
 flag_cylinder_table_up = False
-flag_jog = False
+flag_cylinder_table_shift = False
 
-count_mounting = 0
-inject_state = 0
+flag_jog_enable = False
+flag_jog_req_feed = False
+flag_jog_req_bend = False
+flag_jog_req_turn = False
+flag_operate_req_feed = False
+flag_operate_req_bend = False
+flag_operate_req_turn = False
+
+flag_origin_req = False
 
 class ScreenSplash(MDBoxLayout):
     screen_manager = ObjectProperty(None)
@@ -164,12 +151,10 @@ class ScreenMainMenu(MDBoxLayout):
         Clock.schedule_once(self.delayed_init, 10)
         
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_check, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 1)
 
-    def regular_check(self, dt):
+    def regular_comm_slave(self, dt):
         global flag_cylinder_press, flag_cylinder_clamp, flag_cylinder_table_up, flag_cylinder_table_shift
-
-
 
         # try:
         #     self.modbus_client.connect()
@@ -218,35 +203,20 @@ class ScreenPipeSetting(MDBoxLayout):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        global pipe_length
-        global pipe_diameter
-        global pipe_thickness
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
 
-        self.ids.input_pipe_length.text = str(pipe_length)
-        self.ids.input_pipe_diameter.text = str(pipe_diameter)
-        self.ids.input_pipe_thickness.text = str(pipe_thickness)
+        self.ids.input_pipe_length.text = str(val_pipe_length)
+        self.ids.input_pipe_diameter.text = str(val_pipe_diameter)
+        self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
 
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(111, projection='3d')
-        self.fig.set_facecolor("#eeeeee")
-        self.fig.tight_layout()
-
-        Xr, Yr, Zr = self.simulate(pipe_length, pipe_diameter, pipe_thickness)
-
-        self.ax.plot_surface(Xr, Yr, Zr, color='gray')
-        self.ax.set_box_aspect(aspect=(1, 1, 1))
-
-        # self.ax.set_xlim([0, 6000])
-        # self.ax.set_ylim([-100, 100])
-        # self.ax.set_zlim([-100, 100])
-        # self.ax.axis('off')
-
-        self.ids.pipe_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
+        self.update()
 
     def update(self):
-        global pipe_length
-        global pipe_diameter
-        global pipe_thickness
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
 
         try:
             self.ids.pipe_illustration.clear_widgets()
@@ -255,11 +225,11 @@ class ScreenPipeSetting(MDBoxLayout):
             self.fig.set_facecolor("#eeeeee")
             # self.fig.tight_layout()
 
-            pipe_length = float(self.ids.input_pipe_length.text)
-            pipe_diameter = float(self.ids.input_pipe_diameter.text)
-            pipe_thickness = float(self.ids.input_pipe_thickness.text)
+            val_pipe_length = float(self.ids.input_pipe_length.text)
+            val_pipe_diameter = float(self.ids.input_pipe_diameter.text)
+            val_pipe_thickness = float(self.ids.input_pipe_thickness.text)
 
-            Xr, Yr, Zr = self.simulate(pipe_length, pipe_diameter, pipe_thickness)
+            Xr, Yr, Zr = self.simulate(val_pipe_length, val_pipe_diameter, val_pipe_thickness)
 
             self.ax.plot_surface(Xr, Yr, Zr, color='gray')
             self.ax.set_box_aspect(aspect=(1, 1, 1))
@@ -272,18 +242,18 @@ class ScreenPipeSetting(MDBoxLayout):
         except:
             toast("error update pipe illustration")
 
-    def simulate(self, pipe_length, pipe_diameter, pipe_thickness):
+    def simulate(self, val_pipe_length, val_pipe_diameter, val_pipe_thickness):
         Uc = np.linspace(0, 2 * np.pi, 50)
-        Xc = np.linspace(0, pipe_length, 2)
+        Xc = np.linspace(0, val_pipe_length, 2)
 
         Uc_inner = np.linspace(0, 2 * np.pi, 50)
-        Xc_inner = np.linspace(0, pipe_length, 2)
+        Xc_inner = np.linspace(0, val_pipe_length, 2)
 
         Uc, Xc = np.meshgrid(Uc, Xc)
         Uc_inner, Xc_inner = np.meshgrid(Uc_inner, Xc_inner)
         
-        pipe_radius = pipe_diameter / 2
-        pipe_radius_inner = (pipe_diameter / 2) - pipe_thickness
+        pipe_radius = val_pipe_diameter / 2
+        pipe_radius_inner = (val_pipe_diameter / 2) - val_pipe_thickness
 
         Yc = pipe_radius * np.cos(Uc)
         Zc = pipe_radius * np.sin(Uc)
@@ -335,7 +305,7 @@ class ScreenMachineSetting(MDBoxLayout):
         super(ScreenMachineSetting, self).__init__(**kwargs)
 
     def update(self):
-        global machine_die_radius
+        global val_machine_die_radius
 
     def update_image(self, image_num):
         if image_num == 0:
@@ -453,15 +423,86 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_table_shift = True
             self.ids.bt_table_shift.md_bg_color = "#ee2222"
 
-    def exec_jog(self):
-        global flag_jog
+    def exec_jog_enable(self):
+        global flag_jog_enable
 
-        if flag_jog:
-            flag_jog = False
-            self.ids.bt_jog.md_bg_color = "#196BA5"
+        if flag_jog_enable:
+            flag_jog_enable = False
+            self.ids.bt_jog_enable.md_bg_color = "#196BA5"
         else:
-            flag_jog = True
-            self.ids.bt_jog.md_bg_color = "#ee2222"
+            flag_jog_enable = True
+            self.ids.bt_jog_enable.md_bg_color = "#ee2222"
+
+    def exec_jog_feed(self):
+        global flag_jog_req_feed
+        flag_jog_req_feed = True
+        self.ids.bt_jog_feed.md_bg_color = "#ee2222"
+
+    def stop_jog_feed(self):
+        global flag_jog_req_feed
+        flag_jog_req_feed = False
+        self.ids.bt_jog_feed.md_bg_color = "#196BA5"
+
+    def exec_jog_bend(self):
+        global flag_jog_req_bend
+        flag_jog_req_bend = True
+        self.ids.bt_jog_bend.md_bg_color = "#ee2222"
+
+    def stop_jog_bend(self):
+        global flag_jog_req_bend
+        flag_jog_req_bend = False
+        self.ids.bt_jog_bend.md_bg_color = "#196BA5"
+
+    def exec_jog_turn(self):
+        global flag_jog_req_turn
+        flag_jog_req_turn = True
+        self.ids.bt_jog_turn.md_bg_color = "#ee2222"
+
+    def stop_jog_turn(self):
+        global flag_jog_req_turn
+        flag_jog_req_turn = False
+        self.ids.bt_jog_turn.md_bg_color = "#196BA5"
+
+    def exec_operate_feed(self):
+        global flag_operate_req_feed
+        flag_operate_req_feed = True
+        self.ids.bt_operate_feed.md_bg_color = "#ee2222"
+
+    def stop_operate_feed(self):
+        global flag_operate_req_feed
+        flag_operate_req_feed = False
+        self.ids.bt_operate_feed.md_bg_color = "#196BA5"
+
+    def exec_operate_bend(self):
+        global flag_operate_req_bend
+        flag_operate_req_bend = True
+        self.ids.bt_operate_bend.md_bg_color = "#ee2222"
+
+    def stop_operate_bend(self):
+        global flag_operate_req_bend
+        flag_operate_req_bend = False
+        self.ids.bt_operate_bend.md_bg_color = "#196BA5"
+
+    def exec_operate_turn(self):
+        global flag_operate_req_turn
+        flag_operate_req_turn = True
+        self.ids.bt_operate_turn.md_bg_color = "#ee2222"
+
+    def stop_operate_turn(self):
+        global flag_operate_req_turn
+        flag_operate_req_turn = False
+        self.ids.bt_operate_turn.md_bg_color = "#196BA5"
+
+    def exec_origin(self):
+        global flag_origin_req
+        flag_origin_req = True
+        self.ids.bt_origin.md_bg_color = "#ee2222"
+
+    def stop_origin(self):
+        global flag_origin_req
+        flag_origin_req = False
+        self.ids.bt_origin.md_bg_color = "#196BA5"
+
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -493,8 +534,18 @@ class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     def __init__(self, **kwargs):       
         super(ScreenOperateAuto, self).__init__(**kwargs)
-        # Clock.schedule_once(self.delayed_init)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
+
+    def reset(self):
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
+
+        val_feed_step = np.zeros(10)
+        val_bend_step = np.zeros(10)
+        val_turn_step = np.zeros(10)
+
+        self.show_graph()
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -508,29 +559,29 @@ class ScreenOperateAuto(MDBoxLayout):
             toast("error select file path")
 
     def exit_manager(self, *args):
-        global data_base
+        global data_base_process
         '''Called when the user reaches the root of the directory tree.'''
         data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
-        data_base = data_set.T
-        print(data_base)
+        data_base_process = data_set.T
+        print(data_base_process)
         self.show_graph()
 
         self.manager_open = False
         self.file_manager.close()
         
     def show_graph(self):
-        global data_base
+        global data_base_process
         try:
-            step_length = data_base[0,:]
-            step_bend = data_base[1,:] 
-            step_turn = data_base[2,:] 
+            val_feed_step = data_base_process[0,:]
+            val_bend_step = data_base_process[1,:] 
+            val_turn_step = data_base_process[2,:] 
 
-            print(data_base)
-            print(data_base[0,:])
+            print(data_base_process)
+            print(data_base_process[0,:])
 
-            print(step_length)
-            print(step_bend)
-            print(step_turn)
+            print(val_feed_step)
+            print(val_bend_step)
+            print(val_turn_step)
 
             self.ids.pipe_bended_illustration.clear_widgets()
 
@@ -539,15 +590,15 @@ class ScreenOperateAuto(MDBoxLayout):
             self.fig.set_facecolor("#eeeeee")
             # self.fig.tight_layout()
 
-            offset_length = step_length
-            bend_angle = step_bend / 180 * np.pi
-            turn_angle = step_turn / 180 * np.pi
-            pipe_radius = pipe_diameter / 2
+            offset_length = val_feed_step
+            bend_angle = val_bend_step / 180 * np.pi
+            turn_angle = val_turn_step / 180 * np.pi
+            pipe_radius = val_pipe_diameter / 2
 
             Uo = np.linspace(0, 2 * np.pi, 30)
             Yo = np.linspace(0, 0, 5)
             Uo, Yo = np.meshgrid(Uo, Yo)
-            Xo = pipe_radius * np.cos(Uo) - machine_die_radius
+            Xo = pipe_radius * np.cos(Uo) - val_machine_die_radius
             Zo = pipe_radius * np.sin(Uo)
             
             X0, Y0, Z0 = self.simulate(Xo, Yo, Zo, offset_length[0], bend_angle[0], turn_angle[0])
@@ -574,20 +625,20 @@ class ScreenOperateAuto(MDBoxLayout):
    
     def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
         global flag_run
-        global step_length
-        global step_bend
-        global step_turn
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
 
-        global pipe_diameter
-        global machine_die_radius
+        global val_pipe_diameter
+        global val_machine_die_radius
 
-        pipe_radius = pipe_diameter / 2
+        pipe_radius = val_pipe_diameter / 2
         # step 1 : create straight pipe
         # straight pipe
         Ua = np.linspace(0, 2 * np.pi, 30)
         Ya = np.linspace(offset_length, 0, 5)
         Ua, Ya = np.meshgrid(Ua, Ya)
-        Xa = pipe_radius * np.cos(Ua) - machine_die_radius
+        Xa = pipe_radius * np.cos(Ua) - val_machine_die_radius
         Za = pipe_radius * np.sin(Ua)
         # combine become one object with previous mesh
         Xa = np.append(prev_X, Xa, axis=0)
@@ -600,8 +651,8 @@ class ScreenOperateAuto(MDBoxLayout):
         phi   = np.linspace(0, bend_angle, 30) 
         theta, phi = np.meshgrid(theta, phi) 
         # torus parametrization 
-        Xb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.cos(phi)
-        Yb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.sin(phi)
+        Xb = (val_machine_die_radius + pipe_radius * np.cos(theta)) * -np.cos(phi)
+        Yb = (val_machine_die_radius + pipe_radius * np.cos(theta)) * -np.sin(phi)
         Zb = pipe_radius * np.sin(theta) 
 
         # step 3 : combine become one object
@@ -616,13 +667,13 @@ class ScreenOperateAuto(MDBoxLayout):
 
         # step 5 : translate to origin, rotate  object at Y axis (B axis), translate back to previous position
         # translate
-        Xe = Xd + machine_die_radius
+        Xe = Xd + val_machine_die_radius
         Ze = Zd
         # rotate
         Xf = np.cos(turn_angle) * Xe + -np.sin(turn_angle) * Ze
         Zf = np.sin(turn_angle) * Xe + np.cos(turn_angle) * Ze
         # translate back
-        Xf = Xf - machine_die_radius
+        Xf = Xf - val_machine_die_radius
         Yf = Yd
 
         return Xf, Yf, Zf
@@ -657,66 +708,65 @@ class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
-        # Clock.schedule_once(self.delayed_init)
-
-    def delayed_init(self, dt):
-        self.reset()
 
     def update(self):
-        global step_length
-        global step_bend
-        global step_turn
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
 
-        global pipe_diameter
-        global machine_die_radius
-        global data_base
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
+
+        global val_machine_die_radius
+        global data_base_process
         try:
-            step_length[0] = float(self.ids.input_step_length0.text)
-            step_bend[0] = float(self.ids.input_step_bend0.text)
-            step_turn[0] = float(self.ids.input_step_turn0.text)
+            val_feed_step[0] = float(self.ids.input_step_length0.text)
+            val_bend_step[0] = float(self.ids.input_step_bend0.text)
+            val_turn_step[0] = float(self.ids.input_step_turn0.text)
 
-            step_length[1] = float(self.ids.input_step_length1.text)
-            step_bend[1] = float(self.ids.input_step_bend1.text)
-            step_turn[1] = float(self.ids.input_step_turn1.text)
+            val_feed_step[1] = float(self.ids.input_step_length1.text)
+            val_bend_step[1] = float(self.ids.input_step_bend1.text)
+            val_turn_step[1] = float(self.ids.input_step_turn1.text)
 
-            step_length[2] = float(self.ids.input_step_length2.text)
-            step_bend[2] = float(self.ids.input_step_bend2.text)
-            step_turn[2] = float(self.ids.input_step_turn2.text)
+            val_feed_step[2] = float(self.ids.input_step_length2.text)
+            val_bend_step[2] = float(self.ids.input_step_bend2.text)
+            val_turn_step[2] = float(self.ids.input_step_turn2.text)
 
-            step_length[3] = float(self.ids.input_step_length3.text)
-            step_bend[3] = float(self.ids.input_step_bend3.text)
-            step_turn[3] = float(self.ids.input_step_turn3.text)
+            val_feed_step[3] = float(self.ids.input_step_length3.text)
+            val_bend_step[3] = float(self.ids.input_step_bend3.text)
+            val_turn_step[3] = float(self.ids.input_step_turn3.text)
 
-            step_length[4] = float(self.ids.input_step_length4.text)
-            step_bend[4] = float(self.ids.input_step_bend4.text)
-            step_turn[4] = float(self.ids.input_step_turn4.text)
+            val_feed_step[4] = float(self.ids.input_step_length4.text)
+            val_bend_step[4] = float(self.ids.input_step_bend4.text)
+            val_turn_step[4] = float(self.ids.input_step_turn4.text)
 
-            step_length[5] = float(self.ids.input_step_length5.text)
-            step_bend[5] = float(self.ids.input_step_bend5.text)
-            step_turn[5] = float(self.ids.input_step_turn5.text)
+            val_feed_step[5] = float(self.ids.input_step_length5.text)
+            val_bend_step[5] = float(self.ids.input_step_bend5.text)
+            val_turn_step[5] = float(self.ids.input_step_turn5.text)
 
-            step_length[6] = float(self.ids.input_step_length6.text)
-            step_bend[6] = float(self.ids.input_step_bend6.text)
-            step_turn[6] = float(self.ids.input_step_turn6.text)
+            val_feed_step[6] = float(self.ids.input_step_length6.text)
+            val_bend_step[6] = float(self.ids.input_step_bend6.text)
+            val_turn_step[6] = float(self.ids.input_step_turn6.text)
 
-            step_length[7] = float(self.ids.input_step_length7.text)
-            step_bend[7] = float(self.ids.input_step_bend7.text)
-            step_turn[7] = float(self.ids.input_step_turn7.text)
+            val_feed_step[7] = float(self.ids.input_step_length7.text)
+            val_bend_step[7] = float(self.ids.input_step_bend7.text)
+            val_turn_step[7] = float(self.ids.input_step_turn7.text)
 
-            step_length[8] = float(self.ids.input_step_length8.text)
-            step_bend[8] = float(self.ids.input_step_bend8.text)
-            step_turn[8] = float(self.ids.input_step_turn8.text)
+            val_feed_step[8] = float(self.ids.input_step_length8.text)
+            val_bend_step[8] = float(self.ids.input_step_bend8.text)
+            val_turn_step[8] = float(self.ids.input_step_turn8.text)
 
-            step_length[9] = float(self.ids.input_step_length9.text)
-            step_bend[9] = float(self.ids.input_step_bend9.text)
-            step_turn[9] = float(self.ids.input_step_turn9.text)
+            val_feed_step[9] = float(self.ids.input_step_length9.text)
+            val_bend_step[9] = float(self.ids.input_step_bend9.text)
+            val_turn_step[9] = float(self.ids.input_step_turn9.text)
 
             for i in range(0,9):
-                data_base[0,i] = step_length[i]
-                data_base[1,i] = step_bend[i]
-                data_base[2,i] = step_turn[i]
+                data_base_process[0,i] = val_feed_step[i]
+                data_base_process[1,i] = val_bend_step[i]
+                data_base_process[2,i] = val_turn_step[i]
 
-            print(data_base)
+            print(data_base_process)
 
             self.ids.pipe_bended_illustration.clear_widgets()
 
@@ -725,15 +775,15 @@ class ScreenCompile(MDBoxLayout):
             self.fig.set_facecolor("#eeeeee")
             # self.fig.tight_layout()
 
-            offset_length = step_length
-            bend_angle = step_bend / 180 * np.pi
-            turn_angle = step_turn / 180 * np.pi
-            pipe_radius = pipe_diameter / 2
+            offset_length = val_feed_step
+            bend_angle = val_bend_step / 180 * np.pi
+            turn_angle = val_turn_step / 180 * np.pi
+            pipe_radius = val_pipe_diameter / 2
 
             Uo = np.linspace(0, 2 * np.pi, 30)
             Yo = np.linspace(0, 0, 5)
             Uo, Yo = np.meshgrid(Uo, Yo)
-            Xo = pipe_radius * np.cos(Uo) - machine_die_radius
+            Xo = pipe_radius * np.cos(Uo) - val_machine_die_radius
             Zo = pipe_radius * np.sin(Uo)
             
             X0, Y0, Z0 = self.simulate(Xo, Yo, Zo, offset_length[0], bend_angle[0], turn_angle[0])
@@ -756,24 +806,24 @@ class ScreenCompile(MDBoxLayout):
             # self.ax.axis('off')
             self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))    
         except:
-            toast("error update pipe illustration")
+            toast("error update process illustration")
 
     def simulate(self, prev_X, prev_Y, prev_Z, offset_length, bend_angle, turn_angle):
-        global step_length
-        global step_bend
-        global step_turn
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
 
-        global pipe_diameter
-        global machine_die_radius
-        global data_base
+        global val_pipe_diameter
+        global val_machine_die_radius
+        global data_base_process
     
-        pipe_radius = pipe_diameter / 2
+        pipe_radius = val_pipe_diameter / 2
         # step 1 : create straight pipe
         # straight pipe
         Ua = np.linspace(0, 2 * np.pi, 30)
         Ya = np.linspace(offset_length, 0, 5)
         Ua, Ya = np.meshgrid(Ua, Ya)
-        Xa = pipe_radius * np.cos(Ua) - machine_die_radius
+        Xa = pipe_radius * np.cos(Ua) - val_machine_die_radius
         Za = pipe_radius * np.sin(Ua)
         # combine become one object with previous mesh
         Xa = np.append(prev_X, Xa, axis=0)
@@ -786,8 +836,8 @@ class ScreenCompile(MDBoxLayout):
         phi   = np.linspace(0, bend_angle, 30) 
         theta, phi = np.meshgrid(theta, phi) 
         # torus parametrization 
-        Xb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.cos(phi)
-        Yb = (machine_die_radius + pipe_radius * np.cos(theta)) * -np.sin(phi)
+        Xb = (val_machine_die_radius + pipe_radius * np.cos(theta)) * -np.cos(phi)
+        Yb = (val_machine_die_radius + pipe_radius * np.cos(theta)) * -np.sin(phi)
         Zb = pipe_radius * np.sin(theta) 
 
         # step 3 : combine become one object
@@ -802,65 +852,65 @@ class ScreenCompile(MDBoxLayout):
 
         # step 5 : translate to origin, rotate  object at Y axis (B axis), translate back to previous position
         # translate
-        Xe = Xd + machine_die_radius
+        Xe = Xd + val_machine_die_radius
         Ze = Zd
         # rotate
         Xf = np.cos(turn_angle) * Xe + -np.sin(turn_angle) * Ze
         Zf = np.sin(turn_angle) * Xe + np.cos(turn_angle) * Ze
         # translate back
-        Xf = Xf - machine_die_radius
+        Xf = Xf - val_machine_die_radius
         Yf = Yd
 
         return Xf, Yf, Zf
 
     def reset(self):
-        global step_length
-        global step_bend
-        global step_turn
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
 
-        step_length = np.zeros(10)
-        step_bend = np.zeros(10)
-        step_turn = np.zeros(10)
+        val_feed_step = np.zeros(10)
+        val_bend_step = np.zeros(10)
+        val_turn_step = np.zeros(10)
 
-        self.ids.input_step_length0.text = str(step_length[0])
-        self.ids.input_step_bend0.text = str(step_bend[0])
-        self.ids.input_step_turn0.text = str(step_turn[0])
+        self.ids.input_step_length0.text = str(val_feed_step[0])
+        self.ids.input_step_bend0.text = str(val_bend_step[0])
+        self.ids.input_step_turn0.text = str(val_turn_step[0])
 
-        self.ids.input_step_length1.text = str(step_length[1])
-        self.ids.input_step_bend1.text = str(step_bend[1])
-        self.ids.input_step_turn1.text = str(step_turn[1])
+        self.ids.input_step_length1.text = str(val_feed_step[1])
+        self.ids.input_step_bend1.text = str(val_bend_step[1])
+        self.ids.input_step_turn1.text = str(val_turn_step[1])
 
-        self.ids.input_step_length2.text = str(step_length[2])
-        self.ids.input_step_bend2.text = str(step_bend[2])
-        self.ids.input_step_turn2.text = str(step_turn[2])
+        self.ids.input_step_length2.text = str(val_feed_step[2])
+        self.ids.input_step_bend2.text = str(val_bend_step[2])
+        self.ids.input_step_turn2.text = str(val_turn_step[2])
 
-        self.ids.input_step_length3.text = str(step_length[3])
-        self.ids.input_step_bend3.text = str(step_bend[3])
-        self.ids.input_step_turn3.text = str(step_turn[3])
+        self.ids.input_step_length3.text = str(val_feed_step[3])
+        self.ids.input_step_bend3.text = str(val_bend_step[3])
+        self.ids.input_step_turn3.text = str(val_turn_step[3])
 
-        self.ids.input_step_length4.text = str(step_length[4])
-        self.ids.input_step_bend4.text = str(step_bend[4])
-        self.ids.input_step_turn4.text = str(step_turn[4])
+        self.ids.input_step_length4.text = str(val_feed_step[4])
+        self.ids.input_step_bend4.text = str(val_bend_step[4])
+        self.ids.input_step_turn4.text = str(val_turn_step[4])
 
-        self.ids.input_step_length5.text = str(step_length[5])
-        self.ids.input_step_bend5.text = str(step_bend[5])
-        self.ids.input_step_turn5.text = str(step_turn[5])
+        self.ids.input_step_length5.text = str(val_feed_step[5])
+        self.ids.input_step_bend5.text = str(val_bend_step[5])
+        self.ids.input_step_turn5.text = str(val_turn_step[5])
 
-        self.ids.input_step_length6.text = str(step_length[6])
-        self.ids.input_step_bend6.text = str(step_bend[6])
-        self.ids.input_step_turn6.text = str(step_turn[6])
+        self.ids.input_step_length6.text = str(val_feed_step[6])
+        self.ids.input_step_bend6.text = str(val_bend_step[6])
+        self.ids.input_step_turn6.text = str(val_turn_step[6])
 
-        self.ids.input_step_length7.text = str(step_length[7])
-        self.ids.input_step_bend7.text = str(step_bend[7])
-        self.ids.input_step_turn7.text = str(step_turn[7])
+        self.ids.input_step_length7.text = str(val_feed_step[7])
+        self.ids.input_step_bend7.text = str(val_bend_step[7])
+        self.ids.input_step_turn7.text = str(val_turn_step[7])
 
-        self.ids.input_step_length8.text = str(step_length[8])
-        self.ids.input_step_bend8.text = str(step_bend[8])
-        self.ids.input_step_turn8.text = str(step_turn[8])
+        self.ids.input_step_length8.text = str(val_feed_step[8])
+        self.ids.input_step_bend8.text = str(val_bend_step[8])
+        self.ids.input_step_turn8.text = str(val_turn_step[8])
 
-        self.ids.input_step_length9.text = str(step_length[9])
-        self.ids.input_step_bend9.text = str(step_bend[9])
-        self.ids.input_step_turn9.text = str(step_turn[9]) 
+        self.ids.input_step_length9.text = str(val_feed_step[9])
+        self.ids.input_step_bend9.text = str(val_bend_step[9])
+        self.ids.input_step_turn9.text = str(val_turn_step[9]) 
 
         self.update()
 
@@ -875,7 +925,7 @@ class ScreenCompile(MDBoxLayout):
                 disk = cwd + name_file
             print(disk)
             with open(disk,"wb") as f:
-                np.savetxt(f, data_base.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm]")
+                np.savetxt(f, data_base_process.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm]")
             print("sucessfully save data")
             toast("sucessfully save data")
         except:
