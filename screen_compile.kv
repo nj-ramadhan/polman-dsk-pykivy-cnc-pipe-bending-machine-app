@@ -71,21 +71,18 @@
 			MDBoxLayout:
 				orientation: "horizontal"
 				size_hint_y: 0.05
-				MDLabel:
-					text: "FIle Name"
-					font_style: 'Body1'
-					size_hint_x: 0.2
+				spacing: 20
 
 				MDTextField:
 					id: input_file_name
 					hint_text: "Input File Name"
 					font_style: 'Body1'
-					size_hint_x: 0.6
+					size_hint_x: 0.8
 
 				MDFillRoundFlatIconButton:
 					icon: "folder"
 					text: "OPEN FILE"
-					font_style: 'H6'
+					font_style: 'Button'
 					size_hint_x: 0.2
 					on_release: root.file_manager_open()
 

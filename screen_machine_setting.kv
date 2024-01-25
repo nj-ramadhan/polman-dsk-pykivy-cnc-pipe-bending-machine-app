@@ -177,3 +177,15 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(7)
+
+					MDLabel:
+						text: "Die Radius"
+						font_style: 'Body1'
+
+					MDTextField:
+						id: input_machine_die_radius
+						hint_text: "Input Die Radius (mm)"
+						font_style: 'Body1'
+						input_filter: 'float'
+						on_text_validate: root.update()
+						on_focus: root.update_image(7)

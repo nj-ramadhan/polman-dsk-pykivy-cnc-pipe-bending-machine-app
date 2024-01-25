@@ -223,7 +223,6 @@ class ScreenPipeSetting(MDBoxLayout):
             self.fig = plt.figure()
             self.ax = self.fig.add_subplot(111, projection='3d')
             self.fig.set_facecolor("#eeeeee")
-            # self.fig.tight_layout()
 
             val_pipe_length = float(self.ids.input_pipe_length.text)
             val_pipe_diameter = float(self.ids.input_pipe_diameter.text)
@@ -233,10 +232,6 @@ class ScreenPipeSetting(MDBoxLayout):
 
             self.ax.plot_surface(Xr, Yr, Zr, color='gray')
             self.ax.set_box_aspect(aspect=(1, 1, 1))
-            # self.ax.set_xlim([0, 6000])
-            # self.ax.set_ylim([-100, 100])
-            # self.ax.set_zlim([-100, 100])
-            # self.ax.axis('off')
 
             self.ids.pipe_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
         except:
@@ -303,6 +298,28 @@ class ScreenMachineSetting(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super(ScreenMachineSetting, self).__init__(**kwargs)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        global val_machine_eff_length
+        global val_machine_supp_pos
+        global val_machine_clamp_front_delay
+        global val_machine_clamp_rear_delay
+        global val_machine_press_front_delay
+        global val_machine_press_rear_delay
+        global val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay
+        global val_machine_die_radius
+
+        self.ids.input_machine_eff_length.text = str(val_machine_eff_length)
+        self.ids.input_machine_supp_pos.text = str(val_machine_supp_pos)
+        self.ids.input_machine_clamp_front_delay.text = str(val_machine_clamp_front_delay)
+        self.ids.input_machine_clamp_rear_delay.text = str(val_machine_clamp_rear_delay)
+        self.ids.input_machine_press_front_delay.text = str(val_machine_press_front_delay)
+        self.ids.input_machine_press_rear_delay.text = str(val_machine_press_rear_delay)
+        self.ids.input_machine_collet_clamp_delay.text = str(val_machine_collet_clamp_delay)
+        self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
+        self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
 
     def update(self):
         global val_machine_die_radius
@@ -547,7 +564,6 @@ class ScreenOperateAuto(MDBoxLayout):
 
     def select_path(self, path: str):
         try:
-            # self.ids.input_file_dir.text = path
             self.exit_manager(path)
         except:
             toast("error select file path")
@@ -713,7 +729,9 @@ class ScreenCompile(MDBoxLayout):
 
     def select_path(self, path: str):
         try:
-            # self.ids.input_file_dir.text = path
+            path_name = os.path.expanduser(os.getcwd() + "\data\\")
+            filename = path.replace(path_name, "")
+            self.ids.input_file_name.text = filename
             self.exit_manager(path)
         except:
             toast("error select file path")
