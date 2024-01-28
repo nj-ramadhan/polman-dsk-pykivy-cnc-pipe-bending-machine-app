@@ -1,3 +1,5 @@
+import select
+from unittest import case
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.config import Config
@@ -116,6 +118,8 @@ flag_operate_req_turn = False
 
 flag_origin_req = False
 
+view_camera = np.array([45, 0, 0])
+
 class ScreenSplash(MDBoxLayout):
     screen_manager = ObjectProperty(None)
     screen_main_menu = ObjectProperty(None)
@@ -213,10 +217,35 @@ class ScreenPipeSetting(MDBoxLayout):
 
         self.update_graph()
 
-    def update_graph(self):
+    def update_view(self, direction):
+        global view_camera
+
+        elev, azim, roll = view_camera
+        
+        if(direction == 0):
+            print(elev)
+            elev += 20
+
+        if(direction == 1):
+            print(elev)
+            elev -= 20
+        
+        if(direction == 2):
+            azim += 20
+        
+        if(direction == 3):
+            azim -= 20
+        
+        view_camera = np.array([elev, azim, roll])        
+        self.update_graph(elev, azim, roll)
+
+    def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter
         global val_pipe_thickness
+        global view_camera
+
+        view_camera = elev, azim, roll
 
         try:
             self.ids.pipe_illustration.clear_widgets()
@@ -232,6 +261,7 @@ class ScreenPipeSetting(MDBoxLayout):
 
             self.ax.plot_surface(Xr, Yr, Zr, color='gray')
             self.ax.set_box_aspect(aspect=(1, 1, 1))
+            self.ax.view_init(elev=view_camera[0], azim=view_camera[1], roll=view_camera[2])
 
             self.ids.pipe_illustration.add_widget(FigureCanvasKivyAgg(self.fig))
         except:
@@ -265,7 +295,6 @@ class ScreenPipeSetting(MDBoxLayout):
         Zr = np.append(Zr, Zc, axis=0)
 
         return Xr, Yr, Zr
-
 
     def menu_callback(self, text_item):
         print(text_item)
@@ -806,7 +835,29 @@ class ScreenCompile(MDBoxLayout):
 
         self.update_graph()
 
-    def update_graph(self):
+    def update_view(self, direction):
+        global view_camera
+
+        elev, azim, roll = view_camera
+        
+        if(direction == 0):
+            print(elev)
+            elev += 20
+
+        if(direction == 1):
+            print(elev)
+            elev -= 20
+        
+        if(direction == 2):
+            azim += 20
+        
+        if(direction == 3):
+            azim -= 20
+        
+        view_camera = np.array([elev, azim, roll])        
+        self.update_graph(elev, azim, roll)
+        
+    def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter
         global val_pipe_thickness
@@ -814,8 +865,11 @@ class ScreenCompile(MDBoxLayout):
         global val_feed_step
         global val_bend_step
         global val_turn_step
-        
+
         global data_base_process
+        global view_camera
+
+        view_camera = elev, azim, roll
         try:
             val_feed_step[0] = float(self.ids.input_step_length0.text)
             val_bend_step[0] = float(self.ids.input_step_bend0.text)
@@ -896,12 +950,8 @@ class ScreenCompile(MDBoxLayout):
             X9, Y9, Z9 = self.simulate(X8, Y8, Z8, offset_length[9], bend_angle[9], turn_angle[9])
 
             self.ax.plot_surface(X9, Y9, Z9, color='gray', alpha=1)
-            # self.ax.set_box_aspect(aspect=(1, 1, 1))
             self.ax.set_aspect('equal')
-            # self.ax.set_xlim([0, 6000])
-            # self.ax.set_ylim([-100, 100])
-            # self.ax.set_zlim([-100, 100])
-            # self.ax.axis('off')
+            self.ax.view_init(elev=view_camera[0], azim=view_camera[1], roll=view_camera[2])
             self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))   
         except:
             toast("error update pipe bending process illustration")

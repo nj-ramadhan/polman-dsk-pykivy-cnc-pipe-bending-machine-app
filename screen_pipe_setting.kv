@@ -65,9 +65,70 @@
 
 			# illustration pipe
 			MDBoxLayout:
-				id: pipe_illustration
+				orientation: "horizontal"
 				size_hint_y: 0.5
 				padding: 40
+
+				MDBoxLayout:
+					id: pipe_illustration
+					size_hint_x: 0.8
+					
+				MDGridLayout:
+					cols:2
+					spacing:20
+					size_hint_x: 0.2
+
+					MDFillRoundFlatIconButton:
+						text: "TOP"
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_graph(90, -90, 0)
+
+					MDFillRoundFlatIconButton:
+						text: "FRONT"
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_graph(0, 0, 0)
+
+					MDFillRoundFlatIconButton:
+						text: "SIDE"
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_graph(0, -90, 0)
+
+					MDFillRoundFlatIconButton:
+						text: "ISOMETIC"
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_graph()
+
+					MDFillRoundFlatIconButton:
+						icon: "arrow-up-bold"
+						text: " "
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_view(0)
+
+					MDFillRoundFlatIconButton:
+						icon: "arrow-down-bold"
+						text: " "
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_view(1)
+
+					MDFillRoundFlatIconButton:
+						icon: "arrow-left-bold"
+						text: " "
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_view(2)
+
+					MDFillRoundFlatIconButton:
+						icon: "arrow-right-bold"
+						text: " "
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_press: root.update_view(3)
 
 			MDGridLayout:
 				cols:2
