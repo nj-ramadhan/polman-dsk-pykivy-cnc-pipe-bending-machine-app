@@ -480,13 +480,21 @@ class ScreenOperateManual(MDBoxLayout):
             flag_jog_enable = True
             self.ids.bt_jog_enable.md_bg_color = "#ee2222"
 
+    def stop_jog(self):
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coils(3122, [False, False, False, False, False, False], slave=1) #M50 - M55
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")  
+
     def exec_jog_feed_p(self):
         global flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
+            self.modbus_client.write_coil(3124, True, slave=1) #M52
             self.modbus_client.close()
         except:
             toast("error communication to PLC Slave")
@@ -495,41 +503,74 @@ class ScreenOperateManual(MDBoxLayout):
         global flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3127, True, slave=1) #M55
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")        
 
     def stop_jog_feed(self):
         global flag_jog_req_feed
         flag_jog_req_feed = False
         self.ids.bt_jog_feed.md_bg_color = "#196BA5"
+        self.stop_jog()
 
     def exec_jog_bend_p(self):
         global flag_jog_req_bend
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3123, True, slave=1) #M51
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
 
     def exec_jog_bend_n(self):
         global flag_jog_req_bend
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3126, True, slave=1) #M54
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
 
     def stop_jog_bend(self):
         global flag_jog_req_bend
         flag_jog_req_bend = False
         self.ids.bt_jog_bend.md_bg_color = "#196BA5"
+        self.stop_jog()
 
     def exec_jog_turn_p(self):
         global flag_jog_req_turn
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3122, True, slave=1) #M50
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
 
     def exec_jog_turn_n(self):
         global flag_jog_req_turn
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3125, True, slave=1) #M53
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
 
     def stop_jog_turn(self):
         global flag_jog_req_turn
         flag_jog_req_turn = False
         self.ids.bt_jog_turn.md_bg_color = "#196BA5"
+        self.stop_jog()
 
     def exec_operate_feed(self):
         global flag_operate_req_feed
