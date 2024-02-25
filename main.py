@@ -513,7 +513,8 @@ class ScreenOperateManual(MDBoxLayout):
     def stop_jog_feed(self):
         global flag_jog_req_feed
         flag_jog_req_feed = False
-        self.ids.bt_jog_feed.md_bg_color = "#196BA5"
+        self.ids.bt_jog_feed_p.md_bg_color = "#196BA5"
+        self.ids.bt_jog_feed_n.md_bg_color = "#196BA5"
         self.stop_jog()
 
     def exec_jog_bend_p(self):
@@ -541,7 +542,8 @@ class ScreenOperateManual(MDBoxLayout):
     def stop_jog_bend(self):
         global flag_jog_req_bend
         flag_jog_req_bend = False
-        self.ids.bt_jog_bend.md_bg_color = "#196BA5"
+        self.ids.bt_jog_bend_p.md_bg_color = "#196BA5"
+        self.ids.bt_jog_bend_n.md_bg_color = "#196BA5"
         self.stop_jog()
 
     def exec_jog_turn_p(self):
@@ -569,7 +571,8 @@ class ScreenOperateManual(MDBoxLayout):
     def stop_jog_turn(self):
         global flag_jog_req_turn
         flag_jog_req_turn = False
-        self.ids.bt_jog_turn.md_bg_color = "#196BA5"
+        self.ids.bt_jog_turn_p.md_bg_color = "#196BA5"
+        self.ids.bt_jog_turn_n.md_bg_color = "#196BA5"
         self.stop_jog()
 
     def exec_operate_feed(self):
