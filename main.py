@@ -632,7 +632,7 @@ class ScreenOperateAuto(MDBoxLayout):
         except:
             toast("error open file")
         
-    def update_graph(self):
+    def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter
         global val_pipe_thickness
@@ -642,6 +642,7 @@ class ScreenOperateAuto(MDBoxLayout):
         global val_turn_step
 
         global data_base_process
+        view_camera = elev, azim, roll
         try:
             val_feed_step = data_base_process[0,:]
             val_bend_step = data_base_process[1,:] 
@@ -683,6 +684,7 @@ class ScreenOperateAuto(MDBoxLayout):
             # self.ax.set_ylim([-100, 100])
             # self.ax.set_zlim([-100, 100])
             # self.ax.axis('off')
+            self.ax.view_init(elev=view_camera[0], azim=view_camera[1], roll=view_camera[2])
             self.ids.pipe_bended_illustration.add_widget(FigureCanvasKivyAgg(self.fig))   
         except:
             toast("error update pipe bending process illustration")
