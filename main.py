@@ -582,6 +582,28 @@ class ScreenOperateAuto(MDBoxLayout):
         super(ScreenOperateAuto, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
 
+    def update_view(self, direction):
+        global view_camera
+
+        elev, azim, roll = view_camera
+        
+        if(direction == 0):
+            print(elev)
+            elev += 20
+
+        if(direction == 1):
+            print(elev)
+            elev -= 20
+        
+        if(direction == 2):
+            azim += 20
+        
+        if(direction == 3):
+            azim -= 20
+        
+        view_camera = np.array([elev, azim, roll])        
+        self.update_graph(elev, azim, roll)
+
     def reload(self):
         global data_base_process
         print(data_base_process)
