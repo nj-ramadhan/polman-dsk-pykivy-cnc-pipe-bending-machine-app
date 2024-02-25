@@ -120,29 +120,53 @@
 						size_hint_y: 0.25
 
 						MDFillRoundFlatButton:
-							id: bt_jog_feed
-							text: "FEED"
+							id: bt_jog_feed_p
+							text: "FEED +"
 							font_style: 'Button'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_feed()
+							on_press: root.exec_jog_feed_p()
 							on_release: root.stop_jog_feed()
 
 						MDFillRoundFlatButton:
-							id: bt_jog_bend
-							text: "BEND"
+							id: bt_jog_bend_p
+							text: "BEND +"
 							font_style: 'Button'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_bend()
+							on_press: root.exec_jog_bend_p()
 							on_release: root.stop_jog_bend()
 
 						MDFillRoundFlatButton:
-							id: bt_jog_turn
-							text: "TURN"
+							id: bt_jog_turn_p
+							text: "TURN +"
 							font_style: 'Button'
 							size_hint_x: 0.3
-							on_press: root.exec_jog_turn()
+							on_press: root.exec_jog_turn_p()
 							on_release: root.stop_jog_turn()
-					
+
+						MDFillRoundFlatButton:
+							id: bt_jog_feed_n
+							text: "FEED -"
+							font_style: 'Button'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_feed_n()
+							on_release: root.stop_jog_feed()
+
+						MDFillRoundFlatButton:
+							id: bt_jog_bend_n
+							text: "BEND -"
+							font_style: 'Button'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_bend_n()
+							on_release: root.stop_jog_bend()
+
+						MDFillRoundFlatButton:
+							id: bt_jog_turn_n
+							text: "TURN -"
+							font_style: 'Button'
+							size_hint_x: 0.3
+							on_press: root.exec_jog_turn_n()
+							on_release: root.stop_jog_turn()
+
 					MDFillRoundFlatButton:
 						id: bt_jog_enable
 						text: "JOG"

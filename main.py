@@ -425,6 +425,7 @@ class ScreenAdvancedSetting(MDBoxLayout):
 
 class ScreenOperateManual(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    modbus_client = ModbusTcpClient('192.168.1.111')
 
     def __init__(self, **kwargs):      
         super(ScreenOperateManual, self).__init__(**kwargs)
@@ -479,30 +480,51 @@ class ScreenOperateManual(MDBoxLayout):
             flag_jog_enable = True
             self.ids.bt_jog_enable.md_bg_color = "#ee2222"
 
-    def exec_jog_feed(self):
+    def exec_jog_feed_p(self):
         global flag_jog_req_feed
         flag_jog_req_feed = True
-        self.ids.bt_jog_feed.md_bg_color = "#ee2222"
+        self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
+            self.modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
+
+    def exec_jog_feed_n(self):
+        global flag_jog_req_feed
+        flag_jog_req_feed = True
+        self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
 
     def stop_jog_feed(self):
         global flag_jog_req_feed
         flag_jog_req_feed = False
         self.ids.bt_jog_feed.md_bg_color = "#196BA5"
 
-    def exec_jog_bend(self):
+    def exec_jog_bend_p(self):
         global flag_jog_req_bend
         flag_jog_req_bend = True
-        self.ids.bt_jog_bend.md_bg_color = "#ee2222"
+        self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
+
+    def exec_jog_bend_n(self):
+        global flag_jog_req_bend
+        flag_jog_req_bend = True
+        self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
 
     def stop_jog_bend(self):
         global flag_jog_req_bend
         flag_jog_req_bend = False
         self.ids.bt_jog_bend.md_bg_color = "#196BA5"
 
-    def exec_jog_turn(self):
+    def exec_jog_turn_p(self):
         global flag_jog_req_turn
         flag_jog_req_turn = True
-        self.ids.bt_jog_turn.md_bg_color = "#ee2222"
+        self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
+
+    def exec_jog_turn_n(self):
+        global flag_jog_req_turn
+        flag_jog_req_turn = True
+        self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
 
     def stop_jog_turn(self):
         global flag_jog_req_turn
