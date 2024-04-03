@@ -616,6 +616,9 @@ class ScreenOperateManual(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
+        global flag_mode
+        flag_mode = False
+
         if modbus_client.connected:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
@@ -950,6 +953,9 @@ class ScreenOperateAuto(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
+        global flag_mode
+        flag_mode = True
+
         if modbus_client.connected:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
