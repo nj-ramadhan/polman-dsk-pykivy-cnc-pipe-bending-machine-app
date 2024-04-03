@@ -161,7 +161,6 @@ class ScreenMainMenu(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
-        modbus_client = AsyncModbusTcpClient
         global flag_conn_stat
 
         try: 
@@ -830,7 +829,7 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
             modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
-            msg = f'send data {val_feed_set}'
+            msg = f'send data {int(val_feed_set)}'
             toast(msg)
             modbus_client.close()
         except:
@@ -860,7 +859,7 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
             modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
-            msg = f'send data {val_bend_set}'
+            msg = f'send data {int(val_bend_set)}'
             toast(msg)
             modbus_client.close()
         except:
@@ -890,7 +889,7 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
             modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
-            msg = f'send data {val_turn_set}'
+            msg = f'send data {int(val_turn_set)}'
             toast(msg)
             modbus_client.close()
         except:
@@ -1302,6 +1301,47 @@ class ScreenCompile(MDBoxLayout):
         
         view_camera = np.array([elev, azim, roll])        
         self.update_graph(elev, azim, roll)
+    
+    def update(self):
+        val_feed_step[0] = float(self.ids.input_step_length0.text)
+        val_bend_step[0] = float(self.ids.input_step_bend0.text)
+        val_turn_step[0] = float(self.ids.input_step_turn0.text)
+
+        val_feed_step[1] = float(self.ids.input_step_length1.text)
+        val_bend_step[1] = float(self.ids.input_step_bend1.text)
+        val_turn_step[1] = float(self.ids.input_step_turn1.text)
+
+        val_feed_step[2] = float(self.ids.input_step_length2.text)
+        val_bend_step[2] = float(self.ids.input_step_bend2.text)
+        val_turn_step[2] = float(self.ids.input_step_turn2.text)
+
+        val_feed_step[3] = float(self.ids.input_step_length3.text)
+        val_bend_step[3] = float(self.ids.input_step_bend3.text)
+        val_turn_step[3] = float(self.ids.input_step_turn3.text)
+
+        val_feed_step[4] = float(self.ids.input_step_length4.text)
+        val_bend_step[4] = float(self.ids.input_step_bend4.text)
+        val_turn_step[4] = float(self.ids.input_step_turn4.text)
+
+        val_feed_step[5] = float(self.ids.input_step_length5.text)
+        val_bend_step[5] = float(self.ids.input_step_bend5.text)
+        val_turn_step[5] = float(self.ids.input_step_turn5.text)
+
+        val_feed_step[6] = float(self.ids.input_step_length6.text)
+        val_bend_step[6] = float(self.ids.input_step_bend6.text)
+        val_turn_step[6] = float(self.ids.input_step_turn6.text)
+
+        val_feed_step[7] = float(self.ids.input_step_length7.text)
+        val_bend_step[7] = float(self.ids.input_step_bend7.text)
+        val_turn_step[7] = float(self.ids.input_step_turn7.text)
+
+        val_feed_step[8] = float(self.ids.input_step_length8.text)
+        val_bend_step[8] = float(self.ids.input_step_bend8.text)
+        val_turn_step[8] = float(self.ids.input_step_turn8.text)
+
+        val_feed_step[9] = float(self.ids.input_step_length9.text)
+        val_bend_step[9] = float(self.ids.input_step_bend9.text)
+        val_turn_step[9] = float(self.ids.input_step_turn9.text)
         
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
@@ -1317,45 +1357,8 @@ class ScreenCompile(MDBoxLayout):
 
         view_camera = elev, azim, roll
         try:
-            val_feed_step[0] = float(self.ids.input_step_length0.text)
-            val_bend_step[0] = float(self.ids.input_step_bend0.text)
-            val_turn_step[0] = float(self.ids.input_step_turn0.text)
-
-            val_feed_step[1] = float(self.ids.input_step_length1.text)
-            val_bend_step[1] = float(self.ids.input_step_bend1.text)
-            val_turn_step[1] = float(self.ids.input_step_turn1.text)
-
-            val_feed_step[2] = float(self.ids.input_step_length2.text)
-            val_bend_step[2] = float(self.ids.input_step_bend2.text)
-            val_turn_step[2] = float(self.ids.input_step_turn2.text)
-
-            val_feed_step[3] = float(self.ids.input_step_length3.text)
-            val_bend_step[3] = float(self.ids.input_step_bend3.text)
-            val_turn_step[3] = float(self.ids.input_step_turn3.text)
-
-            val_feed_step[4] = float(self.ids.input_step_length4.text)
-            val_bend_step[4] = float(self.ids.input_step_bend4.text)
-            val_turn_step[4] = float(self.ids.input_step_turn4.text)
-
-            val_feed_step[5] = float(self.ids.input_step_length5.text)
-            val_bend_step[5] = float(self.ids.input_step_bend5.text)
-            val_turn_step[5] = float(self.ids.input_step_turn5.text)
-
-            val_feed_step[6] = float(self.ids.input_step_length6.text)
-            val_bend_step[6] = float(self.ids.input_step_bend6.text)
-            val_turn_step[6] = float(self.ids.input_step_turn6.text)
-
-            val_feed_step[7] = float(self.ids.input_step_length7.text)
-            val_bend_step[7] = float(self.ids.input_step_bend7.text)
-            val_turn_step[7] = float(self.ids.input_step_turn7.text)
-
-            val_feed_step[8] = float(self.ids.input_step_length8.text)
-            val_bend_step[8] = float(self.ids.input_step_bend8.text)
-            val_turn_step[8] = float(self.ids.input_step_turn8.text)
-
-            val_feed_step[9] = float(self.ids.input_step_length9.text)
-            val_bend_step[9] = float(self.ids.input_step_bend9.text)
-            val_turn_step[9] = float(self.ids.input_step_turn9.text)
+            self.update()
+            
 
             for i in range(0,9):
                 data_base_process[0,i] = val_feed_step[i]
