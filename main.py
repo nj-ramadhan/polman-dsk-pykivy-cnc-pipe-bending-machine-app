@@ -1,5 +1,3 @@
-import select
-from unittest import case
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.config import Config
@@ -151,6 +149,7 @@ class ScreenSplash(MDBoxLayout):
         
 class ScreenMainMenu(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    modbus_client_async = AsyncModbusTcpClient
     
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
@@ -163,7 +162,7 @@ class ScreenMainMenu(MDBoxLayout):
     def regular_comm_slave(self, dt):
         global flag_conn_stat
 
-        try: 
+        try:
             modbus_client.connect()
             flag_conn_stat = modbus_client.connected
             modbus_client.close()
@@ -177,7 +176,6 @@ class ScreenMainMenu(MDBoxLayout):
             self.ids.comm_status.text = "Status: Disconnected"
             self.ids.comm_status.color = "#ee2222"
         
-
         # try:
         #     modbus_client.connect()
         #     modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
@@ -642,6 +640,25 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.comm_status.text = "Status: Disconnected"
             self.ids.comm_status.color = "#ee2222"
 
+    def exec_mode(self):
+        global flag_mode
+
+        if flag_mode:
+            flag_mode = False
+            self.ids.bt_mode.md_bg_color = "#196BA5"
+            self.ids.bt_mode.text = "MANUAL MODE"
+        else:
+            flag_mode = True
+            self.ids.bt_mode.md_bg_color = "#ee2222"
+            self.ids.bt_mode.text = "AUTO MODE"
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3072, flag_mode, slave=1) #M0
+            modbus_client.close()
+        except:
+            toast("error send flag_mode data to PLC Slave") 
+
     def exec_press(self):
         global flag_cylinder_press
 
@@ -1034,7 +1051,26 @@ class ScreenOperateAuto(MDBoxLayout):
             self.file_manager.close()
         except:
             toast("error open file")
-        
+
+    def exec_mode(self):
+        global flag_mode
+
+        if flag_mode:
+            flag_mode = False
+            self.ids.bt_mode.md_bg_color = "#196BA5"
+            self.ids.bt_mode.text = "MANUAL MODE"
+        else:
+            flag_mode = True
+            self.ids.bt_mode.md_bg_color = "#ee2222"
+            self.ids.bt_mode.text = "AUTO MODE"
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3072, flag_mode, slave=1) #M0
+            modbus_client.close()
+        except:
+            toast("error send flag_mode data to PLC Slave") 
+                    
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter

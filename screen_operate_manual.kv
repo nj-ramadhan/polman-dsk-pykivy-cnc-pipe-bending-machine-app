@@ -88,6 +88,14 @@
 					orientation: "vertical"
 					size_hint_x: 0.4
 					padding:20
+
+					MDFillRoundFlatButton:
+						id: bt_mode
+						text: "MODE MANUAL"
+						font_style: 'Button'
+						size_hint_x: 1
+						padding:0, 30
+						on_press: root.exec_mode()
 				
 					MDGridLayout:
 						cols:2
@@ -180,7 +188,7 @@
 						text: "JOG"
 						font_style: 'Button'
 						size_hint_x: 1
-						spacing:30
+						padding:0, 30
 						on_press: root.exec_jog_enable()
 
 					MDFillRoundFlatButton:
@@ -188,7 +196,7 @@
 						text: "ORIGIN"
 						font_style: 'Button'
 						size_hint_x: 1
-						spacing:30
+						padding:0, 30
 						on_press: root.exec_origin()
 						on_release: root.stop_origin()
 

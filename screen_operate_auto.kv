@@ -159,18 +159,26 @@
 				MDLabel:
 					id: lb_real_feed
 					text: "000.00"
-					font_style: 'H3'
+					font_style: 'H2'
 
 				MDLabel:
 					id: lb_real_bend
 					text: "000.00"
-					font_style: 'H3'
+					font_style: 'H2'
 
 				MDLabel:
 					id: lb_real_turn
 					text: "000.00"
-					font_style: 'H3'
+					font_style: 'H2'
 
+			MDFillRoundFlatButton:
+				id: bt_mode
+				text: "MODE MANUAL"
+				font_style: 'Button'
+				size_hint_x: 1
+				padding:0, 30
+				on_press: root.exec_mode()
+						
 			MDBoxLayout:
 				orientation: "horizontal"
 				spacing: 20
