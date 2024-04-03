@@ -235,7 +235,7 @@ class ScreenPipeSetting(MDBoxLayout):
         self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
 
         self.update_graph()
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
         if flag_conn_stat:
@@ -390,7 +390,7 @@ class ScreenMachineSetting(MDBoxLayout):
         self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
         self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
 
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
         if flag_conn_stat:
@@ -523,7 +523,7 @@ class ScreenAdvancedSetting(MDBoxLayout):
         self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
         self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
 
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
         if flag_conn_stat:
@@ -624,7 +624,12 @@ class ScreenOperateManual(MDBoxLayout):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        global val_feed_set, val_bend_set, val_turn_set
+        Clock.schedule_interval(self.regular_comm_slave, 10)
+
+        self.ids.input_operate_feed.text = str(val_feed_set)
+        self.ids.input_operate_bend.text = str(val_bend_set)
+        self.ids.input_operate_turn.text = str(val_turn_set)
 
     def regular_comm_slave(self, dt):
         global flag_mode
@@ -967,7 +972,7 @@ class ScreenOperateAuto(MDBoxLayout):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
         global flag_mode
@@ -1178,7 +1183,7 @@ class ScreenCompile(MDBoxLayout):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
         if flag_conn_stat:
