@@ -71,12 +71,12 @@ val_machine_collet_open_delay = 5.
 val_machine_die_radius = 100.0
 
 val_advanced_pipe_head = 200.
-val_advanced_start_mode = 0.
-val_advanced_first_line = 0.
-val_advanced_finish_job = 0.
+val_advanced_start_mode = 0
+val_advanced_first_line = 0
+val_advanced_finish_job = 0
 val_advanced_receive_pos_x = 0.
 val_advanced_receive_pos_b = 1000.
-val_advanced_prod_qty = 0.
+val_advanced_prod_qty = 0
 val_advanced_press_semiclamp_time = 5.
 val_advanced_press_semiopen_time = 5.
 val_advanced_clamp_semiclamp_time = 5.
@@ -324,6 +324,7 @@ class ScreenPipeSetting(MDBoxLayout):
 
 class ScreenMachineSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    modbus_client = ModbusTcpClient('192.168.1.111')
 
     def __init__(self, **kwargs):
         super(ScreenMachineSetting, self).__init__(**kwargs)
@@ -351,7 +352,80 @@ class ScreenMachineSetting(MDBoxLayout):
         self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
 
     def update(self):
+        global val_machine_eff_length
+        global val_machine_supp_pos
+        global val_machine_clamp_front_delay
+        global val_machine_clamp_rear_delay
+        global val_machine_press_front_delay
+        global val_machine_press_rear_delay
+        global val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay
         global val_machine_die_radius
+
+        val_machine_eff_length = float(self.ids.input_machine_eff_length.text)
+        val_machine_supp_pos = float(self.ids.input_machine_supp_pos.text)
+        val_machine_clamp_front_delay = float(self.ids.input_machine_clamp_front_delay.text)
+        val_machine_clamp_rear_delay = float(self.ids.input_machine_clamp_rear_delay.text)
+        val_machine_press_front_delay = float(self.ids.input_machine_press_front_delay.text)
+        val_machine_press_rear_delay = float(self.ids.input_machine_press_rear_delay.text)
+        val_machine_collet_clamp_delay = float(self.ids.input_machine_collet_clamp_delay.text)
+        val_machine_collet_open_delay = float(self.ids.input_machine_collet_open_delay.text)
+        val_machine_die_radius = float(self.ids.input_machine_die_radius.text)
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2512, int(val_machine_eff_length), slave=1) #V2000
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_eff_length data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2513, int(val_machine_supp_pos), slave=1) #V2001
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_supp_pos data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2514, int(val_machine_clamp_front_delay), slave=1) #V2002
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_clamp_front_delay data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2515, int(val_machine_clamp_rear_delay), slave=1) #V2003
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_clamp_rear_delay data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2516, int(val_machine_press_front_delay), slave=1) #V2004
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_press_front_delay data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2517, int(val_machine_press_rear_delay), slave=1) #V2005
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_press_rear_delay data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2518, int(val_machine_collet_clamp_delay), slave=1) #V2006
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_collet_clamp_delay data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2519, int(val_machine_collet_open_delay), slave=1) #V2007
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_collet_open_delay data to PLC Slave")            
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2520, int(val_machine_die_radius), slave=1) #V2008
+            self.modbus_client.close()
+        except:
+            toast("error send val_machine_die_radius data to PLC Slave")    
 
     def update_image(self, image_num):
         if image_num == 0:
@@ -396,9 +470,168 @@ class ScreenMachineSetting(MDBoxLayout):
 
 class ScreenAdvancedSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    modbus_client = ModbusTcpClient('192.168.1.111')
 
     def __init__(self, **kwargs):
         super(ScreenAdvancedSetting, self).__init__(**kwargs)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        global val_advanced_pipe_head
+        global val_advanced_start_mode
+        global val_advanced_first_line
+        global val_advanced_finish_job
+        global val_advanced_receive_pos_x
+        global val_advanced_receive_pos_b
+        global val_advanced_prod_qty
+        global val_advanced_press_semiclamp_time
+        global val_advanced_press_semiopen_time
+        global val_advanced_clamp_semiclamp_time
+        global val_advanced_springback_20
+        global val_advanced_springback_120
+        global val_advanced_max_bend
+        global val_advanced_press_start_angle
+        global val_advanced_press_stop_angle
+
+        self.ids.input_advanced_pipe_head.text = str(val_advanced_pipe_head)
+        self.ids.input_advanced_start_mode.text = str(val_advanced_start_mode)
+        self.ids.input_advanced_first_line.text = str(val_advanced_first_line)
+        self.ids.input_advanced_finish_job.text = str(val_advanced_finish_job)
+        self.ids.input_advanced_receive_pos_x.text = str(val_advanced_receive_pos_x)
+        self.ids.input_advanced_receive_pos_b.text = str(val_advanced_receive_pos_b)
+        self.ids.input_advanced_prod_qty.text = str(val_advanced_prod_qty)
+        self.ids.input_advanced_press_semiclamp_time.text = str(val_advanced_press_semiclamp_time)
+        self.ids.input_advanced_press_semiopen_time.text = str(val_advanced_press_semiopen_time)
+        self.ids.input_advanced_clamp_semiclamp_time.text = str(val_advanced_clamp_semiclamp_time)
+        self.ids.input_advanced_springback_20.text = str(val_advanced_springback_20)
+        self.ids.input_advanced_springback_120.text = str(val_advanced_springback_120)
+        self.ids.input_advanced_max_bend.text = str(val_advanced_max_bend)
+        self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
+        self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
+
+    def update(self):
+        global val_advanced_pipe_head
+        global val_advanced_start_mode
+        global val_advanced_first_line
+        global val_advanced_finish_job
+        global val_advanced_receive_pos_x
+        global val_advanced_receive_pos_b
+        global val_advanced_prod_qty
+        global val_advanced_press_semiclamp_time
+        global val_advanced_press_semiopen_time
+        global val_advanced_clamp_semiclamp_time
+        global val_advanced_springback_20
+        global val_advanced_springback_120
+        global val_advanced_max_bend
+        global val_advanced_press_start_angle
+        global val_advanced_press_stop_angle
+
+        val_advanced_pipe_head = float(self.ids.input_advanced_pipe_head.text)
+        val_advanced_start_mode = int(self.ids.input_advanced_start_mode.text)
+        val_advanced_first_line = int(self.ids.input_advanced_first_line.text)
+        val_advanced_finish_job = int(self.ids.input_advanced_finish_job.text)
+        val_advanced_receive_pos_x = float(self.ids.input_advanced_receive_pos_x.text)
+        val_advanced_receive_pos_b = float(self.ids.input_advanced_receive_pos_b.text)
+        val_advanced_prod_qty = int(self.ids.input_advanced_prod_qty.text)
+        val_advanced_press_semiclamp_time = float(self.ids.input_advanced_press_semiclamp_time.text)
+        val_advanced_press_semiopen_time = float(self.ids.input_advanced_press_semiopen_time.text)
+        val_advanced_clamp_semiclamp_time = float(self.ids.input_advanced_clamp_semiclamp_time.text)
+        val_advanced_springback_20 = float(self.ids.input_advanced_springback_20.text)
+        val_advanced_springback_120 = float(self.ids.input_advanced_springback_120.text)
+        val_advanced_max_bend = float(self.ids.input_advanced_max_bend.text)
+        val_advanced_press_start_angle = float(self.ids.input_advanced_press_start_angle.text)
+        val_advanced_press_stop_angle = float(self.ids.input_advanced_press_stop_angle.text)
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_pipe_head data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2523, val_advanced_start_mode, slave=1) #V2011
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_start_mode data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2524, val_advanced_first_line, slave=1) #V2012
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_first_line data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2525, val_advanced_finish_job, slave=1) #V2013
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_finish_job data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2526, int(val_advanced_receive_pos_x), slave=1) #V2014
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_receive_pos_x data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2527, int(val_advanced_receive_pos_b), slave=1) #V2015
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_receive_pos_b data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2528, val_advanced_prod_qty, slave=1) #V2016
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_prod_qty data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2529, int(val_advanced_press_semiclamp_time), slave=1) #V2017
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_press_semiclamp_time data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2530, int(val_advanced_press_semiopen_time), slave=1) #V2018
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_press_semiopen_time data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2531, int(val_advanced_clamp_semiclamp_time), slave=1) #V2019
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_clamp_semiclamp_time data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2532, int(val_advanced_springback_20), slave=1) #V2020
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_springback_20 data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2533, int(val_advanced_springback_120), slave=1) #V2021
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_springback_120 data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2534, int(val_advanced_max_bend), slave=1) #V2022
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_max_bend data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2535, int(val_advanced_press_start_angle), slave=1) #V2023
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_press_start_angle data to PLC Slave")
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_register(2536, int(val_advanced_press_stop_angle), slave=1) #V2024
+            self.modbus_client.close()
+        except:
+            toast("error send val_advanced_press_stop_angle data to PLC Slave")
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -440,6 +673,13 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_press = True
             self.ids.bt_press.md_bg_color = "#ee2222"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3082, flag_cylinder_press, slave=1) #M10
+            self.modbus_client.close()
+        except:
+            toast("error send flag_cylinder_press data to PLC Slave") 
+
     def exec_clamp(self):
         global flag_cylinder_clamp
 
@@ -449,6 +689,13 @@ class ScreenOperateManual(MDBoxLayout):
         else:
             flag_cylinder_clamp = True
             self.ids.bt_clamp.md_bg_color = "#ee2222"
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3083, flag_cylinder_clamp, slave=1) #M11
+            self.modbus_client.close()
+        except:
+            toast("error send flag_cylinder_clamp data to PLC Slave") 
 
     def exec_table_up(self):
         global flag_cylinder_table_up
@@ -460,6 +707,13 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_table_up = True
             self.ids.bt_table_up.md_bg_color = "#ee2222"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3084, flag_cylinder_table_up, slave=1) #M12
+            self.modbus_client.close()
+        except:
+            toast("error send flag_cylinder_table_up data to PLC Slave") 
+
     def exec_table_shift(self):
         global flag_cylinder_table_shift
 
@@ -469,6 +723,13 @@ class ScreenOperateManual(MDBoxLayout):
         else:
             flag_cylinder_table_shift = True
             self.ids.bt_table_shift.md_bg_color = "#ee2222"
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3085, flag_cylinder_table_shift, slave=1) #M13
+            self.modbus_client.close()
+        except:
+            toast("error send flag_cylinder_table_shift data to PLC Slave") 
 
     def exec_jog_enable(self):
         global flag_jog_enable
@@ -480,13 +741,20 @@ class ScreenOperateManual(MDBoxLayout):
             flag_jog_enable = True
             self.ids.bt_jog_enable.md_bg_color = "#ee2222"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3092, flag_jog_enable, slave=1) #M20
+            self.modbus_client.close()
+        except:
+            toast("error send flag_jog_enable data to PLC Slave")  
+
     def stop_jog(self):
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coils(3122, [False, False, False, False, False, False], slave=1) #M50 - M55
+            self.modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")  
+            toast("error send stop_jog data to PLC Slave")  
 
     def exec_jog_feed_p(self):
         global flag_jog_req_feed
@@ -494,10 +762,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3124, True, slave=1) #M52
+            self.modbus_client.write_coil(3093, True, slave=1) #M21
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_feed_p data to PLC Slave")  
 
     def exec_jog_feed_n(self):
         global flag_jog_req_feed
@@ -505,10 +773,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3127, True, slave=1) #M55
+            self.modbus_client.write_coil(3094, True, slave=1) #M22
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")        
+            toast("error send exec_jog_feed_n data to PLC Slave")     
 
     def stop_jog_feed(self):
         global flag_jog_req_feed
@@ -523,10 +791,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3123, True, slave=1) #M51
+            self.modbus_client.write_coil(3095, True, slave=1) #M23
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_bend_p data to PLC Slave")  
 
     def exec_jog_bend_n(self):
         global flag_jog_req_bend
@@ -534,10 +802,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3126, True, slave=1) #M54
+            self.modbus_client.write_coil(3096, True, slave=1) #M24
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_bend_n data to PLC Slave")  
 
     def stop_jog_bend(self):
         global flag_jog_req_bend
@@ -552,10 +820,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3122, True, slave=1) #M50
+            self.modbus_client.write_coil(3097, True, slave=1) #M25
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_turn_p data to PLC Slave")  
 
     def exec_jog_turn_n(self):
         global flag_jog_req_turn
@@ -563,10 +831,10 @@ class ScreenOperateManual(MDBoxLayout):
         self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
         try:
             self.modbus_client.connect()
-            self.modbus_client.write_coil(3125, True, slave=1) #M53
+            self.modbus_client.write_coil(3098, True, slave=1) #M26
             self.modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_turn_n data to PLC Slave")  
 
     def stop_jog_turn(self):
         global flag_jog_req_turn
@@ -577,44 +845,111 @@ class ScreenOperateManual(MDBoxLayout):
 
     def exec_operate_feed(self):
         global flag_operate_req_feed
+        global val_feed_set
+
         flag_operate_req_feed = True
         self.ids.bt_operate_feed.md_bg_color = "#ee2222"
+        val_feed_set = float(self.ids.input_operate_feed.text)
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+            self.modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
+            self.modbus_client.close()
+        except:
+            toast("error send exec_operate_feed and val_operate_feed data to PLC Slave") 
 
     def stop_operate_feed(self):
         global flag_operate_req_feed
         flag_operate_req_feed = False
         self.ids.bt_operate_feed.md_bg_color = "#196BA5"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+            self.modbus_client.close()
+        except:
+            toast("error send stop_operate_feed data to PLC Slave") 
+
     def exec_operate_bend(self):
         global flag_operate_req_bend
+        global val_bend_set
+
         flag_operate_req_bend = True
         self.ids.bt_operate_bend.md_bg_color = "#ee2222"
+        val_bend_set = float(self.ids.input_operate_bend.text)
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+            self.modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
+            self.modbus_client.close()
+        except:
+            toast("error send exec_operate_bend and val_operate_bend data to PLC Slave") 
 
     def stop_operate_bend(self):
         global flag_operate_req_bend
         flag_operate_req_bend = False
         self.ids.bt_operate_bend.md_bg_color = "#196BA5"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+            self.modbus_client.close()
+        except:
+            toast("error send stop_operate_bend data to PLC Slave") 
+
     def exec_operate_turn(self):
         global flag_operate_req_turn
+        global val_turn_set
+
         flag_operate_req_turn = True
         self.ids.bt_operate_turn.md_bg_color = "#ee2222"
+        val_turn_set = float(self.ids.input_operate_turn.text)
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            self.modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
+            self.modbus_client.close()
+        except:
+            toast("error send exec_operate_turn and val_operate_turn data to PLC Slave")
 
     def stop_operate_turn(self):
         global flag_operate_req_turn
         flag_operate_req_turn = False
         self.ids.bt_operate_turn.md_bg_color = "#196BA5"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            self.modbus_client.close()
+        except:
+            toast("error send stop_operate_turn data to PLC Slave")
+
     def exec_origin(self):
         global flag_origin_req
         flag_origin_req = True
         self.ids.bt_origin.md_bg_color = "#ee2222"
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+            self.modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
 
     def stop_origin(self):
         global flag_origin_req
         flag_origin_req = False
         self.ids.bt_origin.md_bg_color = "#196BA5"
 
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+            self.modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -922,6 +1257,15 @@ class ScreenCompile(MDBoxLayout):
         self.ids.input_step_length9.text = str(val_feed_step[9])
         self.ids.input_step_bend9.text = str(val_bend_step[9])
         self.ids.input_step_turn9.text = str(val_turn_step[9]) 
+
+        try:
+            self.modbus_client.connect()
+            self.modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
+            self.modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
+            self.modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
+            self.modbus_client.close()
+        except:
+            toast("error send setpoint feed, bend, turn data for all steps to PLC Slave") 
 
         self.update_graph()
 
