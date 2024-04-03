@@ -12,11 +12,14 @@ from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from pymodbus.client import ModbusTcpClient
+from pymodbus.client import AsyncModbusTcpClient
 from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 import os
+
+modbus_client = AsyncModbusTcpClient('192.168.1.111')
 
 plt.style.use('bmh')
 
@@ -71,12 +74,12 @@ val_machine_collet_open_delay = 5.
 val_machine_die_radius = 100.0
 
 val_advanced_pipe_head = 200.
-val_advanced_start_mode = 0.
-val_advanced_first_line = 0.
-val_advanced_finish_job = 0.
+val_advanced_start_mode = 0
+val_advanced_first_line = 0
+val_advanced_finish_job = 0
 val_advanced_receive_pos_x = 0.
 val_advanced_receive_pos_b = 1000.
-val_advanced_prod_qty = 0.
+val_advanced_prod_qty = 0
 val_advanced_press_semiclamp_time = 5.
 val_advanced_press_semiopen_time = 5.
 val_advanced_clamp_semiclamp_time = 5.
@@ -147,30 +150,34 @@ class ScreenSplash(MDBoxLayout):
         
 class ScreenMainMenu(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-    modbus_client = ModbusTcpClient('192.168.1.111')
+    global modbus_client
     
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
         self.scrOpManual = ScreenOperateManual()
-        Clock.schedule_once(self.delayed_init, 10)
+        Clock.schedule_once(self.delayed_init, 5)
         
     def delayed_init(self, dt):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
-        global flag_cylinder_press, flag_cylinder_clamp, flag_cylinder_table_up, flag_cylinder_table_shift
-
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
         # try:
-        #     self.modbus_client.connect()
-        #     self.modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
+        #     modbus_client.connect()
+        #     modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
 
-        #     self.modbus_client.write_coils(1536, [False, False, False, False, True, True, True, True], slave=1)
+        #     modbus_client.write_coils(1536, [False, False, False, False, True, True, True, True], slave=1)
 
-        #     self.modbus_client.write_coils(1536, [False, False, False, False, False, False, False, False], slave=1)
+        #     modbus_client.write_coils(1536, [False, False, False, False, False, False, False, False], slave=1)
 
-        #     reading_coil = self.modbus_client.read_coils(1536, 8, slave=1)
+        #     reading_coil = modbus_client.read_coils(1536, 8, slave=1)
         #     print(reading_coil.bits)
-        #     self.modbus_client.close()
+        #     modbus_client.close()
         # except:
         #     toast("error communication to PLC Slave")
         
@@ -201,6 +208,7 @@ class ScreenMainMenu(MDBoxLayout):
 
 class ScreenPipeSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    global modbus_client
 
     def __init__(self, **kwargs):
         super(ScreenPipeSetting, self).__init__(**kwargs)
@@ -214,6 +222,26 @@ class ScreenPipeSetting(MDBoxLayout):
         self.ids.input_pipe_length.text = str(val_pipe_length)
         self.ids.input_pipe_diameter.text = str(val_pipe_diameter)
         self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
+
+        self.update_graph()
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
+
+    def update(self):
+        global val_pipe_length
+        global val_pipe_diameter
+        global val_pipe_thickness
+
+        val_pipe_length = float(self.ids.input_pipe_length.text)
+        val_pipe_diameter = float(self.ids.input_pipe_diameter.text)
+        val_pipe_thickness = float(self.ids.input_pipe_thickness.text)
 
         self.update_graph()
 
@@ -324,6 +352,7 @@ class ScreenPipeSetting(MDBoxLayout):
 
 class ScreenMachineSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    global modbus_client
 
     def __init__(self, **kwargs):
         super(ScreenMachineSetting, self).__init__(**kwargs)
@@ -350,8 +379,56 @@ class ScreenMachineSetting(MDBoxLayout):
         self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
         self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
 
-    def update(self):
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
+
+    async def update(self):
+        global val_machine_eff_length
+        global val_machine_supp_pos
+        global val_machine_clamp_front_delay
+        global val_machine_clamp_rear_delay
+        global val_machine_press_front_delay
+        global val_machine_press_rear_delay
+        global val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay
         global val_machine_die_radius
+
+        val_machine_eff_length = float(self.ids.input_machine_eff_length.text)
+        val_machine_supp_pos = float(self.ids.input_machine_supp_pos.text)
+        val_machine_clamp_front_delay = float(self.ids.input_machine_clamp_front_delay.text)
+        val_machine_clamp_rear_delay = float(self.ids.input_machine_clamp_rear_delay.text)
+        val_machine_press_front_delay = float(self.ids.input_machine_press_front_delay.text)
+        val_machine_press_rear_delay = float(self.ids.input_machine_press_rear_delay.text)
+        val_machine_collet_clamp_delay = float(self.ids.input_machine_collet_clamp_delay.text)
+        val_machine_collet_open_delay = float(self.ids.input_machine_collet_open_delay.text)
+        val_machine_die_radius = float(self.ids.input_machine_die_radius.text)
+
+        try:
+            await modbus_client.connect()
+
+            if modbus_client.connected:
+                modbus_client.write_register(2512, int(val_machine_eff_length), slave=1) #V2000
+                modbus_client.write_register(2513, int(val_machine_supp_pos), slave=1) #V2001
+                modbus_client.write_register(2514, int(val_machine_clamp_front_delay), slave=1) #V2002
+                modbus_client.write_register(2515, int(val_machine_clamp_rear_delay), slave=1) #V2003
+                modbus_client.write_register(2516, int(val_machine_press_front_delay), slave=1) #V2004
+                modbus_client.write_register(2517, int(val_machine_press_rear_delay), slave=1) #V2005
+                modbus_client.write_register(2518, int(val_machine_collet_clamp_delay), slave=1) #V2006
+                modbus_client.write_register(2519, int(val_machine_collet_open_delay), slave=1) #V2007
+                modbus_client.write_register(2520, int(val_machine_die_radius), slave=1) #V2008
+            else:
+                toast("PLC Slave is not connected")  
+
+            modbus_client.close()
+        except:
+            toast("error send machine_setting data to PLC Slave")    
 
     def update_image(self, image_num):
         if image_num == 0:
@@ -396,9 +473,113 @@ class ScreenMachineSetting(MDBoxLayout):
 
 class ScreenAdvancedSetting(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    global modbus_client
 
     def __init__(self, **kwargs):
         super(ScreenAdvancedSetting, self).__init__(**kwargs)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        global val_advanced_pipe_head
+        global val_advanced_start_mode
+        global val_advanced_first_line
+        global val_advanced_finish_job
+        global val_advanced_receive_pos_x
+        global val_advanced_receive_pos_b
+        global val_advanced_prod_qty
+        global val_advanced_press_semiclamp_time
+        global val_advanced_press_semiopen_time
+        global val_advanced_clamp_semiclamp_time
+        global val_advanced_springback_20
+        global val_advanced_springback_120
+        global val_advanced_max_bend
+        global val_advanced_press_start_angle
+        global val_advanced_press_stop_angle
+
+        self.ids.input_advanced_pipe_head.text = str(val_advanced_pipe_head)
+        self.ids.input_advanced_start_mode.text = str(val_advanced_start_mode)
+        self.ids.input_advanced_first_line.text = str(val_advanced_first_line)
+        self.ids.input_advanced_finish_job.text = str(val_advanced_finish_job)
+        self.ids.input_advanced_receive_pos_x.text = str(val_advanced_receive_pos_x)
+        self.ids.input_advanced_receive_pos_b.text = str(val_advanced_receive_pos_b)
+        self.ids.input_advanced_prod_qty.text = str(val_advanced_prod_qty)
+        self.ids.input_advanced_press_semiclamp_time.text = str(val_advanced_press_semiclamp_time)
+        self.ids.input_advanced_press_semiopen_time.text = str(val_advanced_press_semiopen_time)
+        self.ids.input_advanced_clamp_semiclamp_time.text = str(val_advanced_clamp_semiclamp_time)
+        self.ids.input_advanced_springback_20.text = str(val_advanced_springback_20)
+        self.ids.input_advanced_springback_120.text = str(val_advanced_springback_120)
+        self.ids.input_advanced_max_bend.text = str(val_advanced_max_bend)
+        self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
+        self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
+
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
+            
+    async def update(self):
+        global val_advanced_pipe_head
+        global val_advanced_start_mode
+        global val_advanced_first_line
+        global val_advanced_finish_job
+        global val_advanced_receive_pos_x
+        global val_advanced_receive_pos_b
+        global val_advanced_prod_qty
+        global val_advanced_press_semiclamp_time
+        global val_advanced_press_semiopen_time
+        global val_advanced_clamp_semiclamp_time
+        global val_advanced_springback_20
+        global val_advanced_springback_120
+        global val_advanced_max_bend
+        global val_advanced_press_start_angle
+        global val_advanced_press_stop_angle
+
+        val_advanced_pipe_head = float(self.ids.input_advanced_pipe_head.text)
+        val_advanced_start_mode = int(self.ids.input_advanced_start_mode.text)
+        val_advanced_first_line = int(self.ids.input_advanced_first_line.text)
+        val_advanced_finish_job = int(self.ids.input_advanced_finish_job.text)
+        val_advanced_receive_pos_x = float(self.ids.input_advanced_receive_pos_x.text)
+        val_advanced_receive_pos_b = float(self.ids.input_advanced_receive_pos_b.text)
+        val_advanced_prod_qty = int(self.ids.input_advanced_prod_qty.text)
+        val_advanced_press_semiclamp_time = float(self.ids.input_advanced_press_semiclamp_time.text)
+        val_advanced_press_semiopen_time = float(self.ids.input_advanced_press_semiopen_time.text)
+        val_advanced_clamp_semiclamp_time = float(self.ids.input_advanced_clamp_semiclamp_time.text)
+        val_advanced_springback_20 = float(self.ids.input_advanced_springback_20.text)
+        val_advanced_springback_120 = float(self.ids.input_advanced_springback_120.text)
+        val_advanced_max_bend = float(self.ids.input_advanced_max_bend.text)
+        val_advanced_press_start_angle = float(self.ids.input_advanced_press_start_angle.text)
+        val_advanced_press_stop_angle = float(self.ids.input_advanced_press_stop_angle.text)
+
+        try:
+            await modbus_client.connect()
+
+            if modbus_client.connected:
+                modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
+                modbus_client.write_register(2523, val_advanced_start_mode, slave=1) #V2011
+                modbus_client.write_register(2524, val_advanced_first_line, slave=1) #V2012
+                modbus_client.write_register(2525, val_advanced_finish_job, slave=1) #V2013
+                modbus_client.write_register(2526, int(val_advanced_receive_pos_x), slave=1) #V2014
+                modbus_client.write_register(2527, int(val_advanced_receive_pos_b), slave=1) #V2015
+                modbus_client.write_register(2528, val_advanced_prod_qty, slave=1) #V2016
+                modbus_client.write_register(2529, int(val_advanced_press_semiclamp_time), slave=1) #V2017
+                modbus_client.write_register(2530, int(val_advanced_press_semiopen_time), slave=1) #V2018
+                modbus_client.write_register(2531, int(val_advanced_clamp_semiclamp_time), slave=1) #V2019
+                modbus_client.write_register(2532, int(val_advanced_springback_20), slave=1) #V2020
+                modbus_client.write_register(2533, int(val_advanced_springback_120), slave=1) #V2021
+                modbus_client.write_register(2534, int(val_advanced_max_bend), slave=1) #V2022
+                modbus_client.write_register(2535, int(val_advanced_press_start_angle), slave=1) #V2023
+                modbus_client.write_register(2536, int(val_advanced_press_stop_angle), slave=1) #V2024
+            else:
+                toast("PLC Slave is not connected")  
+
+            modbus_client.close()
+        except:
+            toast("error send machine_setting data to PLC Slave") 
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -425,10 +606,22 @@ class ScreenAdvancedSetting(MDBoxLayout):
 
 class ScreenOperateManual(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-    modbus_client = ModbusTcpClient('192.168.1.111')
+    global modbus_client
 
     def __init__(self, **kwargs):      
         super(ScreenOperateManual, self).__init__(**kwargs)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
 
     def exec_press(self):
         global flag_cylinder_press
@@ -440,6 +633,13 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_press = True
             self.ids.bt_press.md_bg_color = "#ee2222"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3082, flag_cylinder_press, slave=1) #M10
+            modbus_client.close()
+        except:
+            toast("error send flag_cylinder_press data to PLC Slave") 
+
     def exec_clamp(self):
         global flag_cylinder_clamp
 
@@ -449,6 +649,13 @@ class ScreenOperateManual(MDBoxLayout):
         else:
             flag_cylinder_clamp = True
             self.ids.bt_clamp.md_bg_color = "#ee2222"
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3083, flag_cylinder_clamp, slave=1) #M11
+            modbus_client.close()
+        except:
+            toast("error send flag_cylinder_clamp data to PLC Slave") 
 
     def exec_table_up(self):
         global flag_cylinder_table_up
@@ -460,6 +667,13 @@ class ScreenOperateManual(MDBoxLayout):
             flag_cylinder_table_up = True
             self.ids.bt_table_up.md_bg_color = "#ee2222"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3084, flag_cylinder_table_up, slave=1) #M12
+            modbus_client.close()
+        except:
+            toast("error send flag_cylinder_table_up data to PLC Slave") 
+
     def exec_table_shift(self):
         global flag_cylinder_table_shift
 
@@ -469,6 +683,13 @@ class ScreenOperateManual(MDBoxLayout):
         else:
             flag_cylinder_table_shift = True
             self.ids.bt_table_shift.md_bg_color = "#ee2222"
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3085, flag_cylinder_table_shift, slave=1) #M13
+            modbus_client.close()
+        except:
+            toast("error send flag_cylinder_table_shift data to PLC Slave") 
 
     def exec_jog_enable(self):
         global flag_jog_enable
@@ -480,35 +701,42 @@ class ScreenOperateManual(MDBoxLayout):
             flag_jog_enable = True
             self.ids.bt_jog_enable.md_bg_color = "#ee2222"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3092, flag_jog_enable, slave=1) #M20
+            modbus_client.close()
+        except:
+            toast("error send flag_jog_enable data to PLC Slave")  
+
     def stop_jog(self):
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coils(3122, [False, False, False, False, False, False], slave=1) #M50 - M55
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")  
+            toast("error send stop_jog data to PLC Slave")  
 
     def exec_jog_feed_p(self):
         global flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3124, True, slave=1) #M52
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3093, True, slave=1) #M21
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_feed_p data to PLC Slave")  
 
     def exec_jog_feed_n(self):
         global flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3127, True, slave=1) #M55
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3094, True, slave=1) #M22
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")        
+            toast("error send exec_jog_feed_n data to PLC Slave")     
 
     def stop_jog_feed(self):
         global flag_jog_req_feed
@@ -522,22 +750,22 @@ class ScreenOperateManual(MDBoxLayout):
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3123, True, slave=1) #M51
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3095, True, slave=1) #M23
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_bend_p data to PLC Slave")  
 
     def exec_jog_bend_n(self):
         global flag_jog_req_bend
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3126, True, slave=1) #M54
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3096, True, slave=1) #M24
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_bend_n data to PLC Slave")  
 
     def stop_jog_bend(self):
         global flag_jog_req_bend
@@ -551,22 +779,22 @@ class ScreenOperateManual(MDBoxLayout):
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3122, True, slave=1) #M50
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3097, True, slave=1) #M25
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_turn_p data to PLC Slave")  
 
     def exec_jog_turn_n(self):
         global flag_jog_req_turn
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
         try:
-            self.modbus_client.connect()
-            self.modbus_client.write_coil(3125, True, slave=1) #M53
-            self.modbus_client.close()
+            modbus_client.connect()
+            modbus_client.write_coil(3098, True, slave=1) #M26
+            modbus_client.close()
         except:
-            toast("error communication to PLC Slave")
+            toast("error send exec_jog_turn_n data to PLC Slave")  
 
     def stop_jog_turn(self):
         global flag_jog_req_turn
@@ -577,44 +805,111 @@ class ScreenOperateManual(MDBoxLayout):
 
     def exec_operate_feed(self):
         global flag_operate_req_feed
+        global val_feed_set
+
         flag_operate_req_feed = True
         self.ids.bt_operate_feed.md_bg_color = "#ee2222"
+        val_feed_set = float(self.ids.input_operate_feed.text)
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+            modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
+            modbus_client.close()
+        except:
+            toast("error send exec_operate_feed and val_operate_feed data to PLC Slave") 
 
     def stop_operate_feed(self):
         global flag_operate_req_feed
         flag_operate_req_feed = False
         self.ids.bt_operate_feed.md_bg_color = "#196BA5"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+            modbus_client.close()
+        except:
+            toast("error send stop_operate_feed data to PLC Slave") 
+
     def exec_operate_bend(self):
         global flag_operate_req_bend
+        global val_bend_set
+
         flag_operate_req_bend = True
         self.ids.bt_operate_bend.md_bg_color = "#ee2222"
+        val_bend_set = float(self.ids.input_operate_bend.text)
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+            modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
+            modbus_client.close()
+        except:
+            toast("error send exec_operate_bend and val_operate_bend data to PLC Slave") 
 
     def stop_operate_bend(self):
         global flag_operate_req_bend
         flag_operate_req_bend = False
         self.ids.bt_operate_bend.md_bg_color = "#196BA5"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+            modbus_client.close()
+        except:
+            toast("error send stop_operate_bend data to PLC Slave") 
+
     def exec_operate_turn(self):
         global flag_operate_req_turn
+        global val_turn_set
+
         flag_operate_req_turn = True
         self.ids.bt_operate_turn.md_bg_color = "#ee2222"
+        val_turn_set = float(self.ids.input_operate_turn.text)
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
+            modbus_client.close()
+        except:
+            toast("error send exec_operate_turn and val_operate_turn data to PLC Slave")
 
     def stop_operate_turn(self):
         global flag_operate_req_turn
         flag_operate_req_turn = False
         self.ids.bt_operate_turn.md_bg_color = "#196BA5"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            modbus_client.close()
+        except:
+            toast("error send stop_operate_turn data to PLC Slave")
+
     def exec_origin(self):
         global flag_origin_req
         flag_origin_req = True
         self.ids.bt_origin.md_bg_color = "#ee2222"
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+            modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
 
     def stop_origin(self):
         global flag_origin_req
         flag_origin_req = False
         self.ids.bt_origin.md_bg_color = "#196BA5"
 
+        try:
+            modbus_client.connect()
+            modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+            modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -644,9 +939,23 @@ class ScreenOperateManual(MDBoxLayout):
 
 class ScreenOperateAuto(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    global modbus_client
+
     def __init__(self, **kwargs):       
         super(ScreenOperateAuto, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
 
     def update_view(self, direction):
         global view_camera
@@ -838,9 +1147,23 @@ class ScreenOperateAuto(MDBoxLayout):
 
 class ScreenCompile(MDBoxLayout):
     screen_manager = ObjectProperty(None)
+    global modbus_client
+
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
+        Clock.schedule_once(self.delayed_init)
+
+    def delayed_init(self, dt):
+        Clock.schedule_interval(self.regular_comm_slave, 1)
+
+    def regular_comm_slave(self, dt):
+        if modbus_client.connected:
+            self.ids.comm_status.text = "Status: Connected"
+            self.ids.comm_status.color = "#196BA5"
+        else:
+            self.ids.comm_status.text = "Status: Disconnected"
+            self.ids.comm_status.color = "#ee2222"
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -922,6 +1245,15 @@ class ScreenCompile(MDBoxLayout):
         self.ids.input_step_length9.text = str(val_feed_step[9])
         self.ids.input_step_bend9.text = str(val_bend_step[9])
         self.ids.input_step_turn9.text = str(val_turn_step[9]) 
+
+        try:
+            modbus_client.connect()
+            modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
+            modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
+            modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
+            modbus_client.close()
+        except:
+            toast("error send setpoint feed, bend, turn data for all steps to PLC Slave") 
 
         self.update_graph()
 
