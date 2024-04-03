@@ -236,6 +236,7 @@ class ScreenPipeSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
+        global flag_conn_stat
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
@@ -391,6 +392,7 @@ class ScreenMachineSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
+        global flag_conn_stat
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
@@ -524,6 +526,7 @@ class ScreenAdvancedSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
+        global flag_conn_stat        
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
@@ -623,15 +626,18 @@ class ScreenOperateManual(MDBoxLayout):
 
     def delayed_init(self, dt):
         global val_feed_set, val_bend_set, val_turn_set
+        global flag_mode
+
         Clock.schedule_interval(self.regular_comm_slave, 10)
+        Clock.schedule_interval(self.regular_mode_check, 1)
 
         self.ids.input_operate_feed.text = str(val_feed_set)
         self.ids.input_operate_bend.text = str(val_bend_set)
         self.ids.input_operate_turn.text = str(val_turn_set)
 
+
     def regular_comm_slave(self, dt):
-        global flag_mode
-        flag_mode = False
+        global flag_conn_stat
 
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
@@ -640,17 +646,23 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.comm_status.text = "Status: Disconnected"
             self.ids.comm_status.color = "#ee2222"
 
+    def regular_mode_check(self, dt):
+        global flag_mode
+
+        if not flag_mode:
+            self.ids.bt_mode.md_bg_color = "#196BA5"
+            self.ids.bt_mode.text = "MANUAL MODE"
+        else:
+            self.ids.bt_mode.md_bg_color = "#ee2222"
+            self.ids.bt_mode.text = "AUTO MODE"
+
     def exec_mode(self):
         global flag_mode
 
         if flag_mode:
             flag_mode = False
-            self.ids.bt_mode.md_bg_color = "#196BA5"
-            self.ids.bt_mode.text = "MANUAL MODE"
         else:
             flag_mode = True
-            self.ids.bt_mode.md_bg_color = "#ee2222"
-            self.ids.bt_mode.text = "AUTO MODE"
 
         try:
             modbus_client.connect()
@@ -990,10 +1002,10 @@ class ScreenOperateAuto(MDBoxLayout):
 
     def delayed_init(self, dt):
         Clock.schedule_interval(self.regular_comm_slave, 10)
+        Clock.schedule_interval(self.regular_mode_check, 1)
 
     def regular_comm_slave(self, dt):
-        global flag_mode
-        flag_mode = True
+        global flag_conn_stat
 
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
@@ -1001,6 +1013,34 @@ class ScreenOperateAuto(MDBoxLayout):
         else:
             self.ids.comm_status.text = "Status: Disconnected"
             self.ids.comm_status.color = "#ee2222"
+
+    def regular_mode_check(self, dt):
+        global flag_mode
+        global flag_run
+        global flag_alarm
+        global flag_reset
+
+        if not flag_mode:
+            self.ids.bt_mode.md_bg_color = "#196BA5"
+            self.ids.bt_mode.text = "MANUAL MODE"
+        else:
+            self.ids.bt_mode.md_bg_color = "#ee2222"
+            self.ids.bt_mode.text = "AUTO MODE"
+
+        if not flag_run:
+            self.ids.bt_run.md_bg_color = "#22ee22"
+        else:
+            self.ids.bt_run.md_bg_color = "#ee2222"
+
+        if not flag_alarm:
+            self.ids.bt_alarm.md_bg_color = "#22ee22"
+        else:
+            self.ids.bt_alarm.md_bg_color = "#ee2222"
+
+        if not flag_reset:
+            self.ids.bt_reset.md_bg_color = "#22ee22"
+        else:
+            self.ids.bt_reset.md_bg_color = "#ee2222"
 
     def update_view(self, direction):
         global view_camera
@@ -1057,12 +1097,8 @@ class ScreenOperateAuto(MDBoxLayout):
 
         if flag_mode:
             flag_mode = False
-            self.ids.bt_mode.md_bg_color = "#196BA5"
-            self.ids.bt_mode.text = "MANUAL MODE"
         else:
             flag_mode = True
-            self.ids.bt_mode.md_bg_color = "#ee2222"
-            self.ids.bt_mode.text = "AUTO MODE"
 
         try:
             modbus_client.connect()
@@ -1222,6 +1258,7 @@ class ScreenCompile(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
+        global flag_conn_stat        
         if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"

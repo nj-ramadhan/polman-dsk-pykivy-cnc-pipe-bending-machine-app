@@ -78,25 +78,26 @@
 				allow_stretch: True
 				size_hint_y: 0.5
 
+			MDFillRoundFlatButton:
+				id: bt_mode
+				text: "MODE MANUAL"
+				font_style: 'Button'
+				size_hint_x: 1
+				size_hint_y: 0.03
+				on_press: root.exec_mode()
+
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.5
+				size_hint_y: 0.47
 				spacing: 20
 				padding: 20
 
 				MDBoxLayout:
 					orientation: "vertical"
 					size_hint_x: 0.4
-					padding:20
-
-					MDFillRoundFlatButton:
-						id: bt_mode
-						text: "MODE MANUAL"
-						font_style: 'Button'
-						size_hint_x: 1
-						padding:0, 30
-						on_press: root.exec_mode()
-				
+					padding: 20
+					spacing: 20
+			
 					MDGridLayout:
 						cols:2
 						spacing:20
@@ -188,7 +189,6 @@
 						text: "JOG"
 						font_style: 'Button'
 						size_hint_x: 1
-						padding:0, 30
 						on_press: root.exec_jog_enable()
 
 					MDFillRoundFlatButton:
@@ -196,7 +196,6 @@
 						text: "ORIGIN"
 						font_style: 'Button'
 						size_hint_x: 1
-						padding:0, 30
 						on_press: root.exec_origin()
 						on_release: root.stop_origin()
 

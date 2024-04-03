@@ -137,12 +137,43 @@
 						font_style: 'Button'
 						size_hint_x: 0.5
 						on_press: root.update_view(3)
-						
+
+			MDBoxLayout:
+				orientation: "horizontal"
+				size_hint_y: 0.3
+				spacing:20
+
+				MDIconButton:
+					id: bt_run
+					text: " "
+					font_style: 'Button'
+					size_hint_x: 0.3
+
+				MDIconButton:
+					id: bt_alarm
+					text: " "
+					font_style: 'Button'
+					size_hint_x: 0.3
+
+				MDIconButton:
+					id: bt_reset
+					text: " "
+					font_style: 'Button'
+					size_hint_x: 0.3
+
+			MDFillRoundFlatButton:
+				id: bt_mode
+				text: "MODE MANUAL"
+				font_style: 'Button'
+				size_hint_x: 1
+				size_hint_y: 0.03
+				on_press: root.exec_mode()
+
 			MDGridLayout:
 				cols:3
 				spacing:20
 				padding: 20
-				size_hint_y: 0.4
+				size_hint_y: 0.34
 
 				MDLabel:
 					text: "Realtime Feeding Data"
@@ -170,15 +201,7 @@
 					id: lb_real_turn
 					text: "000.00"
 					font_style: 'H2'
-
-			MDFillRoundFlatButton:
-				id: bt_mode
-				text: "MODE MANUAL"
-				font_style: 'Button'
-				size_hint_x: 1
-				padding:0, 30
-				on_press: root.exec_mode()
-						
+					
 			MDBoxLayout:
 				orientation: "horizontal"
 				spacing: 20
