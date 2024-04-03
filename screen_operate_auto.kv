@@ -17,13 +17,21 @@
                 size_hint_x: 0.25
                 allow_stretch: True 
 
-			MDLabel:
-				id: subtitle            
-				text: "PIPE BENDING CNC MACHINE"
-				halign: "center"
-				valign: "middle"
-				font_style: 'H5'
-				color: 0, 0, 0
+			MDBoxLayout:
+				orientation: "vertical"
+
+				MDLabel:
+					id: subtitle            
+					text: "PIPE BENDING CNC MACHINE"
+					halign: "center"
+					valign: "middle"
+					font_style: 'H5'
+
+				MDLabel:
+					id: comm_status
+					text: "Status:"
+					halign: "center"
+					valign: "middle"
                   
             Image:
                 id: logo
