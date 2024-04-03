@@ -226,6 +226,8 @@ class ScreenPipeSetting(MDBoxLayout):
         val_pipe_diameter = float(self.ids.input_pipe_diameter.text)
         val_pipe_thickness = float(self.ids.input_pipe_thickness.text)
 
+        self.update_graph()
+
     def update_view(self, direction):
         global view_camera
 
