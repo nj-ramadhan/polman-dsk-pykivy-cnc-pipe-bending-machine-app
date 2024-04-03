@@ -19,7 +19,7 @@ import numpy as np
 import time
 import os
 
-modbus_client = AsyncModbusTcpClient('192.168.1.111')
+modbus_client = ModbusTcpClient('192.168.1.111')
 
 plt.style.use('bmh')
 
