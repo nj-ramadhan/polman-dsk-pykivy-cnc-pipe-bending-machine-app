@@ -101,6 +101,7 @@ val_bend_step = np.zeros(10)
 val_turn_step = np.zeros(10)
 data_base_process = np.zeros([3, 10])
 
+flag_conn_stat = False
 flag_mode = False
 flag_run = False
 flag_alarm = False
@@ -150,7 +151,6 @@ class ScreenSplash(MDBoxLayout):
         
 class ScreenMainMenu(MDBoxLayout):
     screen_manager = ObjectProperty(None)
-    global modbus_client
     
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
@@ -158,15 +158,27 @@ class ScreenMainMenu(MDBoxLayout):
         Clock.schedule_once(self.delayed_init, 5)
         
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 1)
+        Clock.schedule_interval(self.regular_comm_slave, 10)
 
     def regular_comm_slave(self, dt):
-        if modbus_client.connected:
+        modbus_client = AsyncModbusTcpClient
+        global flag_conn_stat
+
+        try: 
+            modbus_client.connect()
+            flag_conn_stat = modbus_client.connected
+            modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")
+        
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
             self.ids.comm_status.text = "Status: Disconnected"
             self.ids.comm_status.color = "#ee2222"
+        
+
         # try:
         #     modbus_client.connect()
         #     modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
@@ -227,7 +239,7 @@ class ScreenPipeSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
@@ -382,7 +394,7 @@ class ScreenMachineSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
@@ -413,7 +425,7 @@ class ScreenMachineSetting(MDBoxLayout):
         try:
             await modbus_client.connect()
 
-            if modbus_client.connected:
+            if flag_conn_stat:
                 modbus_client.write_register(2512, int(val_machine_eff_length), slave=1) #V2000
                 modbus_client.write_register(2513, int(val_machine_supp_pos), slave=1) #V2001
                 modbus_client.write_register(2514, int(val_machine_clamp_front_delay), slave=1) #V2002
@@ -515,7 +527,7 @@ class ScreenAdvancedSetting(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
@@ -558,7 +570,7 @@ class ScreenAdvancedSetting(MDBoxLayout):
         try:
             await modbus_client.connect()
 
-            if modbus_client.connected:
+            if flag_conn_stat:
                 modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
                 modbus_client.write_register(2523, val_advanced_start_mode, slave=1) #V2011
                 modbus_client.write_register(2524, val_advanced_first_line, slave=1) #V2012
@@ -619,7 +631,7 @@ class ScreenOperateManual(MDBoxLayout):
         global flag_mode
         flag_mode = False
 
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
@@ -818,6 +830,8 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
             modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
+            msg = f'send data {val_feed_set}'
+            toast(msg)
             modbus_client.close()
         except:
             toast("error send exec_operate_feed and val_operate_feed data to PLC Slave") 
@@ -846,6 +860,8 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
             modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
+            msg = f'send data {val_bend_set}'
+            toast(msg)
             modbus_client.close()
         except:
             toast("error send exec_operate_bend and val_operate_bend data to PLC Slave") 
@@ -874,6 +890,8 @@ class ScreenOperateManual(MDBoxLayout):
             modbus_client.connect()
             modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
             modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
+            msg = f'send data {val_turn_set}'
+            toast(msg)
             modbus_client.close()
         except:
             toast("error send exec_operate_turn and val_operate_turn data to PLC Slave")
@@ -956,7 +974,7 @@ class ScreenOperateAuto(MDBoxLayout):
         global flag_mode
         flag_mode = True
 
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
@@ -1164,7 +1182,7 @@ class ScreenCompile(MDBoxLayout):
         Clock.schedule_interval(self.regular_comm_slave, 1)
 
     def regular_comm_slave(self, dt):
-        if modbus_client.connected:
+        if flag_conn_stat:
             self.ids.comm_status.text = "Status: Connected"
             self.ids.comm_status.color = "#196BA5"
         else:
