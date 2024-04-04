@@ -143,6 +143,7 @@ class ScreenSplash(MDScreen):
 
     def regular_get_data(self, dt):
         global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset
+        flags = [False, False, False, False]
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -153,8 +154,9 @@ class ScreenSplash(MDScreen):
                 flag_reset = flags[3]
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
                 modbus_client.close()
-        except:
-            toast("error communication to PLC Slave")  
+        except Exception as e:
+            msg = f'{e}'
+            toast(msg)  
 
     def regular_display(self, dt):   
         global flag_mode, flag_run, flag_alarm, flag_reset
