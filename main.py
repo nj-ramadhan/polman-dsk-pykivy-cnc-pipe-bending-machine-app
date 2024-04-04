@@ -921,7 +921,7 @@ class ScreenOperateManual(MDBoxLayout):
 
         try:
             modbus_client.connect()
-            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            modbus_client.write_coil(3101, flag_operate_req_turn, slave=1) #M29
             modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
             msg = f'send data {int(val_turn_set)}'
             toast(msg)
@@ -936,7 +936,7 @@ class ScreenOperateManual(MDBoxLayout):
 
         try:
             modbus_client.connect()
-            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+            modbus_client.write_coil(3101, flag_operate_req_turn, slave=1) #M29
             modbus_client.close()
         except:
             toast("error send stop_operate_turn data to PLC Slave")
