@@ -10,55 +10,49 @@
 #:include screen_operate_auto.kv
 #:include screen_compile.kv
 
-ScreenManager:
+# ScreenManager:
+<RootScreen>:
     id: screen_manager
     transition: NoTransition()
-    Screen:
+
+    ScreenSplash:
+        app_window: app
         name: 'screen_splash'
-        ScreenSplash:
-            app_window: app
-            screen_manager: screen_manager
-            screen_main_menu: screen_main_menu
-
-    Screen:
+        screen_manager: screen_manager
+        screen_main_menu: screen_main_menu
+       
+    ScreenMainMenu:
+        id: screen_main_menu
         name: 'screen_main_menu'
-        ScreenMainMenu:
-            id: screen_main_menu
-            screen_manager: screen_manager
+        screen_manager: screen_manager
 
-    Screen:
+    ScreenPipeSetting:
+        id: screen_pipe_setting
         name: 'screen_pipe_setting'
-        ScreenPipeSetting:
-            id: screen_pipe_setting
-            screen_manager: screen_manager
-
-    Screen:
+        screen_manager: screen_manager
+       
+    ScreenMachineSetting:
+        id: screen_machine_setting
         name: 'screen_machine_setting'
-        ScreenMachineSetting:
-            id: screen_machine_setting
-            screen_manager: screen_manager
+        screen_manager: screen_manager
 
-    Screen:
+    ScreenAdvancedSetting:
+        id: screen_advanced_setting
         name: 'screen_advanced_setting'
-        ScreenAdvancedSetting:
-            id: screen_advanced_setting
-            screen_manager: screen_manager
+        screen_manager: screen_manager
 
-    Screen:
+    ScreenOperateManual:
+        id: screen_operate_manual
         name: 'screen_operate_manual'
-        ScreenOperateManual:
-            id: screen_operate_manual
-            screen_manager: screen_manager
+        screen_manager: screen_manager
 
-    Screen:
+    ScreenOperateAuto:
+        id: screen_operate_auto
         name: 'screen_operate_auto'
-        ScreenOperateAuto:
-            id: screen_operate_auto
-            screen_manager: screen_manager
+        screen_manager: screen_manager
 
-    Screen:
+    ScreenCompile:
+        id: screen_compile
         name: 'screen_compile'
-        ScreenCompile:
-            id: screen_compile
-            screen_manager: screen_manager
+        screen_manager: screen_manager
                   

@@ -1,13 +1,13 @@
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.config import Config
+from kivy.logger import Logger
 from kivy.core.window import Window
-from kivymd.uix.boxlayout import MDBoxLayout
+from kivy.uix.screenmanager import ScreenManager
+from kivymd.uix.screen import MDScreen
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.app import MDApp
 from kivymd.toast import toast
-from kivy.properties import ObjectProperty
-from kivy.properties import StringProperty
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from pymodbus.client import ModbusTcpClient
 from pymodbus.client import AsyncModbusTcpClient
@@ -16,9 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 import os
-
-modbus_client = ModbusTcpClient('192.168.1.111')
-
 plt.style.use('bmh')
 
 colors = {
@@ -56,6 +53,8 @@ colors = {
         "FlatButtonDown": "#333333",
     },
 }
+
+modbus_client = ModbusTcpClient('192.168.1.111')
 
 val_pipe_length = 6000.0
 val_pipe_diameter = 60.3
@@ -122,14 +121,113 @@ flag_origin_req = False
 
 view_camera = np.array([45, 0, 0])
 
-class ScreenSplash(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    screen_main_menu = ObjectProperty(None)
-    app_window = ObjectProperty(None)
-    
+class ScreenSplash(MDScreen):    
     def __init__(self, **kwargs):
         super(ScreenSplash, self).__init__(**kwargs)
         Clock.schedule_interval(self.update_progress_bar, .01)
+        Clock.schedule_once(self.delayed_init, 5)
+        
+    def delayed_init(self, dt):
+        Clock.schedule_interval(self.regular_update_connection, 10)
+        Clock.schedule_interval(self.regular_display, 1)
+        Clock.schedule_interval(self.regular_get_data, 1)
+
+    def regular_update_connection(self, dt):
+        global flag_conn_stat
+        try:
+            modbus_client.connect()
+            flag_conn_stat = modbus_client.connected
+            modbus_client.close()
+        except Exception as e:
+            toast(e)         
+
+    def regular_get_data(self, dt):
+        global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                flags = modbus_client.read_coils(3072, 4, slave=1) #M0 - M3
+                flag_mode = flags[0]
+                flag_run = flags[1]
+                flag_alarm = flags[2]
+                flag_reset = flags[3]
+                # flag_mode, flag_run, flag_alarm, flag_reset = flags
+                modbus_client.close()
+        except:
+            toast("error communication to PLC Slave")  
+
+    def regular_display(self, dt):   
+        global flag_mode, flag_run, flag_alarm, flag_reset
+
+        try:
+            screenMainMenu = self.screen_manager.get_screen('screen_main_menu')
+            screenPipeSetting = self.screen_manager.get_screen('screen_pipe_setting')
+            screenMachineSetting = self.screen_manager.get_screen('screen_machine_setting')
+            screenAdvancedSetting = self.screen_manager.get_screen('screen_advanced_setting')
+            screenOperateManual = self.screen_manager.get_screen('screen_operate_manual')
+            screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
+            screenCompile = self.screen_manager.get_screen('screen_compile')
+
+            if flag_conn_stat:
+                screenMainMenu.ids.comm_status.text = "Status: Connected"
+                screenMainMenu.ids.comm_status.color = "#196BA5"
+                screenPipeSetting.ids.comm_status.text = "Status: Connected"
+                screenPipeSetting.ids.comm_status.color = "#196BA5"
+                screenMachineSetting.ids.comm_status.text = "Status: Connected"
+                screenMachineSetting.ids.comm_status.color = "#196BA5"                        
+                screenAdvancedSetting.ids.comm_status.text = "Status: Connected"
+                screenAdvancedSetting.ids.comm_status.color = "#196BA5"  
+                screenOperateManual.ids.comm_status.text = "Status: Connected"
+                screenOperateManual.ids.comm_status.color = "#196BA5"  
+                screenOperateAuto.ids.comm_status.text = "Status: Connected"
+                screenOperateAuto.ids.comm_status.color = "#196BA5"  
+                screenCompile.ids.comm_status.text = "Status: Connected"
+                screenCompile.ids.comm_status.color = "#196BA5"  
+
+            else:
+                screenMainMenu.ids.comm_status.text = "Status: Disconnected"
+                screenMainMenu.ids.comm_status.color = "#ee2222"
+                screenPipeSetting.ids.comm_status.text = "Status: Disconnected"
+                screenPipeSetting.ids.comm_status.color = "#ee2222"
+                screenMachineSetting.ids.comm_status.text = "Status: Disconnected"
+                screenMachineSetting.ids.comm_status.color = "#ee2222"
+                screenAdvancedSetting.ids.comm_status.text = "Status: Disconnected"
+                screenAdvancedSetting.ids.comm_status.color = "#ee2222"
+                screenOperateManual.ids.comm_status.text = "Status: Disconnected"
+                screenOperateManual.ids.comm_status.color = "#ee2222"
+                screenOperateAuto.ids.comm_status.text = "Status: Disconnected"
+                screenOperateAuto.ids.comm_status.color = "#ee2222"
+                screenCompile.ids.comm_status.text = "Status: Disconnected"
+                screenCompile.ids.comm_status.color = "#ee2222"
+            
+            if not flag_mode:
+                screenOperateManual.ids.bt_mode.md_bg_color = "#196BA5"
+                screenOperateManual.ids.bt_mode.text = "MANUAL MODE"
+                screenOperateAuto.ids.bt_mode.md_bg_color = "#196BA5"
+                screenOperateAuto.ids.bt_mode.text = "MANUAL MODE"
+            else:
+                screenOperateManual.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateManual.ids.bt_mode.text = "AUTO MODE"
+                screenOperateAuto.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
+
+            if flag_run:
+                screenOperateAuto.ids.bt_run.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.bt_run.md_bg_color = "#223322"
+
+            if not flag_alarm:
+                screenOperateAuto.ids.bt_alarm.md_bg_color = "#ee2222"
+            else:
+                screenOperateAuto.ids.bt_alarm.md_bg_color = "#332222"
+
+            if not flag_reset:
+                screenOperateAuto.ids.bt_reset.md_bg_color = "#2222ee"
+            else:
+                screenOperateAuto.ids.bt_reset.md_bg_color = "#222233"
+
+        except Exception as e:
+            Logger.error(e)
 
     def update_progress_bar(self, *args):
         if (self.ids.progress_bar.value + 1) < 100:
@@ -147,49 +245,9 @@ class ScreenSplash(MDBoxLayout):
             self.screen_manager.current = 'screen_main_menu'
             return False
         
-class ScreenMainMenu(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    modbus_client_async = AsyncModbusTcpClient
-    
+class ScreenMainMenu(MDScreen):    
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
-        self.scrOpManual = ScreenOperateManual()
-        Clock.schedule_once(self.delayed_init, 5)
-        
-    def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat
-
-        try:
-            modbus_client.connect()
-            flag_conn_stat = modbus_client.connected
-            modbus_client.close()
-        except:
-            toast("error communication to PLC Slave")
-        
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
-        
-        # try:
-        #     modbus_client.connect()
-        #     modbus_client.write_coils(1536, [True, True, True, True, True, True, True, True], slave=1)
-
-        #     modbus_client.write_coils(1536, [False, False, False, False, True, True, True, True], slave=1)
-
-        #     modbus_client.write_coils(1536, [False, False, False, False, False, False, False, False], slave=1)
-
-        #     reading_coil = modbus_client.read_coils(1536, 8, slave=1)
-        #     print(reading_coil.bits)
-        #     modbus_client.close()
-        # except:
-        #     toast("error communication to PLC Slave")
-        
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -215,10 +273,7 @@ class ScreenMainMenu(MDBoxLayout):
         # os.system("shutdown -h now")
 
 
-class ScreenPipeSetting(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenPipeSetting(MDScreen):
     def __init__(self, **kwargs):
         super(ScreenPipeSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
@@ -233,16 +288,6 @@ class ScreenPipeSetting(MDBoxLayout):
         self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
 
         self.update_graph()
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
 
     def update(self):
         global val_pipe_length
@@ -360,10 +405,7 @@ class ScreenPipeSetting(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
-class ScreenMachineSetting(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenMachineSetting(MDScreen):
     def __init__(self, **kwargs):
         super(ScreenMachineSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
@@ -389,18 +431,9 @@ class ScreenMachineSetting(MDBoxLayout):
         self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
         self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
 
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-
-    def regular_comm_slave(self, dt):
+    def update(self):
         global flag_conn_stat
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
 
-    async def update(self):
         global val_machine_eff_length
         global val_machine_supp_pos
         global val_machine_clamp_front_delay
@@ -422,9 +455,8 @@ class ScreenMachineSetting(MDBoxLayout):
         val_machine_die_radius = float(self.ids.input_machine_die_radius.text)
 
         try:
-            await modbus_client.connect()
-
             if flag_conn_stat:
+                modbus_client.connect()
                 modbus_client.write_register(2512, int(val_machine_eff_length), slave=1) #V2000
                 modbus_client.write_register(2513, int(val_machine_supp_pos), slave=1) #V2001
                 modbus_client.write_register(2514, int(val_machine_clamp_front_delay), slave=1) #V2002
@@ -434,10 +466,10 @@ class ScreenMachineSetting(MDBoxLayout):
                 modbus_client.write_register(2518, int(val_machine_collet_clamp_delay), slave=1) #V2006
                 modbus_client.write_register(2519, int(val_machine_collet_open_delay), slave=1) #V2007
                 modbus_client.write_register(2520, int(val_machine_die_radius), slave=1) #V2008
+                modbus_client.close()
             else:
                 toast("PLC Slave is not connected")  
 
-            modbus_client.close()
         except:
             toast("error send machine_setting data to PLC Slave")    
 
@@ -482,10 +514,7 @@ class ScreenMachineSetting(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
-class ScreenAdvancedSetting(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenAdvancedSetting(MDScreen):
     def __init__(self, **kwargs):
         super(ScreenAdvancedSetting, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
@@ -522,19 +551,10 @@ class ScreenAdvancedSetting(MDBoxLayout):
         self.ids.input_advanced_max_bend.text = str(val_advanced_max_bend)
         self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
         self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
+           
+    def update(self):
+        global modbus_client
 
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat        
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
-            
-    async def update(self):
         global val_advanced_pipe_head
         global val_advanced_start_mode
         global val_advanced_first_line
@@ -568,9 +588,8 @@ class ScreenAdvancedSetting(MDBoxLayout):
         val_advanced_press_stop_angle = float(self.ids.input_advanced_press_stop_angle.text)
 
         try:
-            await modbus_client.connect()
-
             if flag_conn_stat:
+                modbus_client.connect()
                 modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
                 modbus_client.write_register(2523, val_advanced_start_mode, slave=1) #V2011
                 modbus_client.write_register(2524, val_advanced_first_line, slave=1) #V2012
@@ -586,10 +605,9 @@ class ScreenAdvancedSetting(MDBoxLayout):
                 modbus_client.write_register(2534, int(val_advanced_max_bend), slave=1) #V2022
                 modbus_client.write_register(2535, int(val_advanced_press_start_angle), slave=1) #V2023
                 modbus_client.write_register(2536, int(val_advanced_press_stop_angle), slave=1) #V2024
+                modbus_client.close()
             else:
                 toast("PLC Slave is not connected")  
-
-            modbus_client.close()
         except:
             toast("error send machine_setting data to PLC Slave") 
 
@@ -616,48 +634,20 @@ class ScreenAdvancedSetting(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
-class ScreenOperateManual(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenOperateManual(MDScreen):
     def __init__(self, **kwargs):      
         super(ScreenOperateManual, self).__init__(**kwargs)
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
         global val_feed_set, val_bend_set, val_turn_set
-        global flag_mode
-
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-        Clock.schedule_interval(self.regular_mode_check, 1)
 
         self.ids.input_operate_feed.text = str(val_feed_set)
         self.ids.input_operate_bend.text = str(val_bend_set)
         self.ids.input_operate_turn.text = str(val_turn_set)
 
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat
-
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
-
-    def regular_mode_check(self, dt):
-        global flag_mode
-
-        if not flag_mode:
-            self.ids.bt_mode.md_bg_color = "#196BA5"
-            self.ids.bt_mode.text = "MANUAL MODE"
-        else:
-            self.ids.bt_mode.md_bg_color = "#ee2222"
-            self.ids.bt_mode.text = "AUTO MODE"
-
     def exec_mode(self):
-        global flag_mode
+        global flag_conn_stat, flag_mode
 
         if flag_mode:
             flag_mode = False
@@ -665,14 +655,15 @@ class ScreenOperateManual(MDBoxLayout):
             flag_mode = True
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3072, flag_mode, slave=1) #M0
-            modbus_client.close()
-        except:
-            toast("error send flag_mode data to PLC Slave") 
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3072, flag_mode, slave=1) #M0
+                modbus_client.close()
+        except Exception as e:
+            toast(e) 
 
     def exec_press(self):
-        global flag_cylinder_press
+        global flag_conn_stat, flag_cylinder_press
 
         if flag_cylinder_press:
             flag_cylinder_press = False
@@ -682,14 +673,15 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.bt_press.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3082, flag_cylinder_press, slave=1) #M10
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3082, flag_cylinder_press, slave=1) #M10
+                modbus_client.close()
         except:
             toast("error send flag_cylinder_press data to PLC Slave") 
 
     def exec_clamp(self):
-        global flag_cylinder_clamp
+        global flag_conn_stat, flag_cylinder_clamp
 
         if flag_cylinder_clamp:
             flag_cylinder_clamp = False
@@ -699,14 +691,15 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.bt_clamp.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3083, flag_cylinder_clamp, slave=1) #M11
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3083, flag_cylinder_clamp, slave=1) #M11
+                modbus_client.close()
         except:
             toast("error send flag_cylinder_clamp data to PLC Slave") 
 
     def exec_table_up(self):
-        global flag_cylinder_table_up
+        global flag_conn_stat, flag_cylinder_table_up
 
         if flag_cylinder_table_up:
             flag_cylinder_table_up = False
@@ -716,14 +709,15 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.bt_table_up.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3084, flag_cylinder_table_up, slave=1) #M12
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3084, flag_cylinder_table_up, slave=1) #M12
+                modbus_client.close()
         except:
             toast("error send flag_cylinder_table_up data to PLC Slave") 
 
     def exec_table_shift(self):
-        global flag_cylinder_table_shift
+        global flag_conn_stat, flag_cylinder_table_shift
 
         if flag_cylinder_table_shift:
             flag_cylinder_table_shift = False
@@ -733,15 +727,15 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.bt_table_shift.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3085, flag_cylinder_table_shift, slave=1) #M13
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3085, flag_cylinder_table_shift, slave=1) #M13
+                modbus_client.close()
         except:
             toast("error send flag_cylinder_table_shift data to PLC Slave") 
 
     def exec_jog_enable(self):
-        global flag_jog_enable
-
+        global flag_conn_stat, flag_jog_enable
         if flag_jog_enable:
             flag_jog_enable = False
             self.ids.bt_jog_enable.md_bg_color = "#196BA5"
@@ -750,39 +744,44 @@ class ScreenOperateManual(MDBoxLayout):
             self.ids.bt_jog_enable.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3092, flag_jog_enable, slave=1) #M20
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3092, flag_jog_enable, slave=1) #M20
+                modbus_client.close()
         except:
             toast("error send flag_jog_enable data to PLC Slave")  
 
     def stop_jog(self):
+        global flag_conn_stat
         try:
-            modbus_client.connect()
-            modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
+                modbus_client.close()
         except:
             toast("error send stop_jog data to PLC Slave")  
 
     def exec_jog_feed_p(self):
-        global flag_jog_req_feed
+        global flag_conn_stat, flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3093, True, slave=1) #M21
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3093, True, slave=1) #M21
+                modbus_client.close()
         except:
             toast("error send exec_jog_feed_p data to PLC Slave")  
 
     def exec_jog_feed_n(self):
-        global flag_jog_req_feed
+        global flag_conn_stat, flag_jog_req_feed
         flag_jog_req_feed = True
         self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3094, True, slave=1) #M22
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3094, True, slave=1) #M22
+                modbus_client.close()
         except:
             toast("error send exec_jog_feed_n data to PLC Slave")     
 
@@ -794,24 +793,26 @@ class ScreenOperateManual(MDBoxLayout):
         self.stop_jog()
 
     def exec_jog_bend_p(self):
-        global flag_jog_req_bend
+        global flag_conn_stat, flag_jog_req_bend
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3095, True, slave=1) #M23
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3095, True, slave=1) #M23
+                modbus_client.close()
         except:
             toast("error send exec_jog_bend_p data to PLC Slave")  
 
     def exec_jog_bend_n(self):
-        global flag_jog_req_bend
+        global flag_conn_stat, flag_jog_req_bend
         flag_jog_req_bend = True
         self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3096, True, slave=1) #M24
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3096, True, slave=1) #M24
+                modbus_client.close()
         except:
             toast("error send exec_jog_bend_n data to PLC Slave")  
 
@@ -823,24 +824,26 @@ class ScreenOperateManual(MDBoxLayout):
         self.stop_jog()
 
     def exec_jog_turn_p(self):
-        global flag_jog_req_turn
+        global flag_conn_stat, flag_jog_req_turn
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3097, True, slave=1) #M25
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3097, True, slave=1) #M25
+                modbus_client.close()
         except:
             toast("error send exec_jog_turn_p data to PLC Slave")  
 
     def exec_jog_turn_n(self):
-        global flag_jog_req_turn
+        global flag_conn_stat, flag_jog_req_turn
         flag_jog_req_turn = True
         self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3098, True, slave=1) #M26
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3098, True, slave=1) #M26
+                modbus_client.close()
         except:
             toast("error send exec_jog_turn_n data to PLC Slave")  
 
@@ -852,7 +855,7 @@ class ScreenOperateManual(MDBoxLayout):
         self.stop_jog()
 
     def exec_operate_feed(self):
-        global flag_operate_req_feed
+        global flag_conn_stat, flag_operate_req_feed
         global val_feed_set
 
         flag_operate_req_feed = True
@@ -860,29 +863,29 @@ class ScreenOperateManual(MDBoxLayout):
         val_feed_set = float(self.ids.input_operate_feed.text)
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
-            modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
-            msg = f'send data {int(val_feed_set)}'
-            toast(msg)
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+                modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
+                modbus_client.close()
         except:
             toast("error send exec_operate_feed and val_operate_feed data to PLC Slave") 
 
     def stop_operate_feed(self):
-        global flag_operate_req_feed
+        global flag_conn_stat, flag_operate_req_feed
         flag_operate_req_feed = False
         self.ids.bt_operate_feed.md_bg_color = "#196BA5"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
+                modbus_client.close()
         except:
             toast("error send stop_operate_feed data to PLC Slave") 
 
     def exec_operate_bend(self):
-        global flag_operate_req_bend
+        global flag_conn_stat, flag_operate_req_bend
         global val_bend_set
 
         flag_operate_req_bend = True
@@ -890,29 +893,29 @@ class ScreenOperateManual(MDBoxLayout):
         val_bend_set = float(self.ids.input_operate_bend.text)
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
-            modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
-            msg = f'send data {int(val_bend_set)}'
-            toast(msg)
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+                modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
+                modbus_client.close()
         except:
             toast("error send exec_operate_bend and val_operate_bend data to PLC Slave") 
 
     def stop_operate_bend(self):
-        global flag_operate_req_bend
+        global flag_conn_stat, flag_operate_req_bend
         flag_operate_req_bend = False
         self.ids.bt_operate_bend.md_bg_color = "#196BA5"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
+                modbus_client.close()
         except:
             toast("error send stop_operate_bend data to PLC Slave") 
 
     def exec_operate_turn(self):
-        global flag_operate_req_turn
+        global flag_conn_stat, flag_operate_req_turn
         global val_turn_set
 
         flag_operate_req_turn = True
@@ -920,48 +923,50 @@ class ScreenOperateManual(MDBoxLayout):
         val_turn_set = float(self.ids.input_operate_turn.text)
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
-            modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
-            msg = f'send data {int(val_turn_set)}'
-            toast(msg)
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+                modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
+                modbus_client.close()
         except:
             toast("error send exec_operate_turn and val_operate_turn data to PLC Slave")
 
     def stop_operate_turn(self):
-        global flag_operate_req_turn
+        global flag_conn_stat, flag_operate_req_turn
         flag_operate_req_turn = False
         self.ids.bt_operate_turn.md_bg_color = "#196BA5"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+                modbus_client.close()
         except:
             toast("error send stop_operate_turn data to PLC Slave")
 
     def exec_origin(self):
-        global flag_origin_req
+        global flag_conn_stat, flag_origin_req
         flag_origin_req = True
         self.ids.bt_origin.md_bg_color = "#ee2222"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+                modbus_client.close()
         except:
             toast("error send flag_origin_req data to PLC Slave")
 
     def stop_origin(self):
-        global flag_origin_req
+        global flag_conn_stat, flag_origin_req
         flag_origin_req = False
         self.ids.bt_origin.md_bg_color = "#196BA5"
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+                modbus_client.close()
         except:
             toast("error send flag_origin_req data to PLC Slave")
 
@@ -991,56 +996,14 @@ class ScreenOperateManual(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
-class ScreenOperateAuto(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenOperateAuto(MDScreen):
     def __init__(self, **kwargs):       
         super(ScreenOperateAuto, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
-        Clock.schedule_once(self.delayed_init)
+        Clock.schedule_once(self.delayed_init, 5)
 
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-        Clock.schedule_interval(self.regular_mode_check, 1)
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat
-
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
-
-    def regular_mode_check(self, dt):
-        global flag_mode
-        global flag_run
-        global flag_alarm
-        global flag_reset
-
-        if not flag_mode:
-            self.ids.bt_mode.md_bg_color = "#196BA5"
-            self.ids.bt_mode.text = "MANUAL MODE"
-        else:
-            self.ids.bt_mode.md_bg_color = "#ee2222"
-            self.ids.bt_mode.text = "AUTO MODE"
-
-        if not flag_run:
-            self.ids.bt_run.md_bg_color = "#22ee22"
-        else:
-            self.ids.bt_run.md_bg_color = "#ee2222"
-
-        if not flag_alarm:
-            self.ids.bt_alarm.md_bg_color = "#22ee22"
-        else:
-            self.ids.bt_alarm.md_bg_color = "#ee2222"
-
-        if not flag_reset:
-            self.ids.bt_reset.md_bg_color = "#22ee22"
-        else:
-            self.ids.bt_reset.md_bg_color = "#ee2222"
+        self.reload()
 
     def update_view(self, direction):
         global view_camera
@@ -1093,7 +1056,7 @@ class ScreenOperateAuto(MDBoxLayout):
             toast("error open file")
 
     def exec_mode(self):
-        global flag_mode
+        global flag_conn_stat, flag_mode
 
         if flag_mode:
             flag_mode = False
@@ -1101,9 +1064,10 @@ class ScreenOperateAuto(MDBoxLayout):
             flag_mode = True
 
         try:
-            modbus_client.connect()
-            modbus_client.write_coil(3072, flag_mode, slave=1) #M0
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3072, flag_mode, slave=1) #M0
+                modbus_client.close()
         except:
             toast("error send flag_mode data to PLC Slave") 
                     
@@ -1245,26 +1209,10 @@ class ScreenOperateAuto(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
-class ScreenCompile(MDBoxLayout):
-    screen_manager = ObjectProperty(None)
-    global modbus_client
-
+class ScreenCompile(MDScreen):
     def __init__(self, **kwargs):
         super(ScreenCompile, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
-        Clock.schedule_once(self.delayed_init)
-
-    def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_comm_slave, 10)
-
-    def regular_comm_slave(self, dt):
-        global flag_conn_stat        
-        if flag_conn_stat:
-            self.ids.comm_status.text = "Status: Connected"
-            self.ids.comm_status.color = "#196BA5"
-        else:
-            self.ids.comm_status.text = "Status: Disconnected"
-            self.ids.comm_status.color = "#ee2222"
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -1293,14 +1241,9 @@ class ScreenCompile(MDBoxLayout):
             toast("error open file")
 
     def update_data(self):
-        global val_pipe_length
-        global val_pipe_diameter
-        global val_pipe_thickness
-
-        global val_feed_step
-        global val_bend_step
-        global val_turn_step
-        
+        global flag_conn_stat
+        global val_pipe_length, val_pipe_diameter, val_pipe_thickness
+        global val_feed_step, val_bend_step, val_turn_step
         global data_base_process
 
         val_feed_step = data_base_process[0,:]
@@ -1348,11 +1291,12 @@ class ScreenCompile(MDBoxLayout):
         self.ids.input_step_turn9.text = str(val_turn_step[9]) 
 
         try:
-            modbus_client.connect()
-            modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
-            modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
-            modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
-            modbus_client.close()
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
+                modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
+                modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
+                modbus_client.close()
         except:
             toast("error send setpoint feed, bend, turn data for all steps to PLC Slave") 
 
@@ -1437,7 +1381,6 @@ class ScreenCompile(MDBoxLayout):
         try:
             self.update()
             
-
             for i in range(0,9):
                 data_base_process[0,i] = val_feed_step[i]
                 data_base_process[1,i] = val_bend_step[i]
@@ -1640,6 +1583,9 @@ class ScreenCompile(MDBoxLayout):
         toast("shutting down system")
         # os.system("shutdown -h 1")
 
+class RootScreen(ScreenManager):
+    pass
+
 class PipeBendingCNCApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -1655,10 +1601,8 @@ class PipeBendingCNCApp(MDApp):
         # Window.size = 450, 720
         # Window.allow_screensaver = True
 
-        screen = Builder.load_file('main.kv')
-
-        return screen
-
+        Builder.load_file('main.kv')
+        return RootScreen()
 
 if __name__ == '__main__':
     PipeBendingCNCApp().run()
