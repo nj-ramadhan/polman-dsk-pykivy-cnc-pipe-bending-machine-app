@@ -142,7 +142,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_feed_p()
-							on_release: root.stop_jog_feed()
+							on_release: root.end_jog_feed()
 
 						MDFillRoundFlatButton:
 							id: bt_jog_bend_p
@@ -150,7 +150,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_bend_p()
-							on_release: root.stop_jog_bend()
+							on_release: root.end_jog_bend()
 
 						MDFillRoundFlatButton:
 							id: bt_jog_turn_p
@@ -158,7 +158,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_turn_p()
-							on_release: root.stop_jog_turn()
+							on_release: root.end_jog_turn()
 
 						MDFillRoundFlatButton:
 							id: bt_jog_feed_n
@@ -166,7 +166,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_feed_n()
-							on_release: root.stop_jog_feed()
+							on_release: root.end_jog_feed()
 
 						MDFillRoundFlatButton:
 							id: bt_jog_bend_n
@@ -174,7 +174,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_bend_n()
-							on_release: root.stop_jog_bend()
+							on_release: root.end_jog_bend()
 
 						MDFillRoundFlatButton:
 							id: bt_jog_turn_n
@@ -182,7 +182,7 @@
 							font_style: 'Button'
 							size_hint_x: 0.3
 							on_press: root.exec_jog_turn_n()
-							on_release: root.stop_jog_turn()
+							on_release: root.end_jog_turn()
 
 					MDFillRoundFlatButton:
 						id: bt_jog_enable
@@ -197,7 +197,7 @@
 						font_style: 'Button'
 						size_hint_x: 1
 						on_press: root.exec_origin()
-						on_release: root.stop_origin()
+						on_release: root.end_origin()
 
 					MDFillRoundFlatButton:
 						id: bt_reset
@@ -205,7 +205,7 @@
 						font_style: 'Button'
 						size_hint_x: 1
 						on_press: root.exec_reset()
-						on_release: root.stop_reset()
+						on_release: root.end_reset()
 
 				MDGridLayout:
 					cols:2
@@ -225,7 +225,7 @@
 						font_style: 'Button'
 						size_hint_x: 0.2
 						on_press: root.exec_operate_feed()
-						on_release: root.stop_operate_feed()
+						on_release: root.end_operate_feed()
 
 					MDTextField:
 						id: input_operate_bend
@@ -239,7 +239,7 @@
 						font_style: 'Button'
 						size_hint_x: 0.2
 						on_press: root.exec_operate_bend()
-						on_release: root.stop_operate_bend()
+						on_release: root.end_operate_bend()
 
 					MDTextField:
 						id: input_operate_turn
@@ -253,7 +253,7 @@
 						font_style: 'Button'
 						size_hint_x: 0.2
 						on_press: root.exec_operate_turn()
-						on_release: root.stop_operate_turn()
+						on_release: root.end_operate_turn()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:

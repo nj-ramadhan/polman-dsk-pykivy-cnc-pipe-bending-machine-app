@@ -140,7 +140,7 @@
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.15
+				size_hint_y: 0.05
 				spacing:20
 
 				MDIconButton:
@@ -165,29 +165,38 @@
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.15
+				size_hint_y: 0.05
 				spacing:20
 
 				MDFillRoundFlatIconButton:
-					id: bt_run
-					text: "RUN"
+					id: bt_start
+					text: "START"
 					font_style: 'Button'
-					size_hint_x: 0.5
-					on_press: root.exec_run()
+					size_hint_x: 0.3
+					on_press: root.exec_start()
+					on_release: root.end_start()
+
+				MDFillRoundFlatIconButton:
+					id: bt_stop
+					text: "STOP"
+					font_style: 'Button'
+					size_hint_x: 0.3
+					on_press: root.exec_stop()
+					on_release: root.end_stop()
 
 				MDFillRoundFlatIconButton:
 					id: bt_reset
 					text: "RESET"
 					font_style: 'Button'
-					size_hint_x: 0.5
+					size_hint_x: 0.3
 					on_press: root.exec_reset()
-					on_release: root.stop_reset()
+					on_release: root.end_reset()
 
 			MDGridLayout:
 				cols:3
 				spacing:20
 				padding: 20
-				size_hint_y: 0.34
+				size_hint_y: 0.27
 
 				MDLabel:
 					text: "Realtime Feeding Data"
