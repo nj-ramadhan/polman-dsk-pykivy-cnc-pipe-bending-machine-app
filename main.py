@@ -212,19 +212,16 @@ class ScreenSplash(MDScreen):
                 screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
 
             if flag_run:
-                screenOperateAuto.ids.bt_run.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.bt_run.text = "STOP"
+                screenOperateAuto.ids.lp_run.md_bg_color = "#22ee22"
             else:
-                screenOperateAuto.ids.bt_run.md_bg_color = "#223322"
+                screenOperateAuto.ids.bt_run.text = "RUN"
+                screenOperateAuto.ids.lp_run.md_bg_color = "#223322"
 
             if not flag_alarm:
-                screenOperateAuto.ids.bt_alarm.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.lp_alarm.md_bg_color = "#ee2222"
             else:
-                screenOperateAuto.ids.bt_alarm.md_bg_color = "#332222"
-
-            if not flag_reset:
-                screenOperateAuto.ids.bt_reset.md_bg_color = "#2222ee"
-            else:
-                screenOperateAuto.ids.bt_reset.md_bg_color = "#222233"
+                screenOperateAuto.ids.lp_alarm.md_bg_color = "#332222"
 
         except Exception as e:
             Logger.error(e)
@@ -970,6 +967,32 @@ class ScreenOperateManual(MDScreen):
         except:
             toast("error send flag_origin_req data to PLC Slave")
 
+    def exec_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = True
+        self.ids.bt_reset.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
+        except:
+            toast("error send flag_reset data to PLC Slave")
+
+    def stop_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = False
+        self.ids.bt_reset.md_bg_color = "#196BA5"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
+        except:
+            toast("error send flag_reset data to PLC Slave")
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -1054,6 +1077,26 @@ class ScreenOperateAuto(MDScreen):
             self.file_manager.close()
         except:
             toast("error open file")
+    
+    def send_data(self):
+        global val_feed_step
+        global val_bend_step
+        global val_turn_step
+
+        global data_base_process
+
+        val_feed_step = data_base_process[0,:]
+        val_bend_step = data_base_process[1,:] 
+        val_turn_step = data_base_process[2,:] 
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
+                modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
+                modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
+                modbus_client.close()
+        except Exception as e:
+            toast(e) 
 
     def exec_mode(self):
         global flag_conn_stat, flag_mode
@@ -1068,9 +1111,52 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.connect()
                 modbus_client.write_coil(3072, flag_mode, slave=1) #M0
                 modbus_client.close()
+        except Exception as e:
+            toast(e) 
+
+    def exec_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = True
+        self.ids.bt_reset.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
         except:
-            toast("error send flag_mode data to PLC Slave") 
-                    
+            toast("error send flag_reset data to PLC Slave")
+
+    def stop_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = False
+        self.ids.bt_reset.md_bg_color = "#196BA5"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
+        except:
+            toast("error send flag_reset data to PLC Slave")
+
+    def exec_run(self):
+        global flag_conn_stat, flag_run
+
+        if flag_run:
+            flag_run = False
+            
+        else:
+            flag_run = True          
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3073, flag_run, slave=1) #M1
+                modbus_client.close()
+        except:
+            toast("error send flag_run data to PLC Slave") 
+
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter

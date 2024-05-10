@@ -140,26 +140,20 @@
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.3
+				size_hint_y: 0.15
 				spacing:20
 
 				MDIconButton:
-					id: bt_run
+					id: lp_run
 					text: " "
 					font_style: 'Button'
-					size_hint_x: 0.3
+					size_hint_x: 0.5
 
 				MDIconButton:
-					id: bt_alarm
+					id: lp_alarm
 					text: " "
 					font_style: 'Button'
-					size_hint_x: 0.3
-
-				MDIconButton:
-					id: bt_reset
-					text: " "
-					font_style: 'Button'
-					size_hint_x: 0.3
+					size_hint_x: 0.5
 
 			MDFillRoundFlatButton:
 				id: bt_mode
@@ -168,6 +162,26 @@
 				size_hint_x: 1
 				size_hint_y: 0.03
 				on_press: root.exec_mode()
+
+			MDBoxLayout:
+				orientation: "horizontal"
+				size_hint_y: 0.15
+				spacing:20
+
+				MDFillRoundFlatIconButton:
+					id: bt_run
+					text: "RUN"
+					font_style: 'Button'
+					size_hint_x: 0.5
+					on_press: root.exec_run()
+
+				MDFillRoundFlatIconButton:
+					id: bt_reset
+					text: "RESET"
+					font_style: 'Button'
+					size_hint_x: 0.5
+					on_press: root.exec_reset()
+					on_release: root.stop_reset()
 
 			MDGridLayout:
 				cols:3
