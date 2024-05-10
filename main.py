@@ -143,6 +143,7 @@ class ScreenSplash(MDScreen):
 
     def regular_get_data(self, dt):
         global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset
+        flags = [False, False, False, False]
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -153,8 +154,9 @@ class ScreenSplash(MDScreen):
                 flag_reset = flags[3]
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
                 modbus_client.close()
-        except:
-            toast("error communication to PLC Slave")  
+        except Exception as e:
+            msg = f'{e}'
+            toast(msg)  
 
     def regular_display(self, dt):   
         global flag_mode, flag_run, flag_alarm, flag_reset
@@ -922,7 +924,7 @@ class ScreenOperateManual(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+                modbus_client.write_coil(3101, flag_operate_req_turn, slave=1) #M29
                 modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
                 modbus_client.close()
         except:
@@ -936,7 +938,7 @@ class ScreenOperateManual(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3101, flag_operate_req_bend, slave=1) #M29
+                modbus_client.write_coil(3101, flag_operate_req_turn, slave=1) #M29
                 modbus_client.close()
         except:
             toast("error send stop_operate_turn data to PLC Slave")
