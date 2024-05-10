@@ -23,7 +23,7 @@ client.connect()
 # client.write_coil(1536, False)
 # client.write_coil(1537, False)
 # client.write_coil(1538, False)
-# reading_coil = client.read_coils(1536, 8, slave=1)
-# print(reading_coil.bits)
-client.write_register(512, 1000, slave=1) #V0
+reading_coil = client.read_coils(1536, 8, slave=1)
+print(reading_coil.bits)
+# client.write_register(512, 1000, slave=1) #V0
 client.close()
