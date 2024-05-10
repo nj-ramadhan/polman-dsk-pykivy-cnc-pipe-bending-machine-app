@@ -148,10 +148,10 @@ class ScreenSplash(MDScreen):
             if flag_conn_stat:
                 modbus_client.connect()
                 flags = modbus_client.read_coils(3072, 4, slave=1) #M0 - M3
-                flag_mode = flags[0]
-                flag_run = flags[1]
-                flag_alarm = flags[2]
-                flag_reset = flags[3]
+                flag_mode = flags.bits[0]
+                flag_run = flags.bits[1]
+                flag_alarm = flags.bits[2]
+                flag_reset = flags.bits[3]
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
                 modbus_client.close()
         except Exception as e:
