@@ -1122,17 +1122,17 @@ class ScreenOperateAuto(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                # modbus_client.write_register(3523, int(val_feed_step[0]), slave=1) #V3011
-                # modbus_client.write_register(3553, int(val_bend_step[0]), slave=1) #V3011
-                # modbus_client.write_register(3583, int(val_turn_step[0]), slave=1) #V3011
+                modbus_client.write_register(3523, int(val_feed_step[0]), slave=1) #V3011
+                modbus_client.write_register(3553, int(val_bend_step[0]), slave=1) #V3011
+                modbus_client.write_register(3583, int(val_turn_step[0]), slave=1) #V3011
 
-                # modbus_client.write_register(3524, int(val_feed_step[1]), slave=1) #V3011
-                # modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
-                # modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
+                modbus_client.write_register(3524, int(val_feed_step[1]), slave=1) #V3011
+                modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
+                modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
 
-                modbus_client.write_registers(3523, int(val_feed_step), slave=1) #V3011
-                modbus_client.write_registers(3553, int(val_bend_step), slave=1) #V3041
-                modbus_client.write_registers(3583, int(val_turn_step), slave=1) #V3071
+                # modbus_client.write_registers(3523, 10, int(val_feed_step), slave=1) #V3011
+                # modbus_client.write_registers(3553, 10, int(val_bend_step), slave=1) #V3041
+                # modbus_client.write_registers(3583, 10, int(val_turn_step), slave=1) #V3071
                 modbus_client.close()
         except Exception as e:
             toast(e) 
