@@ -137,7 +137,7 @@ class ScreenSplash(MDScreen):
     def delayed_init(self, dt):
         Clock.schedule_interval(self.regular_update_connection, 10)
         Clock.schedule_interval(self.regular_display, 1)
-        Clock.schedule_interval(self.regular_highspeed_display, 0.2)
+        Clock.schedule_interval(self.regular_highspeed_display, 0.5)
         Clock.schedule_interval(self.regular_get_data, 1)
 
     def regular_update_connection(self, dt):
@@ -152,6 +152,7 @@ class ScreenSplash(MDScreen):
     def regular_get_data(self, dt):
         global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset, flag_jog_enable
         flags = [False, False, False, False]
+        jog_flags = [False]
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -161,7 +162,8 @@ class ScreenSplash(MDScreen):
                 flag_alarm = flags.bits[2]
                 flag_reset = flags.bits[3]
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
-                flag_jog_enable = modbus_client.read_coils(3092, 1, slave=1) #M20
+                jog_flags = modbus_client.read_coils(3092, 1, slave=1) #M20
+                flag_jog_enable = jog_flags.bits[0]
                 modbus_client.close()
         except Exception as e:
             msg = f'{e}'
@@ -1099,11 +1101,13 @@ class ScreenOperateAuto(MDScreen):
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
             data_base_process = data_set.T
             self.update_graph()
+            self.send_data()
 
             self.manager_open = False
             self.file_manager.close()
         except:
-            toast("error open file")
+            # toast("error open file")
+            self.file_manager.close()
     
     def send_data(self):
         global val_feed_step
@@ -1118,9 +1122,17 @@ class ScreenOperateAuto(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
-                modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
-                modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
+                # modbus_client.write_register(3523, int(val_feed_step[0]), slave=1) #V3011
+                # modbus_client.write_register(3553, int(val_bend_step[0]), slave=1) #V3011
+                # modbus_client.write_register(3583, int(val_turn_step[0]), slave=1) #V3011
+
+                # modbus_client.write_register(3524, int(val_feed_step[1]), slave=1) #V3011
+                # modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
+                # modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
+
+                modbus_client.write_registers(3523, int(val_feed_step), slave=1) #V3011
+                modbus_client.write_registers(3553, int(val_bend_step), slave=1) #V3041
+                modbus_client.write_registers(3583, int(val_turn_step), slave=1) #V3071
                 modbus_client.close()
         except Exception as e:
             toast(e) 
@@ -1371,6 +1383,7 @@ class ScreenCompile(MDScreen):
             self.file_manager.close()
         except:
             toast("error open file")
+            self.file_manager.close()
 
     def update_text_data(self):
         global flag_conn_stat
