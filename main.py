@@ -113,6 +113,8 @@ flag_reset = False
 
 flag_cylinder_press = False
 flag_cylinder_clamp = False
+flag_cylinder_chuck = False
+flag_cylinder_mandrell = False
 flag_cylinder_table_up = False
 flag_cylinder_table_shift = False
 
@@ -800,6 +802,42 @@ class ScreenOperateManual(MDScreen):
         except:
             toast("error send flag_cylinder_clamp data to PLC Slave") 
 
+    def exec_chuck(self):
+        global flag_conn_stat, flag_cylinder_chuck
+
+        if flag_cylinder_chuck:
+            flag_cylinder_chuck = False
+            self.ids.bt_chuck.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_chuck = True
+            self.ids.bt_chuck.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3084, flag_cylinder_chuck, slave=1) #M12
+                modbus_client.close()
+        except:
+            toast("error send flag_cylinder_chuck data to PLC Slave") 
+
+    def exec_mandrell(self):
+        global flag_conn_stat, flag_cylinder_mandrell
+
+        if flag_cylinder_mandrell:
+            flag_cylinder_mandrell = False
+            self.ids.bt_mandrell.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_mandrell = True
+            self.ids.bt_mandrell.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3085, flag_cylinder_mandrell, slave=1) #M13
+                modbus_client.close()
+        except:
+            toast("error send flag_cylinder_mandrell data to PLC Slave") 
+
     def exec_table_up(self):
         global flag_conn_stat, flag_cylinder_table_up
 
@@ -813,7 +851,7 @@ class ScreenOperateManual(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3084, flag_cylinder_table_up, slave=1) #M12
+                modbus_client.write_coil(3086, flag_cylinder_table_up, slave=1) #M14
                 modbus_client.close()
         except:
             toast("error send flag_cylinder_table_up data to PLC Slave") 
@@ -831,7 +869,7 @@ class ScreenOperateManual(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3085, flag_cylinder_table_shift, slave=1) #M13
+                modbus_client.write_coil(3087, flag_cylinder_table_shift, slave=1) #M15
                 modbus_client.close()
         except:
             toast("error send flag_cylinder_table_shift data to PLC Slave") 
