@@ -99,11 +99,11 @@ val_bend_step = np.zeros(10)
 val_turn_step = np.zeros(10)
 data_base_process = np.zeros([3, 10])
 
-conf_feed_speed_step = np.zeros(10)
-conf_bend_speed_step = np.zeros(10)
-conf_turn_speed_step = np.zeros(10)
+conf_feed_speed_step = np.ones(10)
+conf_bend_speed_step = np.ones(10)
+conf_turn_speed_step = np.ones(10)
 conf_bed_pos_step = np.zeros(10)
-data_base_config = np.zeros([4, 10])
+data_base_config = np.ones([4, 10])
 
 flag_conn_stat = False
 flag_mode = False
@@ -151,16 +151,16 @@ class ScreenSplash(MDScreen):
 
     def regular_get_data(self, dt):
         global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset, flag_jog_enable
-        flags = [False, False, False, False]
+        operate_flags = [False, False, False, False]
         jog_flags = [False]
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                flags = modbus_client.read_coils(3072, 4, slave=1) #M0 - M3
-                flag_mode = flags.bits[0]
-                flag_run = flags.bits[1]
-                flag_alarm = flags.bits[2]
-                flag_reset = flags.bits[3]
+                operate_flags = modbus_client.read_coils(3072, 4, slave=1) #M0 - M3
+                flag_mode = operate_flags.bits[0]
+                flag_run = operate_flags.bits[1]
+                flag_alarm = operate_flags.bits[2]
+                flag_reset = operate_flags.bits[3]
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
                 jog_flags = modbus_client.read_coils(3092, 1, slave=1) #M20
                 flag_jog_enable = jog_flags.bits[0]
@@ -171,6 +171,7 @@ class ScreenSplash(MDScreen):
 
     def regular_display(self, dt):   
         global flag_mode, flag_run, flag_alarm, flag_reset
+        global conf_bed_pos_step
 
         try:
             screenMainMenu = self.screen_manager.get_screen('screen_main_menu')
@@ -233,6 +234,76 @@ class ScreenSplash(MDScreen):
                 screenOperateAuto.ids.lp_alarm.md_bg_color = "#ee2222"
             else:
                 screenOperateAuto.ids.lp_alarm.md_bg_color = "#332222"
+            
+            if conf_bed_pos_step[0] != 1:
+                screenCompile.ids.bt_bed_pos0.text = "DN"
+                screenCompile.ids.bt_bed_pos0.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos0.text = "UP"
+                screenCompile.ids.bt_bed_pos0.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[1] != 1:
+                screenCompile.ids.bt_bed_pos1.text = "DN"
+                screenCompile.ids.bt_bed_pos1.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos1.text = "UP"
+                screenCompile.ids.bt_bed_pos1.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[2] != 1:
+                screenCompile.ids.bt_bed_pos2.text = "DN"
+                screenCompile.ids.bt_bed_pos2.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos2.text = "UP"
+                screenCompile.ids.bt_bed_pos2.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[3] != 1:
+                screenCompile.ids.bt_bed_pos3.text = "DN"
+                screenCompile.ids.bt_bed_pos3.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos3.text = "UP"
+                screenCompile.ids.bt_bed_pos3.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[4] != 1:
+                screenCompile.ids.bt_bed_pos4.text = "DN"
+                screenCompile.ids.bt_bed_pos4.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos4.text = "UP"
+                screenCompile.ids.bt_bed_pos4.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[5] != 1:
+                screenCompile.ids.bt_bed_pos5.text = "DN"
+                screenCompile.ids.bt_bed_pos5.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos5.text = "UP"
+                screenCompile.ids.bt_bed_pos5.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[6] != 1:
+                screenCompile.ids.bt_bed_pos6.text = "DN"
+                screenCompile.ids.bt_bed_pos6.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos6.text = "UP"
+                screenCompile.ids.bt_bed_pos6.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[7] != 1:
+                screenCompile.ids.bt_bed_pos7.text = "DN"
+                screenCompile.ids.bt_bed_pos7.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos7.text = "UP"
+                screenCompile.ids.bt_bed_pos7.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[8] != 1:
+                screenCompile.ids.bt_bed_pos8.text = "DN"
+                screenCompile.ids.bt_bed_pos8.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos8.text = "UP"
+                screenCompile.ids.bt_bed_pos8.md_bg_color = "#ee2222"
+
+            if conf_bed_pos_step[9] != 1:
+                screenCompile.ids.bt_bed_pos9.text = "DN"
+                screenCompile.ids.bt_bed_pos9.md_bg_color = "#196BA5"
+            else:
+                screenCompile.ids.bt_bed_pos9.text = "UP"
+                screenCompile.ids.bt_bed_pos9.md_bg_color = "#ee2222"
 
         except Exception as e:
             Logger.error(e)
@@ -242,10 +313,14 @@ class ScreenSplash(MDScreen):
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.read_holding_registers(3512, int(val_feed_present), slave=1) #V3000
-                modbus_client.read_holding_registers(3542, int(val_bend_present), slave=1) #V3030
-                modbus_client.read_holding_registers(3572, int(val_turn_present), slave=1) #V3060
+                register_feed = modbus_client.read_holding_registers(3512, 1, slave=1) #V3000
+                register_bend = modbus_client.read_holding_registers(3542, 1, slave=1) #V3030
+                register_turn = modbus_client.read_holding_registers(3572, 1, slave=1) #V3060
                 modbus_client.close()
+            
+            val_feed_present = int(register_feed.registers)
+            val_bend_present = int(register_bend.registers)
+            val_turn_present = int(register_turn.registers)
 
             screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
 
@@ -1082,8 +1157,9 @@ class ScreenOperateAuto(MDScreen):
 
     def reload(self):
         global data_base_process
-        print(data_base_process)
+        
         self.update_graph()
+        self.send_data()
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -1100,13 +1176,12 @@ class ScreenOperateAuto(MDScreen):
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
             data_base_process = data_set.T
-            self.update_graph()
-            self.send_data()
+            self.reload()
 
             self.manager_open = False
             self.file_manager.close()
         except:
-            # toast("error open file")
+            toast("error open file")
             self.file_manager.close()
     
     def send_data(self):
@@ -1119,97 +1194,29 @@ class ScreenOperateAuto(MDScreen):
         val_feed_step = data_base_process[0,:]
         val_bend_step = data_base_process[1,:] 
         val_turn_step = data_base_process[2,:] 
+
+        list_val_feed_step = val_feed_step.tolist()
+        list_val_bend_step = val_bend_step.tolist()
+        list_val_turn_step = val_turn_step.tolist()
+
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_register(3523, int(val_feed_step[0]), slave=1) #V3011
-                modbus_client.write_register(3553, int(val_bend_step[0]), slave=1) #V3011
-                modbus_client.write_register(3583, int(val_turn_step[0]), slave=1) #V3011
+                # modbus_client.write_register(3523, int(val_feed_step[0]), slave=1) #V3011
+                # modbus_client.write_register(3553, int(val_bend_step[0]), slave=1) #V3011
+                # modbus_client.write_register(3583, int(val_turn_step[0]), slave=1) #V3011
 
-                modbus_client.write_register(3524, int(val_feed_step[1]), slave=1) #V3011
-                modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
-                modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
+                # modbus_client.write_register(3524, int(val_feed_step[1]), slave=1) #V3011
+                # modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
+                # modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
 
-                # modbus_client.write_registers(3523, 10, int(val_feed_step), slave=1) #V3011
-                # modbus_client.write_registers(3553, 10, int(val_bend_step), slave=1) #V3041
-                # modbus_client.write_registers(3583, 10, int(val_turn_step), slave=1) #V3071
+                modbus_client.write_registers(3523, list_val_feed_step, slave=1) #V3011
+                modbus_client.write_registers(3553, list_val_bend_step, slave=1) #V3041
+                modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
                 modbus_client.close()
         except Exception as e:
             toast(e) 
-
-    def exec_mode(self):
-        global flag_conn_stat, flag_mode
-
-        if flag_mode:
-            flag_mode = False
-        else:
-            flag_mode = True
-
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_coil(3072, flag_mode, slave=1) #M0
-                modbus_client.close()
-        except Exception as e:
-            toast(e) 
-
-    def exec_reset(self):
-        global flag_conn_stat, flag_reset
-        flag_reset = True
-        self.ids.bt_reset.md_bg_color = "#ee2222"
-
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
-                modbus_client.close()
-        except:
-            toast("error send flag_reset data to PLC Slave")
-
-    def end_reset(self):
-        global flag_conn_stat, flag_reset
-        flag_reset = False
-        self.ids.bt_reset.md_bg_color = "#196BA5"
-
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
-                modbus_client.close()
-        except:
-            toast("error send flag_reset data to PLC Slave")
-
-    def exec_start(self):
-        global flag_conn_stat, flag_run
-        flag_run = True
-        self.ids.bt_start.md_bg_color = "#ee2222"
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_coil(3073, flag_run, slave=1) #M1
-                modbus_client.close()
-        except:
-            toast("error send flag_run data to PLC Slave") 
-
-    def end_start(self):
-        self.ids.bt_start.md_bg_color = "#196BA5"
-
-
-    def exec_stop(self):
-        global flag_conn_stat, flag_run
-        flag_run = False
-        self.ids.bt_stop.md_bg_color = "#ee2222"
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_coil(3073, flag_run, slave=1) #M1
-                modbus_client.close()
-        except:
-            toast("error send flag_run data to PLC Slave") 
-
-    def end_stop(self):
-        self.ids.bt_stop.md_bg_color = "#196BA5"
-
+            
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter
@@ -1322,6 +1329,105 @@ class ScreenOperateAuto(MDScreen):
 
         return Xf, Yf, Zf
     
+    def exec_mode(self):
+        global flag_conn_stat, flag_mode
+
+        if flag_mode:
+            flag_mode = False
+        else:
+            flag_mode = True
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3072, flag_mode, slave=1) #M0
+                modbus_client.close()
+        except Exception as e:
+            toast(e) 
+
+    def exec_start(self):
+        global flag_conn_stat, flag_run
+        flag_run = True
+        self.ids.bt_start.md_bg_color = "#ee2222"
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3073, flag_run, slave=1) #M1
+                modbus_client.close()
+        except:
+            toast("error send flag_run data to PLC Slave") 
+
+    def end_start(self):
+        self.ids.bt_start.md_bg_color = "#196BA5"
+
+
+    def exec_stop(self):
+        global flag_conn_stat, flag_run
+        flag_run = False
+        self.ids.bt_stop.md_bg_color = "#ee2222"
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3073, flag_run, slave=1) #M1
+                modbus_client.close()
+        except:
+            toast("error send flag_run data to PLC Slave") 
+
+    def end_stop(self):
+        self.ids.bt_stop.md_bg_color = "#196BA5"
+
+    def exec_origin(self):
+        global flag_conn_stat, flag_origin_req
+        flag_origin_req = True
+        self.ids.bt_origin.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+                modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
+
+    def end_origin(self):
+        global flag_conn_stat, flag_origin_req
+        flag_origin_req = False
+        self.ids.bt_origin.md_bg_color = "#196BA5"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3102, flag_origin_req, slave=1) #M30
+                modbus_client.close()
+        except:
+            toast("error send flag_origin_req data to PLC Slave")
+
+    def exec_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = True
+        self.ids.bt_reset.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
+        except:
+            toast("error send flag_reset data to PLC Slave")
+
+    def end_reset(self):
+        global flag_conn_stat, flag_reset
+        flag_reset = False
+        self.ids.bt_reset.md_bg_color = "#196BA5"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3075, flag_reset, slave=1) #M3
+                modbus_client.close()
+        except:
+            toast("error send flag_reset data to PLC Slave")
+    
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -1350,8 +1456,16 @@ class ScreenOperateAuto(MDScreen):
 
 class ScreenCompile(MDScreen):
     def __init__(self, **kwargs):
+        global data_base_config
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
+
         super(ScreenCompile, self).__init__(**kwargs)
         self.file_manager = MDFileManager(exit_manager=self.exit_manager, select_path=self.select_path)
+        for i in range(0,9):
+            data_base_config[0,i] = conf_feed_speed_step[i]
+            data_base_config[1,i] = conf_bend_speed_step[i]
+            data_base_config[2,i] = conf_turn_speed_step[i]
+            data_base_config[3,i] = conf_bed_pos_step[i]
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser(os.getcwd() + "\data"))  # output manager to the screen
@@ -1372,17 +1486,18 @@ class ScreenCompile(MDScreen):
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
             data_base_load = data_set.T
-            data_base_process = data_base_load[:,3]
-            data_base_config = data_base_load[:,-3]
+            data_base_process = data_base_load[:3,:]
+            data_base_config = data_base_load[3:,:]
+
             self.update_text_data()
             self.update_text_config()
-
-            print(data_base_load.T)
+            self.update_graph()
 
             self.manager_open = False
             self.file_manager.close()
-        except:
+        except Exception as e:
             toast("error open file")
+            print(e)
             self.file_manager.close()
 
     def update_text_data(self):
@@ -1445,32 +1560,55 @@ class ScreenCompile(MDScreen):
         conf_turn_speed_step = data_base_config[2,:] 
         conf_bed_pos_step = data_base_config[3,:] 
     
-        self.ids.bt_feed_speed_step0.text = str(conf_feed_speed_step[0])
-        self.ids.bt_bend_speed_step0.text = str(conf_bend_speed_step[0])
-        self.ids.bt_turn_speed_step0.text = str(conf_turn_speed_step[0])
-        self.ids.bt_bed_pos0.text = "UP" if conf_bed_pos_step[0] == 1 else "DOWN"
+        self.ids.bt_feed_speed_step0.text = str(int(conf_feed_speed_step[0]))
+        self.ids.bt_bend_speed_step0.text = str(int(conf_bend_speed_step[0]))
+        self.ids.bt_turn_speed_step0.text = str(int(conf_turn_speed_step[0]))
+        self.ids.bt_bed_pos0.text = "UP" if conf_bed_pos_step[0] == 1 else "DN"
 
-        self.ids.bt_feed_speed_step1.text = str(conf_feed_speed_step[1])
-        self.ids.bt_bend_speed_step1.text = str(conf_bend_speed_step[1])
-        self.ids.bt_turn_speed_step1.text = str(conf_turn_speed_step[1])
-        self.ids.bt_bed_pos1.text = "UP" if conf_bed_pos_step[1] == 1 else "DOWN"
+        self.ids.bt_feed_speed_step1.text = str(int(conf_feed_speed_step[1]))
+        self.ids.bt_bend_speed_step1.text = str(int(conf_bend_speed_step[1]))
+        self.ids.bt_turn_speed_step1.text = str(int(conf_turn_speed_step[1]))
+        self.ids.bt_bed_pos1.text = "UP" if conf_bed_pos_step[1] == 1 else "DN"
 
-        self.ids.bt_feed_speed_step2.text = str(conf_feed_speed_step[2])
-        self.ids.bt_bend_speed_step2.text = str(conf_bend_speed_step[2])
-        self.ids.bt_turn_speed_step2.text = str(conf_turn_speed_step[2])
-        self.ids.bt_bed_pos2.text = "UP" if conf_bed_pos_step[2] == 1 else "DOWN"
+        self.ids.bt_feed_speed_step2.text = str(int(conf_feed_speed_step[2]))
+        self.ids.bt_bend_speed_step2.text = str(int(conf_bend_speed_step[2]))
+        self.ids.bt_turn_speed_step2.text = str(int(conf_turn_speed_step[2]))
+        self.ids.bt_bed_pos2.text = "UP" if conf_bed_pos_step[2] == 1 else "DN"
 
-        try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                modbus_client.write_registers(3523, val_feed_step, slave=1) #V3011
-                modbus_client.write_registers(3553, val_bend_step, slave=1) #V3041
-                modbus_client.write_registers(3583, val_turn_step, slave=1) #V3071
-                modbus_client.close()
-        except:
-            toast("error send setpoint feed, bend, turn data for all steps to PLC Slave") 
+        self.ids.bt_feed_speed_step3.text = str(int(conf_feed_speed_step[3]))
+        self.ids.bt_bend_speed_step3.text = str(int(conf_bend_speed_step[3]))
+        self.ids.bt_turn_speed_step3.text = str(int(conf_turn_speed_step[3]))
+        self.ids.bt_bed_pos3.text = "UP" if conf_bed_pos_step[3] == 1 else "DN"
 
-        self.update_graph()
+        self.ids.bt_feed_speed_step4.text = str(int(conf_feed_speed_step[4]))
+        self.ids.bt_bend_speed_step4.text = str(int(conf_bend_speed_step[4]))
+        self.ids.bt_turn_speed_step4.text = str(int(conf_turn_speed_step[4]))
+        self.ids.bt_bed_pos4.text = "UP" if conf_bed_pos_step[4] == 1 else "DN"
+
+        self.ids.bt_feed_speed_step5.text = str(int(conf_feed_speed_step[5]))
+        self.ids.bt_bend_speed_step5.text = str(int(conf_bend_speed_step[5]))
+        self.ids.bt_turn_speed_step5.text = str(int(conf_turn_speed_step[5]))
+        self.ids.bt_bed_pos5.text = "UP" if conf_bed_pos_step[5] == 1 else "DN"
+
+        self.ids.bt_feed_speed_step6.text = str(int(conf_feed_speed_step[6]))
+        self.ids.bt_bend_speed_step6.text = str(int(conf_bend_speed_step[6]))
+        self.ids.bt_turn_speed_step6.text = str(int(conf_turn_speed_step[6]))
+        self.ids.bt_bed_pos6.text = "UP" if conf_bed_pos_step[6] == 1 else "DN"
+
+        self.ids.bt_feed_speed_step7.text = str(int(conf_feed_speed_step[7]))
+        self.ids.bt_bend_speed_step7.text = str(int(conf_bend_speed_step[7]))
+        self.ids.bt_turn_speed_step7.text = str(int(conf_turn_speed_step[7]))
+        self.ids.bt_bed_pos7.text = "UP" if conf_bed_pos_step[7] == 1 else "DN"
+
+        self.ids.bt_feed_speed_step8.text = str(int(conf_feed_speed_step[8]))
+        self.ids.bt_bend_speed_step8.text = str(int(conf_bend_speed_step[8]))
+        self.ids.bt_turn_speed_step8.text = str(int(conf_turn_speed_step[8]))
+        self.ids.bt_bed_pos8.text = "UP" if conf_bed_pos_step[8] == 1 else "DN"
+
+        self.ids.bt_feed_speed_step9.text = str(int(conf_feed_speed_step[9]))
+        self.ids.bt_bend_speed_step9.text = str(int(conf_bend_speed_step[9]))
+        self.ids.bt_turn_speed_step9.text = str(int(conf_turn_speed_step[9]))
+        self.ids.bt_bed_pos9.text = "UP" if conf_bed_pos_step[9] == 1 else "DN"
 
     def update_view(self, direction):
         global view_camera
@@ -1534,57 +1672,97 @@ class ScreenCompile(MDScreen):
         val_feed_step[9] = float(self.ids.input_feed_step9.text)
         val_bend_step[9] = float(self.ids.input_bend_step9.text)
         val_turn_step[9] = float(self.ids.input_turn_step9.text)
-    
+   
     def update_config(self):
         conf_feed_speed_step[0] = int(self.ids.input_feed_speed_step0.text)
         conf_bend_speed_step[0] = int(self.ids.input_bend_speed_step0.text)
         conf_turn_speed_step[0] = int(self.ids.input_turn_speed_step0.text)
+        conf_bed_pos_step[0] = 1 if self.ids.bt_bed_pos0.text == "UP" else 0
+
+        conf_feed_speed_step[1] = int(self.ids.input_feed_speed_step1.text)
+        conf_bend_speed_step[1] = int(self.ids.input_bend_speed_step1.text)
+        conf_turn_speed_step[1] = int(self.ids.input_turn_speed_step1.text)
+        conf_bed_pos_step[1] = 1 if self.ids.bt_bed_pos1.text == "UP" else 0
+
+        conf_feed_speed_step[2] = int(self.ids.input_feed_speed_step2.text)
+        conf_bend_speed_step[2] = int(self.ids.input_bend_speed_step2.text)
+        conf_turn_speed_step[2] = int(self.ids.input_turn_speed_step2.text)
+        conf_bed_pos_step[2] = 1 if self.ids.bt_bed_pos2.text == "UP" else 0
+
+        conf_feed_speed_step[3] = int(self.ids.input_feed_speed_step3.text)
+        conf_bend_speed_step[3] = int(self.ids.input_bend_speed_step3.text)
+        conf_turn_speed_step[3] = int(self.ids.input_turn_speed_step3.text)
+        conf_bed_pos_step[3] = 1 if self.ids.bt_bed_pos3.text == "UP" else 0
+
+        conf_feed_speed_step[4] = int(self.ids.input_feed_speed_step4.text)
+        conf_bend_speed_step[4] = int(self.ids.input_bend_speed_step4.text)
+        conf_turn_speed_step[4] = int(self.ids.input_turn_speed_step4.text)
+        conf_bed_pos_step[4] = 1 if self.ids.bt_bed_pos4.text == "UP" else 0
+
+        conf_feed_speed_step[5] = int(self.ids.input_feed_speed_step5.text)
+        conf_bend_speed_step[5] = int(self.ids.input_bend_speed_step5.text)
+        conf_turn_speed_step[5] = int(self.ids.input_turn_speed_step5.text)
+        conf_bed_pos_step[5] = 1 if self.ids.bt_bed_pos5.text == "UP" else 0
+
+        conf_feed_speed_step[6] = int(self.ids.input_feed_speed_step6.text)
+        conf_bend_speed_step[6] = int(self.ids.input_bend_speed_step6.text)
+        conf_turn_speed_step[6] = int(self.ids.input_turn_speed_step6.text)
+        conf_bed_pos_step[6] = 1 if self.ids.bt_bed_pos6.text == "UP" else 0
+
+        conf_feed_speed_step[7] = int(self.ids.input_feed_speed_step7.text)
+        conf_bend_speed_step[7] = int(self.ids.input_bend_speed_step7.text)
+        conf_turn_speed_step[7] = int(self.ids.input_turn_speed_step7.text)
+        conf_bed_pos_step[7] = 1 if self.ids.bt_bed_pos7.text == "UP" else 0
+
+        conf_feed_speed_step[8] = int(self.ids.input_feed_speed_step8.text)
+        conf_bend_speed_step[8] = int(self.ids.input_bend_speed_step8.text)
+        conf_turn_speed_step[8] = int(self.ids.input_turn_speed_step8.text)
+        conf_bed_pos_step[8] = 1 if self.ids.bt_bed_pos8.text == "UP" else 0
+
+        conf_feed_speed_step[9] = int(self.ids.input_feed_speed_step9.text)
+        conf_bend_speed_step[9] = int(self.ids.input_bend_speed_step9.text)
+        conf_turn_speed_step[9] = int(self.ids.input_turn_speed_step9.text)
+        conf_bed_pos_step[9] = 1 if self.ids.bt_bed_pos9.text == "UP" else 0
 
     def choice_speed(self, movement, number):
         global flag_conn_stat
-        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step
         global data_base_config
 
-        if conf_feed_speed_step[0] > 4:
-            conf_feed_speed_step[0] = 0
-        if conf_bend_speed_step[0] > 4:
-            conf_bend_speed_step[0] = 0
-        if conf_turn_speed_step[0] > 4:
-            conf_turn_speed_step[0] = 0    
-
         if(movement=="feed"):
-            if(number==0):
-                if conf_feed_speed_step[0] <= 4:
-                    conf_feed_speed_step[0] += 1
-                    self.ids.bt_feed_speed_step0.text = str(conf_feed_speed_step[0])
+            for i in range(0,10):
+                if(number==i):
+                    if conf_feed_speed_step[i] <= 5:
+                        conf_feed_speed_step[i] += 1
 
         if(movement=="bend"):
-            if(number==0):
-                if conf_bend_speed_step[0] <= 4:
-                    conf_bend_speed_step[0] += 1
-                    self.ids.bt_bend_speed_step0.text = str(conf_bend_speed_step[0])
+            for i in range(0,10):
+                if(number==i):
+                    if conf_bend_speed_step[i] <= 5:
+                        conf_bend_speed_step[i] += 1
 
         if(movement=="turn"):
-            if(number==0):
-                if conf_turn_speed_step[0] <= 4:
-                    conf_turn_speed_step[0] += 1
-                    self.ids.bt_turn_speed_step0.text = str(conf_turn_speed_step[0])
-                    
-      
-        print(movement, number)
+            for i in range(0,10):
+                if(number==i):
+                    if conf_turn_speed_step[i] <= 5:
+                        conf_turn_speed_step[i] += 1
+
+        conf_feed_speed_step[conf_feed_speed_step > 5] = 1
+        conf_bend_speed_step[conf_bend_speed_step > 5] = 1
+        conf_turn_speed_step[conf_turn_speed_step > 5] = 1
+
+        self.update_text_config()
 
     def choice_bed(self, number):
         global flag_conn_stat
-        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
-        global data_base_config        
-        if(number==0):
-            if conf_bed_pos_step[0] == 1:
-                conf_bed_pos_step[0] = False
-                self.ids.bt_bed_pos0.md_bg_color = "#196BA5"
-            else:
-                conf_bed_pos_step[0] = True
-                self.ids.bt_bed_pos0.md_bg_color = "#ee2222"
-        print(number)
+        global conf_bed_pos_step
+        global data_base_config 
+        for i in range (0,10):       
+            if(number==i):
+                if conf_bed_pos_step[i] == 1:
+                    conf_bed_pos_step[i] = 0
+                else:
+                    conf_bed_pos_step[i] = 1
 
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
@@ -1773,12 +1951,14 @@ class ScreenCompile(MDScreen):
             else:
                 disk = cwd + name_file
             print(disk)
-            data_base_save = data_base_process + data_base_config
+            data_base_save = np.vstack((data_base_process, data_base_config))
+            print(data_base_save)
             with open(disk,"wb") as f:
                 np.savetxt(f, data_base_save.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm] \t Feed Speed \t Bend Speed \t Plane Speed \t Bed Pos")
             print("sucessfully save data")
             toast("sucessfully save data")
-        except:
+        except Exception as e:
+            print(e)
             print("error saving data")
             toast("error saving data")
                 
