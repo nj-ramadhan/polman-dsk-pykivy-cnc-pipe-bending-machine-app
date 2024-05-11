@@ -159,29 +159,56 @@
 			MDBoxLayout:
 				orientation: "horizontal"
 				size_hint_y: 0.05
+				spacing: 20
+
 				MDLabel:
 					text: "Step No."
 					font_style: 'Body1'
+					size_hint_x: 0.05
 
 				MDLabel:
 					text: "Offset Length"
 					font_style: 'Body1'
-				
+					size_hint_x: 0.25
+
+				MDLabel:
+					text: "Feed Speed"
+					font_style: 'Body1'
+					size_hint_x: 0.05
+
 				MDLabel:
 					text: "Bending Angle"
 					font_style: 'Body1'
-				
+					size_hint_x: 0.25
+
+				MDLabel:
+					text: "Bend Speed"
+					font_style: 'Body1'
+					size_hint_x: 0.05
+
 				MDLabel:
 					text: "Turning Angle"
 					font_style: 'Body1'
+					size_hint_x: 0.25
+
+				MDLabel:
+					text: "Turn Speed"
+					font_style: 'Body1'
+					size_hint_x: 0.05
+
+				MDLabel:
+					text: "Bed Pos"
+					font_style: 'Body1'
+					size_hint_x: 0.1
 
 			MDScrollView:
 				id: layout_parameter_input
 				size_hint_y: 0.4
 				
 				MDGridLayout:
-					cols: 4
+					cols: 8
 					padding: 20
+					spacing: 20, 0
 					size_hint_y: None
 					height: self.minimum_height
 					width: self.minimum_width
@@ -191,273 +218,534 @@
 					MDLabel:
 						text: "1"
 						font_style: 'Body1'
+						size_hint_x: 0.05
 
 					MDTextField:
-						id: input_step_length0
+						id: input_feed_step0
 						hint_text: "Offset Length 1"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+						# size_hint_x: 0.23
+
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step0
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 0)
+						# size_hint_x: 0.05
 
 					MDTextField:
-						id: input_step_bend0
+						id: input_bend_step0
 						hint_text: "Bending Angle 1"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+						# size_hint_x: 0.23
+
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step0
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 0)
+						# size_hint_x: 0.05
 
 					MDTextField:
-						id: input_step_turn0
+						id: input_turn_step0
 						hint_text: "Turning Angle 1"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+						# size_hint_x: 0.23
 
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step0
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 0)
+						# size_hint_x: 0.05
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos0
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(0)
+						# size_hint_x: 0.05
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "2"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length1
+						id: input_feed_step1
 						hint_text: "Offset Length 2"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step1
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 1)
+
 					MDTextField:
-						id: input_step_bend1
+						id: input_bend_step1
 						hint_text: "Bending Angle 2"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step1
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 1)
+
 					MDTextField:
-						id: input_step_turn1
+						id: input_turn_step1
 						hint_text: "Turning Angle 2"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step1
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 1)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos1
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(1)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "3"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length2
+						id: input_feed_step2
 						hint_text: "Offset Length 3"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step2
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 2)
+
 					MDTextField:
-						id: input_step_bend2
+						id: input_bend_step2
 						hint_text: "Bending Angle 3"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step2
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 2)
+
 					MDTextField:
-						id: input_step_turn2
+						id: input_turn_step2
 						hint_text: "Turning Angle 3"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step2
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 2)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos2
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(2)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "4"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length3
+						id: input_feed_step3
 						hint_text: "Offset Length 4"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step3
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 3)
+
 					MDTextField:
-						id: input_step_bend3
+						id: input_bend_step3
 						hint_text: "Bending Angle 4"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step3
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 3)
+
 					MDTextField:
-						id: input_step_turn3
+						id: input_turn_step3
 						hint_text: "Turning Angle 4"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step3
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 3)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos3
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(3)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "5"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length4
+						id: input_feed_step4
 						hint_text: "Offset Length 5"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step4
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 4)
+
 					MDTextField:
-						id: input_step_bend4
+						id: input_bend_step4
 						hint_text: "Bending Angle 5"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step0
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 4)
+
 					MDTextField:
-						id: input_step_turn4
+						id: input_turn_step4
 						hint_text: "Turning Angle 5"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step4
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 4)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos4
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(4)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "6"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length5
+						id: input_feed_step5
 						hint_text: "Offset Length 6"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step5
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 5)
+
 					MDTextField:
-						id: input_step_bend5
+						id: input_bend_step5
 						hint_text: "Bending Angle 6"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step5
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 5)
+
 					MDTextField:
-						id: input_step_turn5
+						id: input_turn_step5
 						hint_text: "Turning Angle 6"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step5
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 5)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos5
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(5)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "7"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length6
+						id: input_feed_step6
 						hint_text: "Offset Length 7"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step6
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 6)
+
 					MDTextField:
-						id: input_step_bend6
+						id: input_bend_step6
 						hint_text: "Bending Angle 7"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step6
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 6)
+
 					MDTextField:
-						id: input_step_turn6
+						id: input_turn_step6
 						hint_text: "Turning Angle 7"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step6
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 6)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos6
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(6)
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "8"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length7
+						id: input_feed_step7
 						hint_text: "Offset Length 8"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step7
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 7)
+
 					MDTextField:
-						id: input_step_bend7
+						id: input_bend_step7
 						hint_text: "Bending Angle 8"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step7
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 7)
+
 					MDTextField:
-						id: input_step_turn7
+						id: input_turn_step7
 						hint_text: "Turning Angle 8"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step7
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 7)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos7
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(7)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "9"
 						font_style: 'Body1'
+						size_hint_x: 0.05
+
 
 					MDTextField:
-						id: input_step_length8
+						id: input_feed_step8
 						hint_text: "Offset Length 9"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step8
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 8)
 
 					MDTextField:
-						id: input_step_bend8
+						id: input_bend_step8
 						hint_text: "Bending Angle 9"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step8
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 8)
+
 					MDTextField:
-						id: input_step_turn8
+						id: input_turn_step8
 						hint_text: "Turning Angle 9"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
+
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step8
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 8)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos8
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(8)
 
 					# MDBoxLayout:
 					# 	orientation: "horizontal"
 					MDLabel:
 						text: "10"
 						font_style: 'Body1'
+						size_hint_x: 0.05
 
 					MDTextField:
-						id: input_step_length9
+						id: input_feed_step9
 						hint_text: "Offset Length 10"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_feed_speed_step9						
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("feed", 9)
+
 					MDTextField:
-						id: input_step_bend9
+						id: input_bend_step9
 						hint_text: "Bending Angle 10"
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_bend_speed_step9
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("bend", 9)
+
 					MDTextField:
-						id: input_step_turn9
+						id: input_turn_step9
 						hint_text: "Turning Angle 10"
 						font_style: 'Body1'
 						font_style: 'Body1'
 						input_filter: 'float'
 						on_text_validate: root.update()
 
+					MDFillRoundFlatIconButton:
+						id: bt_turn_speed_step9
+						icon: "speedometer"
+						text: "1"
+						on_release: root.choice_speed("turn", 9)
+
+					MDFillRoundFlatIconButton:
+						id: bt_bed_pos5
+						icon: "arrow-expand-vertical"
+						text: "DOWN"
+						on_release: root.choice_bed(9)
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
 			orientation: "horizontal"

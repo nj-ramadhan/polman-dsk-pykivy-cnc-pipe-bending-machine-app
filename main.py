@@ -6,6 +6,7 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.menu import MDDropdownMenu
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
@@ -97,6 +98,12 @@ val_feed_step = np.zeros(10)
 val_bend_step = np.zeros(10)
 val_turn_step = np.zeros(10)
 data_base_process = np.zeros([3, 10])
+
+conf_feed_speed_step = np.zeros(10)
+conf_bend_speed_step = np.zeros(10)
+conf_turn_speed_step = np.zeros(10)
+conf_bed_pos_step = np.zeros(10)
+data_base_config = np.zeros([4, 10])
 
 flag_conn_stat = False
 flag_mode = False
@@ -1348,19 +1355,24 @@ class ScreenCompile(MDScreen):
             toast("error select file path")
 
     def exit_manager(self, *args):
-        global data_base_process
+        global data_base_process, data_base_config
         '''Called when the user reaches the root of the directory tree.'''
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
-            data_base_process = data_set.T
-            self.update_data()
+            data_base_load = data_set.T
+            data_base_process = data_base_load[:,3]
+            data_base_config = data_base_load[:,-3]
+            self.update_text_data()
+            self.update_text_config()
+
+            print(data_base_load.T)
 
             self.manager_open = False
             self.file_manager.close()
         except:
             toast("error open file")
 
-    def update_data(self):
+    def update_text_data(self):
         global flag_conn_stat
         global val_pipe_length, val_pipe_diameter, val_pipe_thickness
         global val_feed_step, val_bend_step, val_turn_step
@@ -1370,45 +1382,70 @@ class ScreenCompile(MDScreen):
         val_bend_step = data_base_process[1,:] 
         val_turn_step = data_base_process[2,:] 
     
-        self.ids.input_step_length0.text = str(val_feed_step[0])
-        self.ids.input_step_bend0.text = str(val_bend_step[0])
-        self.ids.input_step_turn0.text = str(val_turn_step[0])
+        self.ids.input_feed_step0.text = str(val_feed_step[0])
+        self.ids.input_bend_step0.text = str(val_bend_step[0])
+        self.ids.input_turn_step0.text = str(val_turn_step[0])
 
-        self.ids.input_step_length1.text = str(val_feed_step[1])
-        self.ids.input_step_bend1.text = str(val_bend_step[1])
-        self.ids.input_step_turn1.text = str(val_turn_step[1])
+        self.ids.input_feed_step1.text = str(val_feed_step[1])
+        self.ids.input_bend_step1.text = str(val_bend_step[1])
+        self.ids.input_turn_step1.text = str(val_turn_step[1])
 
-        self.ids.input_step_length2.text = str(val_feed_step[2])
-        self.ids.input_step_bend2.text = str(val_bend_step[2])
-        self.ids.input_step_turn2.text = str(val_turn_step[2])
+        self.ids.input_feed_step2.text = str(val_feed_step[2])
+        self.ids.input_bend_step2.text = str(val_bend_step[2])
+        self.ids.input_turn_step2.text = str(val_turn_step[2])
 
-        self.ids.input_step_length3.text = str(val_feed_step[3])
-        self.ids.input_step_bend3.text = str(val_bend_step[3])
-        self.ids.input_step_turn3.text = str(val_turn_step[3])
+        self.ids.input_feed_step3.text = str(val_feed_step[3])
+        self.ids.input_bend_step3.text = str(val_bend_step[3])
+        self.ids.input_turn_step3.text = str(val_turn_step[3])
 
-        self.ids.input_step_length4.text = str(val_feed_step[4])
-        self.ids.input_step_bend4.text = str(val_bend_step[4])
-        self.ids.input_step_turn4.text = str(val_turn_step[4])
+        self.ids.input_feed_step4.text = str(val_feed_step[4])
+        self.ids.input_bend_step4.text = str(val_bend_step[4])
+        self.ids.input_turn_step4.text = str(val_turn_step[4])
 
-        self.ids.input_step_length5.text = str(val_feed_step[5])
-        self.ids.input_step_bend5.text = str(val_bend_step[5])
-        self.ids.input_step_turn5.text = str(val_turn_step[5])
+        self.ids.input_feed_step5.text = str(val_feed_step[5])
+        self.ids.input_bend_step5.text = str(val_bend_step[5])
+        self.ids.input_turn_step5.text = str(val_turn_step[5])
 
-        self.ids.input_step_length6.text = str(val_feed_step[6])
-        self.ids.input_step_bend6.text = str(val_bend_step[6])
-        self.ids.input_step_turn6.text = str(val_turn_step[6])
+        self.ids.input_feed_step6.text = str(val_feed_step[6])
+        self.ids.input_bend_step6.text = str(val_bend_step[6])
+        self.ids.input_turn_step6.text = str(val_turn_step[6])
 
-        self.ids.input_step_length7.text = str(val_feed_step[7])
-        self.ids.input_step_bend7.text = str(val_bend_step[7])
-        self.ids.input_step_turn7.text = str(val_turn_step[7])
+        self.ids.input_feed_step7.text = str(val_feed_step[7])
+        self.ids.input_bend_step7.text = str(val_bend_step[7])
+        self.ids.input_turn_step7.text = str(val_turn_step[7])
 
-        self.ids.input_step_length8.text = str(val_feed_step[8])
-        self.ids.input_step_bend8.text = str(val_bend_step[8])
-        self.ids.input_step_turn8.text = str(val_turn_step[8])
+        self.ids.input_feed_step8.text = str(val_feed_step[8])
+        self.ids.input_bend_step8.text = str(val_bend_step[8])
+        self.ids.input_turn_step8.text = str(val_turn_step[8])
 
-        self.ids.input_step_length9.text = str(val_feed_step[9])
-        self.ids.input_step_bend9.text = str(val_bend_step[9])
-        self.ids.input_step_turn9.text = str(val_turn_step[9]) 
+        self.ids.input_feed_step9.text = str(val_feed_step[9])
+        self.ids.input_bend_step9.text = str(val_bend_step[9])
+        self.ids.input_turn_step9.text = str(val_turn_step[9]) 
+
+    def update_text_config(self):
+        global flag_conn_stat
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
+        global data_base_config
+
+        conf_feed_speed_step = data_base_config[0,:]
+        conf_bend_speed_step = data_base_config[1,:] 
+        conf_turn_speed_step = data_base_config[2,:] 
+        conf_bed_pos_step = data_base_config[3,:] 
+    
+        self.ids.bt_feed_speed_step0.text = str(conf_feed_speed_step[0])
+        self.ids.bt_bend_speed_step0.text = str(conf_bend_speed_step[0])
+        self.ids.bt_turn_speed_step0.text = str(conf_turn_speed_step[0])
+        self.ids.bt_bed_pos0.text = "UP" if conf_bed_pos_step[0] == 1 else "DOWN"
+
+        self.ids.bt_feed_speed_step1.text = str(conf_feed_speed_step[1])
+        self.ids.bt_bend_speed_step1.text = str(conf_bend_speed_step[1])
+        self.ids.bt_turn_speed_step1.text = str(conf_turn_speed_step[1])
+        self.ids.bt_bed_pos1.text = "UP" if conf_bed_pos_step[1] == 1 else "DOWN"
+
+        self.ids.bt_feed_speed_step2.text = str(conf_feed_speed_step[2])
+        self.ids.bt_bend_speed_step2.text = str(conf_bend_speed_step[2])
+        self.ids.bt_turn_speed_step2.text = str(conf_turn_speed_step[2])
+        self.ids.bt_bed_pos2.text = "UP" if conf_bed_pos_step[2] == 1 else "DOWN"
 
         try:
             if flag_conn_stat:
@@ -1445,46 +1482,97 @@ class ScreenCompile(MDScreen):
         self.update_graph(elev, azim, roll)
     
     def update(self):
-        val_feed_step[0] = float(self.ids.input_step_length0.text)
-        val_bend_step[0] = float(self.ids.input_step_bend0.text)
-        val_turn_step[0] = float(self.ids.input_step_turn0.text)
+        val_feed_step[0] = float(self.ids.input_feed_step0.text)
+        val_bend_step[0] = float(self.ids.input_bend_step0.text)
+        val_turn_step[0] = float(self.ids.input_turn_step0.text)
 
-        val_feed_step[1] = float(self.ids.input_step_length1.text)
-        val_bend_step[1] = float(self.ids.input_step_bend1.text)
-        val_turn_step[1] = float(self.ids.input_step_turn1.text)
+        val_feed_step[1] = float(self.ids.input_feed_step1.text)
+        val_bend_step[1] = float(self.ids.input_bend_step1.text)
+        val_turn_step[1] = float(self.ids.input_turn_step1.text)
 
-        val_feed_step[2] = float(self.ids.input_step_length2.text)
-        val_bend_step[2] = float(self.ids.input_step_bend2.text)
-        val_turn_step[2] = float(self.ids.input_step_turn2.text)
+        val_feed_step[2] = float(self.ids.input_feed_step2.text)
+        val_bend_step[2] = float(self.ids.input_bend_step2.text)
+        val_turn_step[2] = float(self.ids.input_turn_step2.text)
 
-        val_feed_step[3] = float(self.ids.input_step_length3.text)
-        val_bend_step[3] = float(self.ids.input_step_bend3.text)
-        val_turn_step[3] = float(self.ids.input_step_turn3.text)
+        val_feed_step[3] = float(self.ids.input_feed_step3.text)
+        val_bend_step[3] = float(self.ids.input_bend_step3.text)
+        val_turn_step[3] = float(self.ids.input_turn_step3.text)
 
-        val_feed_step[4] = float(self.ids.input_step_length4.text)
-        val_bend_step[4] = float(self.ids.input_step_bend4.text)
-        val_turn_step[4] = float(self.ids.input_step_turn4.text)
+        val_feed_step[4] = float(self.ids.input_feed_step4.text)
+        val_bend_step[4] = float(self.ids.input_bend_step4.text)
+        val_turn_step[4] = float(self.ids.input_turn_step4.text)
 
-        val_feed_step[5] = float(self.ids.input_step_length5.text)
-        val_bend_step[5] = float(self.ids.input_step_bend5.text)
-        val_turn_step[5] = float(self.ids.input_step_turn5.text)
+        val_feed_step[5] = float(self.ids.input_feed_step5.text)
+        val_bend_step[5] = float(self.ids.input_bend_step5.text)
+        val_turn_step[5] = float(self.ids.input_turn_step5.text)
 
-        val_feed_step[6] = float(self.ids.input_step_length6.text)
-        val_bend_step[6] = float(self.ids.input_step_bend6.text)
-        val_turn_step[6] = float(self.ids.input_step_turn6.text)
+        val_feed_step[6] = float(self.ids.input_feed_step6.text)
+        val_bend_step[6] = float(self.ids.input_bend_step6.text)
+        val_turn_step[6] = float(self.ids.input_turn_step6.text)
 
-        val_feed_step[7] = float(self.ids.input_step_length7.text)
-        val_bend_step[7] = float(self.ids.input_step_bend7.text)
-        val_turn_step[7] = float(self.ids.input_step_turn7.text)
+        val_feed_step[7] = float(self.ids.input_feed_step7.text)
+        val_bend_step[7] = float(self.ids.input_bend_step7.text)
+        val_turn_step[7] = float(self.ids.input_turn_step7.text)
 
-        val_feed_step[8] = float(self.ids.input_step_length8.text)
-        val_bend_step[8] = float(self.ids.input_step_bend8.text)
-        val_turn_step[8] = float(self.ids.input_step_turn8.text)
+        val_feed_step[8] = float(self.ids.input_feed_step8.text)
+        val_bend_step[8] = float(self.ids.input_bend_step8.text)
+        val_turn_step[8] = float(self.ids.input_turn_step8.text)
 
-        val_feed_step[9] = float(self.ids.input_step_length9.text)
-        val_bend_step[9] = float(self.ids.input_step_bend9.text)
-        val_turn_step[9] = float(self.ids.input_step_turn9.text)
-        
+        val_feed_step[9] = float(self.ids.input_feed_step9.text)
+        val_bend_step[9] = float(self.ids.input_bend_step9.text)
+        val_turn_step[9] = float(self.ids.input_turn_step9.text)
+    
+    def update_config(self):
+        conf_feed_speed_step[0] = int(self.ids.input_feed_speed_step0.text)
+        conf_bend_speed_step[0] = int(self.ids.input_bend_speed_step0.text)
+        conf_turn_speed_step[0] = int(self.ids.input_turn_speed_step0.text)
+
+    def choice_speed(self, movement, number):
+        global flag_conn_stat
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
+        global data_base_config
+
+        if conf_feed_speed_step[0] > 4:
+            conf_feed_speed_step[0] = 0
+        if conf_bend_speed_step[0] > 4:
+            conf_bend_speed_step[0] = 0
+        if conf_turn_speed_step[0] > 4:
+            conf_turn_speed_step[0] = 0    
+
+        if(movement=="feed"):
+            if(number==0):
+                if conf_feed_speed_step[0] <= 4:
+                    conf_feed_speed_step[0] += 1
+                    self.ids.bt_feed_speed_step0.text = str(conf_feed_speed_step[0])
+
+        if(movement=="bend"):
+            if(number==0):
+                if conf_bend_speed_step[0] <= 4:
+                    conf_bend_speed_step[0] += 1
+                    self.ids.bt_bend_speed_step0.text = str(conf_bend_speed_step[0])
+
+        if(movement=="turn"):
+            if(number==0):
+                if conf_turn_speed_step[0] <= 4:
+                    conf_turn_speed_step[0] += 1
+                    self.ids.bt_turn_speed_step0.text = str(conf_turn_speed_step[0])
+                    
+      
+        print(movement, number)
+
+    def choice_bed(self, number):
+        global flag_conn_stat
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step, conf_bed_pos_step
+        global data_base_config        
+        if(number==0):
+            if conf_bed_pos_step[0] == 1:
+                conf_bed_pos_step[0] = False
+                self.ids.bt_bed_pos0.md_bg_color = "#196BA5"
+            else:
+                conf_bed_pos_step[0] = True
+                self.ids.bt_bed_pos0.md_bg_color = "#ee2222"
+        print(number)
+
     def update_graph(self, elev=45, azim=60, roll=0):
         global val_pipe_length
         global val_pipe_diameter
@@ -1620,45 +1708,45 @@ class ScreenCompile(MDScreen):
 
         data_base_process = np.zeros([3, 10])
 
-        self.ids.input_step_length0.text = str(val_feed_step[0])
-        self.ids.input_step_bend0.text = str(val_bend_step[0])
-        self.ids.input_step_turn0.text = str(val_turn_step[0])
+        self.ids.input_feed_step0.text = str(val_feed_step[0])
+        self.ids.input_bend_step0.text = str(val_bend_step[0])
+        self.ids.input_turn_step0.text = str(val_turn_step[0])
 
-        self.ids.input_step_length1.text = str(val_feed_step[1])
-        self.ids.input_step_bend1.text = str(val_bend_step[1])
-        self.ids.input_step_turn1.text = str(val_turn_step[1])
+        self.ids.input_feed_step1.text = str(val_feed_step[1])
+        self.ids.input_bend_step1.text = str(val_bend_step[1])
+        self.ids.input_turn_step1.text = str(val_turn_step[1])
 
-        self.ids.input_step_length2.text = str(val_feed_step[2])
-        self.ids.input_step_bend2.text = str(val_bend_step[2])
-        self.ids.input_step_turn2.text = str(val_turn_step[2])
+        self.ids.input_feed_step2.text = str(val_feed_step[2])
+        self.ids.input_bend_step2.text = str(val_bend_step[2])
+        self.ids.input_turn_step2.text = str(val_turn_step[2])
 
-        self.ids.input_step_length3.text = str(val_feed_step[3])
-        self.ids.input_step_bend3.text = str(val_bend_step[3])
-        self.ids.input_step_turn3.text = str(val_turn_step[3])
+        self.ids.input_feed_step3.text = str(val_feed_step[3])
+        self.ids.input_bend_step3.text = str(val_bend_step[3])
+        self.ids.input_turn_step3.text = str(val_turn_step[3])
 
-        self.ids.input_step_length4.text = str(val_feed_step[4])
-        self.ids.input_step_bend4.text = str(val_bend_step[4])
-        self.ids.input_step_turn4.text = str(val_turn_step[4])
+        self.ids.input_feed_step4.text = str(val_feed_step[4])
+        self.ids.input_bend_step4.text = str(val_bend_step[4])
+        self.ids.input_turn_step4.text = str(val_turn_step[4])
 
-        self.ids.input_step_length5.text = str(val_feed_step[5])
-        self.ids.input_step_bend5.text = str(val_bend_step[5])
-        self.ids.input_step_turn5.text = str(val_turn_step[5])
+        self.ids.input_feed_step5.text = str(val_feed_step[5])
+        self.ids.input_bend_step5.text = str(val_bend_step[5])
+        self.ids.input_turn_step5.text = str(val_turn_step[5])
 
-        self.ids.input_step_length6.text = str(val_feed_step[6])
-        self.ids.input_step_bend6.text = str(val_bend_step[6])
-        self.ids.input_step_turn6.text = str(val_turn_step[6])
+        self.ids.input_feed_step6.text = str(val_feed_step[6])
+        self.ids.input_bend_step6.text = str(val_bend_step[6])
+        self.ids.input_turn_step6.text = str(val_turn_step[6])
 
-        self.ids.input_step_length7.text = str(val_feed_step[7])
-        self.ids.input_step_bend7.text = str(val_bend_step[7])
-        self.ids.input_step_turn7.text = str(val_turn_step[7])
+        self.ids.input_feed_step7.text = str(val_feed_step[7])
+        self.ids.input_bend_step7.text = str(val_bend_step[7])
+        self.ids.input_turn_step7.text = str(val_turn_step[7])
 
-        self.ids.input_step_length8.text = str(val_feed_step[8])
-        self.ids.input_step_bend8.text = str(val_bend_step[8])
-        self.ids.input_step_turn8.text = str(val_turn_step[8])
+        self.ids.input_feed_step8.text = str(val_feed_step[8])
+        self.ids.input_bend_step8.text = str(val_bend_step[8])
+        self.ids.input_turn_step8.text = str(val_turn_step[8])
 
-        self.ids.input_step_length9.text = str(val_feed_step[9])
-        self.ids.input_step_bend9.text = str(val_bend_step[9])
-        self.ids.input_step_turn9.text = str(val_turn_step[9]) 
+        self.ids.input_feed_step9.text = str(val_feed_step[9])
+        self.ids.input_bend_step9.text = str(val_bend_step[9])
+        self.ids.input_turn_step9.text = str(val_turn_step[9]) 
 
         self.update_graph()
 
@@ -1672,8 +1760,9 @@ class ScreenCompile(MDScreen):
             else:
                 disk = cwd + name_file
             print(disk)
+            data_base_save = data_base_process + data_base_config
             with open(disk,"wb") as f:
-                np.savetxt(f, data_base_process.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm]")
+                np.savetxt(f, data_base_save.T, fmt="%.3f",delimiter="\t",header="Feed [mm] \t Bend [mm] \t Plane [mm] \t Feed Speed \t Bend Speed \t Plane Speed \t Bed Pos")
             print("sucessfully save data")
             toast("sucessfully save data")
         except:
