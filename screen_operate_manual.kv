@@ -83,12 +83,12 @@
 				text: "MODE MANUAL"
 				font_style: 'Button'
 				size_hint_x: 1
-				size_hint_y: 0.03
+				size_hint_y: 0.02
 				on_press: root.exec_mode()
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.47
+				size_hint_y: 0.48
 				spacing: 20
 				padding: 20
 
@@ -96,12 +96,12 @@
 					orientation: "vertical"
 					size_hint_x: 0.4
 					padding: 20
-					spacing: 20
+					spacing: 10
 			
 					MDGridLayout:
 						cols:2
-						spacing:20
-						size_hint_y: 0.15
+						spacing:10
+						size_hint_y: 0.09
 
 						MDFillRoundFlatButton:
 							id: bt_press
@@ -148,8 +148,8 @@
 
 					MDGridLayout:
 						cols:3
-						spacing:20
-						size_hint_y: 0.2
+						spacing:10
+						size_hint_y: 0.06
 
 						MDFillRoundFlatButton:
 							id: bt_jog_feed_p
@@ -201,7 +201,7 @@
 
 					MDFillRoundFlatButton:
 						id: bt_jog_enable
-						size_hint_y: 0.05
+						size_hint_y: 0.03
 						text: "JOG"
 						font_style: 'Button'
 						size_hint_x: 1
@@ -209,7 +209,7 @@
 
 					MDFillRoundFlatButton:
 						id: bt_origin
-						size_hint_y: 0.05
+						size_hint_y: 0.03
 						text: "ORIGIN"
 						font_style: 'Button'
 						size_hint_x: 1
@@ -218,7 +218,7 @@
 
 					MDFillRoundFlatButton:
 						id: bt_reset
-						size_hint_y: 0.05
+						size_hint_y: 0.03
 						text: "RESET"
 						font_style: 'Button'
 						size_hint_x: 1

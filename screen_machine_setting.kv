@@ -68,7 +68,7 @@
 		MDBoxLayout:
 			id: layout_machine_setting
 			orientation: "vertical"
-			size_hint_y: 0.85
+			size_hint_y: 0.80
 			padding:20
 			spacing:20
 
@@ -198,3 +198,26 @@
 						input_filter: 'float'
 						on_text_validate: root.update()
 						on_focus: root.update_image(7)
+
+		# MDRectangleFlatIconButton: navigation operation
+		MDBoxLayout:
+			orientation: "horizontal"
+			size_hint_y: 0.05
+			padding:20
+			spacing:20
+
+			MDFillRoundFlatIconButton:
+				id: bt_save
+				icon: "floppy"
+				text: "SAVE"
+				font_style: 'H6'
+				size_hint_x: 0.5
+				on_press: root.save()
+
+			MDFillRoundFlatIconButton:
+				id: bt_reset
+				icon: "folder"
+				text: "LOAD"
+				font_style: 'H6'
+				size_hint_x: 0.5
+				on_press: root.load()

@@ -204,7 +204,40 @@
 				cols:3
 				spacing:20
 				padding: 20
-				size_hint_y: 0.27
+				size_hint_y: 0.07
+
+				MDLabel:
+					text: "Set Point Feeding Data"
+					font_style: 'Body3'
+
+				MDLabel:
+					text: "Set Point Bending Data"
+					font_style: 'Body3'
+
+				MDLabel:
+					text: "Set Point Turning Data"
+					font_style: 'Body3'
+
+				MDLabel:
+					id: lb_set_feed
+					text: "000.00"
+					font_style: 'Body1'
+
+				MDLabel:
+					id: lb_set_bend
+					text: "000.00"
+					font_style: 'Body1'
+
+				MDLabel:
+					id: lb_set_turn
+					text: "000.00"
+					font_style: 'Body1'
+
+			MDGridLayout:
+				cols:3
+				spacing:20
+				padding: 20
+				size_hint_y: 0.20
 
 				MDLabel:
 					text: "Realtime Feeding Data"
@@ -262,7 +295,7 @@
 
 			MDFillRoundFlatIconButton:
 				id: bt_screen_manual
-				icon: "play"
+				icon: "controller-classic"
 				text: "MANUAL OPERATION"
 				font_style: 'H6'
 				size_hint_x: 0.5
@@ -270,7 +303,7 @@
 			
 			MDFillRoundFlatIconButton:
 				id: bt_screen_auto
-				icon: "play"
+				icon: "console"
 				text: "AUTOMATIC OPERATION"
 				font_style: 'H6'
 				size_hint_x: 0.5

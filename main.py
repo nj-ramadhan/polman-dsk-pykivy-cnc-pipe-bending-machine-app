@@ -57,35 +57,41 @@ colors = {
 
 modbus_client = ModbusTcpClient('192.168.1.111')
 
-val_pipe_length = 6000.0
-val_pipe_diameter = 60.3
-val_pipe_thickness = 3.0
+data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
+data_base_load = data_settings.T
+data_base_pipe_setting = data_base_load[:3]
+data_base_machine_setting = data_base_load[3:12]
+data_base_advanced_setting = data_base_load[12:]
 
-val_machine_eff_length = 200.
-val_machine_supp_pos = 200.
-val_machine_clamp_front_delay = 5.
-val_machine_clamp_rear_delay = 5.
-val_machine_press_front_delay = 5.
-val_machine_press_rear_delay = 5.
-val_machine_collet_clamp_delay = 5.
-val_machine_collet_open_delay = 5.
-val_machine_die_radius = 100.0
+val_pipe_length = data_base_pipe_setting[0]
+val_pipe_diameter = data_base_pipe_setting[1]
+val_pipe_thickness = data_base_pipe_setting[2]
 
-val_advanced_pipe_head = 200.
-val_advanced_start_mode = 0
-val_advanced_first_line = 0
-val_advanced_finish_job = 0
-val_advanced_receive_pos_x = 0.
-val_advanced_receive_pos_b = 1000.
-val_advanced_prod_qty = 0
-val_advanced_press_semiclamp_time = 5.
-val_advanced_press_semiopen_time = 5.
-val_advanced_clamp_semiclamp_time = 5.
-val_advanced_springback_20 = 5.
-val_advanced_springback_120 = 5.
-val_advanced_max_bend = 180.
-val_advanced_press_start_angle = 0.
-val_advanced_press_stop_angle = 180.
+val_machine_eff_length = data_base_machine_setting[0]
+val_machine_supp_pos = data_base_machine_setting[1]
+val_machine_clamp_front_delay = data_base_machine_setting[2]
+val_machine_clamp_rear_delay = data_base_machine_setting[3]
+val_machine_press_front_delay = data_base_machine_setting[4]
+val_machine_press_rear_delay = data_base_machine_setting[5]
+val_machine_collet_clamp_delay = data_base_machine_setting[6]
+val_machine_collet_open_delay = data_base_machine_setting[7]
+val_machine_die_radius = data_base_machine_setting[8]
+
+val_advanced_pipe_head = data_base_advanced_setting[0]
+val_advanced_start_mode = data_base_advanced_setting[1]
+val_advanced_first_line = data_base_advanced_setting[2]
+val_advanced_finish_job = data_base_advanced_setting[3]
+val_advanced_receive_pos_x = data_base_advanced_setting[4]
+val_advanced_receive_pos_b = data_base_advanced_setting[5]
+val_advanced_prod_qty = data_base_advanced_setting[6]
+val_advanced_press_semiclamp_time = data_base_advanced_setting[7]
+val_advanced_press_semiopen_time = data_base_advanced_setting[8]
+val_advanced_clamp_semiclamp_time = data_base_advanced_setting[9]
+val_advanced_springback_20 = data_base_advanced_setting[10]
+val_advanced_springback_120 = data_base_advanced_setting[11]
+val_advanced_max_bend = data_base_advanced_setting[12]
+val_advanced_press_start_angle = data_base_advanced_setting[13]
+val_advanced_press_stop_angle = data_base_advanced_setting[14]
 
 val_feed_present = 0.
 val_bend_present = 0.
@@ -312,19 +318,28 @@ class ScreenSplash(MDScreen):
 
     def regular_highspeed_display(self, dt):
         global val_feed_present, val_bend_present, val_turn_present
+        global val_feed_set, val_bend_set, val_turn_set
+
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                register_feed = modbus_client.read_holding_registers(3512, 1, slave=1) #V3000
-                register_bend = modbus_client.read_holding_registers(3542, 1, slave=1) #V3030
-                register_turn = modbus_client.read_holding_registers(3572, 1, slave=1) #V3060
+                feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000
+                bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030
+                turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060
                 modbus_client.close()
             
-            val_feed_present = int(register_feed.registers)
-            val_bend_present = int(register_bend.registers)
-            val_turn_present = int(register_turn.registers)
+            val_feed_present = int(feed_registers.registers[0])
+            val_feed_set = int(feed_registers.registers[1])
+            val_bend_present = int(bend_registers.registers[0])
+            val_bend_set = int(bend_registers.registers[1])
+            val_turn_present = int(turn_registers.registers[0])
+            val_turn_set = int(turn_registers.registers[1])
 
             screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
+
+            screenOperateAuto.ids.lb_set_feed.text = str(val_feed_set)
+            screenOperateAuto.ids.lb_set_bend.text = str(val_bend_set)
+            screenOperateAuto.ids.lb_set_turn.text = str(val_turn_set)
 
             screenOperateAuto.ids.lb_real_feed.text = str(val_feed_present)
             screenOperateAuto.ids.lb_real_bend.text = str(val_bend_present)
@@ -383,13 +398,7 @@ class ScreenPipeSetting(MDScreen):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        global val_pipe_length
-        global val_pipe_diameter
-        global val_pipe_thickness
-
-        self.ids.input_pipe_length.text = str(val_pipe_length)
-        self.ids.input_pipe_diameter.text = str(val_pipe_diameter)
-        self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
+        self.load()
 
         self.update_graph()
 
@@ -483,6 +492,44 @@ class ScreenPipeSetting(MDScreen):
 
         return Xr, Yr, Zr
 
+    def load(self):
+        global data_base_pipe_setting
+        global val_pipe_length, val_pipe_diameter, val_pipe_thickness
+
+        try:
+            data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
+            data_base_load = data_settings.T
+            data_base_pipe_setting = data_base_load[:3]
+
+            val_pipe_length = data_base_pipe_setting[0]
+            val_pipe_diameter = data_base_pipe_setting[1]
+            val_pipe_thickness = data_base_pipe_setting[2]
+
+            self.ids.input_pipe_length.text = str(val_pipe_length)
+            self.ids.input_pipe_diameter.text = str(val_pipe_diameter)
+            self.ids.input_pipe_thickness.text = str(val_pipe_thickness)
+            toast("sucessfully load pipe setting")
+        except:
+            toast("error load pipe setting")
+
+    def save(self):
+        global data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting
+        global val_pipe_length, val_pipe_diameter, val_pipe_thickness
+
+        try:
+            self.update()
+
+            data_base_pipe_setting = np.array([val_pipe_length,
+                                   val_pipe_diameter,
+                                   val_pipe_thickness])
+
+            data_base_save = np.hstack((data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting))
+            with open("conf\\settings.cfg","wb") as f:
+                np.savetxt(f, data_base_save.T, fmt="%.3f")
+            toast("sucessfully save pipe setting")
+        except:
+            toast("error save pipe setting")
+
     def menu_callback(self, text_item):
         print(text_item)
 
@@ -515,25 +562,7 @@ class ScreenMachineSetting(MDScreen):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        global val_machine_eff_length
-        global val_machine_supp_pos
-        global val_machine_clamp_front_delay
-        global val_machine_clamp_rear_delay
-        global val_machine_press_front_delay
-        global val_machine_press_rear_delay
-        global val_machine_collet_clamp_delay
-        global val_machine_collet_open_delay
-        global val_machine_die_radius
-
-        self.ids.input_machine_eff_length.text = str(val_machine_eff_length)
-        self.ids.input_machine_supp_pos.text = str(val_machine_supp_pos)
-        self.ids.input_machine_clamp_front_delay.text = str(val_machine_clamp_front_delay)
-        self.ids.input_machine_clamp_rear_delay.text = str(val_machine_clamp_rear_delay)
-        self.ids.input_machine_press_front_delay.text = str(val_machine_press_front_delay)
-        self.ids.input_machine_press_rear_delay.text = str(val_machine_press_rear_delay)
-        self.ids.input_machine_collet_clamp_delay.text = str(val_machine_collet_clamp_delay)
-        self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
-        self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
+        self.load()
 
     def update(self):
         global flag_conn_stat
@@ -594,7 +623,68 @@ class ScreenMachineSetting(MDScreen):
             self.ids.machine_image.source = 'asset/machine_setting_collet_clamp_delay.png'
         elif image_num == 7:
             self.ids.machine_image.source = 'asset/machine_setting_collet_open_delay.png'
-        
+
+    def load(self):
+        global data_base_machine_setting
+        global val_machine_eff_length, val_machine_supp_pos, val_machine_clamp_front_delay, val_machine_clamp_rear_delay
+        global val_machine_press_front_delay, val_machine_press_rear_delay, val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay, val_machine_die_radius
+
+        try:
+            data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
+            data_base_load = data_settings.T
+            data_base_machine_setting = data_base_load[3:12]
+
+            val_machine_eff_length = data_base_machine_setting[0]
+            val_machine_supp_pos = data_base_machine_setting[1]
+            val_machine_clamp_front_delay = data_base_machine_setting[2]
+            val_machine_clamp_rear_delay = data_base_machine_setting[3]
+            val_machine_press_front_delay = data_base_machine_setting[4]
+            val_machine_press_rear_delay = data_base_machine_setting[5]
+            val_machine_collet_clamp_delay = data_base_machine_setting[6]
+            val_machine_collet_open_delay = data_base_machine_setting[7]
+            val_machine_die_radius = data_base_machine_setting[8]
+
+            self.ids.input_machine_eff_length.text = str(val_machine_eff_length)
+            self.ids.input_machine_supp_pos.text = str(val_machine_supp_pos)
+            self.ids.input_machine_clamp_front_delay.text = str(val_machine_clamp_front_delay)
+            self.ids.input_machine_clamp_rear_delay.text = str(val_machine_clamp_rear_delay)
+            self.ids.input_machine_press_front_delay.text = str(val_machine_press_front_delay)
+            self.ids.input_machine_press_rear_delay.text = str(val_machine_press_rear_delay)
+            self.ids.input_machine_collet_clamp_delay.text = str(val_machine_collet_clamp_delay)
+            self.ids.input_machine_collet_open_delay.text = str(val_machine_collet_open_delay)
+            self.ids.input_machine_die_radius.text = str(val_machine_die_radius)
+            toast("sucessfully load machine setting")
+        except:
+            toast("error load machine setting")
+
+    def save(self):
+        global data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting
+        global val_machine_eff_length, val_machine_supp_pos, val_machine_clamp_front_delay, val_machine_clamp_rear_delay
+        global val_machine_press_front_delay, val_machine_press_rear_delay, val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay, val_machine_die_radius
+
+        try:
+            self.update()
+            
+            data_base_machine_setting = np.array([val_machine_eff_length,
+                                   val_machine_supp_pos,
+                                   val_machine_clamp_front_delay,
+                                   val_machine_clamp_rear_delay,
+                                   val_machine_press_front_delay,
+                                   val_machine_press_rear_delay,
+                                   val_machine_collet_clamp_delay,
+                                   val_machine_collet_open_delay,
+                                   val_machine_die_radius,
+                                   ])
+            
+            data_base_save = np.hstack((data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting))
+            with open("conf\\settings.cfg","wb") as f:
+                np.savetxt(f, data_base_save.T, fmt="%.3f")
+            toast("sucessfully save machine setting")
+        except:
+            toast("error save machine setting")
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -624,37 +714,7 @@ class ScreenAdvancedSetting(MDScreen):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        global val_advanced_pipe_head
-        global val_advanced_start_mode
-        global val_advanced_first_line
-        global val_advanced_finish_job
-        global val_advanced_receive_pos_x
-        global val_advanced_receive_pos_b
-        global val_advanced_prod_qty
-        global val_advanced_press_semiclamp_time
-        global val_advanced_press_semiopen_time
-        global val_advanced_clamp_semiclamp_time
-        global val_advanced_springback_20
-        global val_advanced_springback_120
-        global val_advanced_max_bend
-        global val_advanced_press_start_angle
-        global val_advanced_press_stop_angle
-
-        self.ids.input_advanced_pipe_head.text = str(val_advanced_pipe_head)
-        self.ids.input_advanced_start_mode.text = str(val_advanced_start_mode)
-        self.ids.input_advanced_first_line.text = str(val_advanced_first_line)
-        self.ids.input_advanced_finish_job.text = str(val_advanced_finish_job)
-        self.ids.input_advanced_receive_pos_x.text = str(val_advanced_receive_pos_x)
-        self.ids.input_advanced_receive_pos_b.text = str(val_advanced_receive_pos_b)
-        self.ids.input_advanced_prod_qty.text = str(val_advanced_prod_qty)
-        self.ids.input_advanced_press_semiclamp_time.text = str(val_advanced_press_semiclamp_time)
-        self.ids.input_advanced_press_semiopen_time.text = str(val_advanced_press_semiopen_time)
-        self.ids.input_advanced_clamp_semiclamp_time.text = str(val_advanced_clamp_semiclamp_time)
-        self.ids.input_advanced_springback_20.text = str(val_advanced_springback_20)
-        self.ids.input_advanced_springback_120.text = str(val_advanced_springback_120)
-        self.ids.input_advanced_max_bend.text = str(val_advanced_max_bend)
-        self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
-        self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
+        self.load()
            
     def update(self):
         global modbus_client
@@ -676,12 +736,12 @@ class ScreenAdvancedSetting(MDScreen):
         global val_advanced_press_stop_angle
 
         val_advanced_pipe_head = float(self.ids.input_advanced_pipe_head.text)
-        val_advanced_start_mode = int(self.ids.input_advanced_start_mode.text)
-        val_advanced_first_line = int(self.ids.input_advanced_first_line.text)
-        val_advanced_finish_job = int(self.ids.input_advanced_finish_job.text)
+        val_advanced_start_mode = float(self.ids.input_advanced_start_mode.text)
+        val_advanced_first_line = float(self.ids.input_advanced_first_line.text)
+        val_advanced_finish_job = float(self.ids.input_advanced_finish_job.text)
         val_advanced_receive_pos_x = float(self.ids.input_advanced_receive_pos_x.text)
         val_advanced_receive_pos_b = float(self.ids.input_advanced_receive_pos_b.text)
-        val_advanced_prod_qty = int(self.ids.input_advanced_prod_qty.text)
+        val_advanced_prod_qty = float(self.ids.input_advanced_prod_qty.text)
         val_advanced_press_semiclamp_time = float(self.ids.input_advanced_press_semiclamp_time.text)
         val_advanced_press_semiopen_time = float(self.ids.input_advanced_press_semiopen_time.text)
         val_advanced_clamp_semiclamp_time = float(self.ids.input_advanced_clamp_semiclamp_time.text)
@@ -695,12 +755,12 @@ class ScreenAdvancedSetting(MDScreen):
             if flag_conn_stat:
                 modbus_client.connect()
                 modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
-                modbus_client.write_register(2523, val_advanced_start_mode, slave=1) #V2011
-                modbus_client.write_register(2524, val_advanced_first_line, slave=1) #V2012
-                modbus_client.write_register(2525, val_advanced_finish_job, slave=1) #V2013
+                modbus_client.write_register(2523, int(val_advanced_start_mode), slave=1) #V2011
+                modbus_client.write_register(2524, int(val_advanced_first_line), slave=1) #V2012
+                modbus_client.write_register(2525, int(val_advanced_finish_job), slave=1) #V2013
                 modbus_client.write_register(2526, int(val_advanced_receive_pos_x), slave=1) #V2014
                 modbus_client.write_register(2527, int(val_advanced_receive_pos_b), slave=1) #V2015
-                modbus_client.write_register(2528, val_advanced_prod_qty, slave=1) #V2016
+                modbus_client.write_register(2528, int(val_advanced_prod_qty), slave=1) #V2016
                 modbus_client.write_register(2529, int(val_advanced_press_semiclamp_time), slave=1) #V2017
                 modbus_client.write_register(2530, int(val_advanced_press_semiopen_time), slave=1) #V2018
                 modbus_client.write_register(2531, int(val_advanced_clamp_semiclamp_time), slave=1) #V2019
@@ -714,6 +774,86 @@ class ScreenAdvancedSetting(MDScreen):
                 toast("PLC Slave is not connected")  
         except:
             toast("error send machine_setting data to PLC Slave") 
+
+    def load(self):
+        global data_base_advanced_setting
+        global val_advanced_pipe_head, val_advanced_start_mode, val_advanced_first_line, val_advanced_finish_job
+        global val_advanced_receive_pos_x, val_advanced_receive_pos_b, val_advanced_prod_qty, val_advanced_press_semiclamp_time
+        global val_advanced_press_semiopen_time, val_advanced_clamp_semiclamp_time, val_advanced_springback_20, val_advanced_springback_120
+        global val_advanced_max_bend, val_advanced_press_start_angle, val_advanced_press_stop_angle
+
+        try:
+            data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
+            data_base_load = data_settings.T
+            data_base_advanced_setting = data_base_load[12:]
+
+            val_advanced_pipe_head = data_base_advanced_setting[0]
+            val_advanced_start_mode = data_base_advanced_setting[1]
+            val_advanced_first_line = data_base_advanced_setting[2]
+            val_advanced_finish_job = data_base_advanced_setting[3]
+            val_advanced_receive_pos_x = data_base_advanced_setting[4]
+            val_advanced_receive_pos_b = data_base_advanced_setting[5]
+            val_advanced_prod_qty = data_base_advanced_setting[6]
+            val_advanced_press_semiclamp_time = data_base_advanced_setting[7]
+            val_advanced_press_semiopen_time = data_base_advanced_setting[8]
+            val_advanced_clamp_semiclamp_time = data_base_advanced_setting[9]
+            val_advanced_springback_20 = data_base_advanced_setting[10]
+            val_advanced_springback_120 = data_base_advanced_setting[11]
+            val_advanced_max_bend = data_base_advanced_setting[12]
+            val_advanced_press_start_angle = data_base_advanced_setting[13]
+            val_advanced_press_stop_angle = data_base_advanced_setting[14]
+
+            self.ids.input_advanced_pipe_head.text = str(val_advanced_pipe_head)
+            self.ids.input_advanced_start_mode.text = str(val_advanced_start_mode)
+            self.ids.input_advanced_first_line.text = str(val_advanced_first_line)
+            self.ids.input_advanced_finish_job.text = str(val_advanced_finish_job)
+            self.ids.input_advanced_receive_pos_x.text = str(val_advanced_receive_pos_x)
+            self.ids.input_advanced_receive_pos_b.text = str(val_advanced_receive_pos_b)
+            self.ids.input_advanced_prod_qty.text = str(val_advanced_prod_qty)
+            self.ids.input_advanced_press_semiclamp_time.text = str(val_advanced_press_semiclamp_time)
+            self.ids.input_advanced_press_semiopen_time.text = str(val_advanced_press_semiopen_time)
+            self.ids.input_advanced_clamp_semiclamp_time.text = str(val_advanced_clamp_semiclamp_time)
+            self.ids.input_advanced_springback_20.text = str(val_advanced_springback_20)
+            self.ids.input_advanced_springback_120.text = str(val_advanced_springback_120)
+            self.ids.input_advanced_max_bend.text = str(val_advanced_max_bend)
+            self.ids.input_advanced_press_start_angle.text = str(val_advanced_press_start_angle)
+            self.ids.input_advanced_press_stop_angle.text = str(val_advanced_press_stop_angle)
+            toast("sucessfully load advanced setting")
+        except:
+            toast("error load advanced setting")
+
+    def save(self):
+        global data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting
+        global val_machine_eff_length, val_machine_supp_pos, val_machine_clamp_front_delay, val_machine_clamp_rear_delay
+        global val_machine_press_front_delay, val_machine_press_rear_delay, val_machine_collet_clamp_delay
+        global val_machine_collet_open_delay, val_machine_die_radius
+
+        try:
+            self.update()
+            
+            data_base_advanced_setting = np.array([val_advanced_pipe_head,
+                                   val_advanced_start_mode,
+                                   val_advanced_first_line,
+                                   val_advanced_finish_job,
+                                   val_advanced_receive_pos_x,
+                                   val_advanced_receive_pos_b,
+                                   val_advanced_prod_qty,
+                                   val_advanced_press_semiclamp_time,
+                                   val_advanced_press_semiopen_time,
+                                   val_advanced_clamp_semiclamp_time,
+                                   val_advanced_springback_20,
+                                   val_advanced_springback_120,
+                                   val_advanced_max_bend,
+                                   val_advanced_press_start_angle,
+                                   val_advanced_press_stop_angle,
+                                   ])
+            
+            data_base_save = np.hstack((data_base_pipe_setting, data_base_machine_setting, data_base_advanced_setting))
+            with open("conf\\settings.cfg","wb") as f:
+                np.savetxt(f, data_base_save.T, fmt="%.3f")
+            toast("sucessfully save advanced setting")
+        except:
+            toast("error save advanced setting")
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -1210,10 +1350,12 @@ class ScreenOperateAuto(MDScreen):
             toast("error select file path")
 
     def exit_manager(self, *args):
-        global data_base_process
+        global data_base_process, data_base_config
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
-            data_base_process = data_set.T
+            data_base_load = data_set.T
+            data_base_process = data_base_load[:3,:]
+            data_base_config = data_base_load[3:,:]
             self.reload()
 
             self.manager_open = False
@@ -1228,14 +1370,26 @@ class ScreenOperateAuto(MDScreen):
         global val_turn_step
 
         global data_base_process
+        global val_machine_die_radius
 
         val_feed_step = data_base_process[0,:]
         val_bend_step = data_base_process[1,:] 
         val_turn_step = data_base_process[2,:] 
 
-        list_val_feed_step = val_feed_step.tolist()
-        list_val_bend_step = val_bend_step.tolist()
-        list_val_turn_step = val_turn_step.tolist()
+        val_feed_absolute_step = np.zeros(10)
+        # bend linear offset = 2 pi * r * die radius / 360 
+        # (conversion from bending movement to feed offset linear movement)
+        val_bend_linear_offset_step = val_machine_die_radius * 2 * np.pi * val_bend_step / 360
+
+        val_feed_absolute_step[0] = val_feed_step[0]
+        for i in range(1,10):
+            # feed absolute = feed offset + last feed absolute + bend linear offset
+            val_feed_absolute_step[i] = int(val_feed_step[i] + val_feed_absolute_step[i-1] + val_bend_linear_offset_step[i])
+
+        list_val_feed_absolute_step = val_feed_absolute_step.astype(int).tolist()
+        list_val_bend_step = val_bend_step.astype(int).tolist()
+        list_val_turn_step = val_turn_step.astype(int).tolist()
+        list_val_bend_linear_offset_step = val_bend_linear_offset_step.astype(int).tolist()
 
         try:
             if flag_conn_stat:
@@ -1248,9 +1402,11 @@ class ScreenOperateAuto(MDScreen):
                 # modbus_client.write_register(3554, int(val_bend_step[1]), slave=1) #V3011
                 # modbus_client.write_register(3584, int(val_turn_step[1]), slave=1) #V3011
 
-                modbus_client.write_registers(3523, list_val_feed_step, slave=1) #V3011
+                modbus_client.write_registers(3523, list_val_feed_absolute_step, slave=1) #V3011
                 modbus_client.write_registers(3553, list_val_bend_step, slave=1) #V3041
                 modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
+
+                modbus_client.write_registers(3623, list_val_bend_linear_offset_step, slave=1) #V3111
                 modbus_client.close()
         except Exception as e:
             toast(e) 
