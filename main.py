@@ -57,54 +57,61 @@ colors = {
 
 modbus_client = ModbusTcpClient('192.168.1.111')
 
-data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
-data_base_load = data_settings.T
-data_base_pipe_setting = data_base_load[:3]
-data_base_machine_setting = data_base_load[3:12]
-data_base_advanced_setting = data_base_load[12:]
+# data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
+# data_base_load = data_settings.T
+# data_base_pipe_setting = data_base_load[:3]
+# data_base_machine_setting = data_base_load[3:12]
+# data_base_advanced_setting = data_base_load[12:]
 
-val_pipe_length = data_base_pipe_setting[0]
-val_pipe_diameter = data_base_pipe_setting[1]
-val_pipe_thickness = data_base_pipe_setting[2]
+# val_pipe_length = data_base_pipe_setting[0]
+# val_pipe_diameter = data_base_pipe_setting[1]
+# val_pipe_thickness = data_base_pipe_setting[2]
 
-val_machine_eff_length = data_base_machine_setting[0]
-val_machine_supp_pos = data_base_machine_setting[1]
-val_machine_clamp_front_delay = data_base_machine_setting[2]
-val_machine_clamp_rear_delay = data_base_machine_setting[3]
-val_machine_press_front_delay = data_base_machine_setting[4]
-val_machine_press_rear_delay = data_base_machine_setting[5]
-val_machine_collet_clamp_delay = data_base_machine_setting[6]
-val_machine_collet_open_delay = data_base_machine_setting[7]
-val_machine_die_radius = data_base_machine_setting[8]
+# val_machine_eff_length = data_base_machine_setting[0]
+# val_machine_supp_pos = data_base_machine_setting[1]
+# val_machine_clamp_front_delay = data_base_machine_setting[2]
+# val_machine_clamp_rear_delay = data_base_machine_setting[3]
+# val_machine_press_front_delay = data_base_machine_setting[4]
+# val_machine_press_rear_delay = data_base_machine_setting[5]
+# val_machine_collet_clamp_delay = data_base_machine_setting[6]
+# val_machine_collet_open_delay = data_base_machine_setting[7]
+# val_machine_die_radius = data_base_machine_setting[8]
 
-val_advanced_pipe_head = data_base_advanced_setting[0]
-val_advanced_start_mode = data_base_advanced_setting[1]
-val_advanced_first_line = data_base_advanced_setting[2]
-val_advanced_finish_job = data_base_advanced_setting[3]
-val_advanced_receive_pos_x = data_base_advanced_setting[4]
-val_advanced_receive_pos_b = data_base_advanced_setting[5]
-val_advanced_prod_qty = data_base_advanced_setting[6]
-val_advanced_press_semiclamp_time = data_base_advanced_setting[7]
-val_advanced_press_semiopen_time = data_base_advanced_setting[8]
-val_advanced_clamp_semiclamp_time = data_base_advanced_setting[9]
-val_advanced_springback_20 = data_base_advanced_setting[10]
-val_advanced_springback_120 = data_base_advanced_setting[11]
-val_advanced_max_bend = data_base_advanced_setting[12]
-val_advanced_press_start_angle = data_base_advanced_setting[13]
-val_advanced_press_stop_angle = data_base_advanced_setting[14]
+# val_advanced_pipe_head = data_base_advanced_setting[0]
+# val_advanced_start_mode = data_base_advanced_setting[1]
+# val_advanced_first_line = data_base_advanced_setting[2]
+# val_advanced_finish_job = data_base_advanced_setting[3]
+# val_advanced_receive_pos_x = data_base_advanced_setting[4]
+# val_advanced_receive_pos_b = data_base_advanced_setting[5]
+# val_advanced_prod_qty = data_base_advanced_setting[6]
+# val_advanced_press_semiclamp_time = data_base_advanced_setting[7]
+# val_advanced_press_semiopen_time = data_base_advanced_setting[8]
+# val_advanced_clamp_semiclamp_time = data_base_advanced_setting[9]
+# val_advanced_springback_20 = data_base_advanced_setting[10]
+# val_advanced_springback_120 = data_base_advanced_setting[11]
+# val_advanced_max_bend = data_base_advanced_setting[12]
+# val_advanced_press_start_angle = data_base_advanced_setting[13]
+# val_advanced_press_stop_angle = data_base_advanced_setting[14]
 
-val_feed_present = 0.
-val_bend_present = 0.
-val_turn_present = 0.
-val_feed_set = 0.
-val_bend_set = 0.
-val_turn_set = 0.
-
+val_feed_pv = 0.
+val_bend_pv = 0.
+val_turn_pv = 0.
+val_feed_sv = 0.
+val_bend_sv = 0.
+val_turn_sv = 0.
 val_feed_step = np.zeros(10)
 val_bend_step = np.zeros(10)
 val_turn_step = np.zeros(10)
 data_base_process = np.zeros([3, 10])
 
+conf_feed_speed_pv = 1
+conf_bend_speed_pv = 1
+conf_turn_speed_pv = 1
+conf_bed_pos_pv = 0
+conf_feed_speed_sv = 1
+conf_bend_speed_sv = 1
+conf_turn_speed_sv = 1
+conf_bed_pos_sv = 0
 conf_feed_speed_step = np.ones(10)
 conf_bend_speed_step = np.ones(10)
 conf_turn_speed_step = np.ones(10)
@@ -317,8 +324,10 @@ class ScreenSplash(MDScreen):
             Logger.error(e)
 
     def regular_highspeed_display(self, dt):
-        global val_feed_present, val_bend_present, val_turn_present
-        global val_feed_set, val_bend_set, val_turn_set
+        global val_feed_pv, val_bend_pv, val_turn_pv
+        global val_feed_sv, val_bend_sv, val_turn_sv
+
+        screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
 
         try:
             if flag_conn_stat:
@@ -326,24 +335,35 @@ class ScreenSplash(MDScreen):
                 feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000
                 bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030
                 turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060
+                feed_speed_registers = modbus_client.read_holding_registers(3712, 1, slave=1) #V3200
+                bend_speed_registers = modbus_client.read_holding_registers(3742, 1, slave=1) #V3230
+                turn_speed_registers = modbus_client.read_holding_registers(3772, 1, slave=1) #V3260
+                bed_pos_registers = modbus_client.read_coils(3372, 1, slave=1) #M300
                 modbus_client.close()
             
-            val_feed_present = int(feed_registers.registers[0])
-            val_feed_set = int(feed_registers.registers[1])
-            val_bend_present = int(bend_registers.registers[0])
-            val_bend_set = int(bend_registers.registers[1])
-            val_turn_present = int(turn_registers.registers[0])
-            val_turn_set = int(turn_registers.registers[1])
+                val_feed_pv = int(feed_registers.registers[0])
+                val_feed_sv = int(feed_registers.registers[1])
+                val_bend_pv = int(bend_registers.registers[0])
+                val_bend_sv = int(bend_registers.registers[1])
+                val_turn_pv = int(turn_registers.registers[0])
+                val_turn_sv = int(turn_registers.registers[1])
+                val_feed_speed = int(feed_speed_registers.registers[0])
+                val_bend_speed = int(bend_speed_registers.registers[0])
+                val_turn_speed = int(turn_speed_registers.registers[0])
+                val_bed_pos = bed_pos_registers.bits[0]
 
-            screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
+                screenOperateAuto.ids.lb_set_feed.text = str(val_feed_sv)
+                screenOperateAuto.ids.lb_set_bend.text = str(val_bend_sv)
+                screenOperateAuto.ids.lb_set_turn.text = str(val_turn_sv)
 
-            screenOperateAuto.ids.lb_set_feed.text = str(val_feed_set)
-            screenOperateAuto.ids.lb_set_bend.text = str(val_bend_set)
-            screenOperateAuto.ids.lb_set_turn.text = str(val_turn_set)
+                screenOperateAuto.ids.lb_real_feed.text = str(val_feed_pv)
+                screenOperateAuto.ids.lb_real_bend.text = str(val_bend_pv)
+                screenOperateAuto.ids.lb_real_turn.text = str(val_turn_pv)
 
-            screenOperateAuto.ids.lb_real_feed.text = str(val_feed_present)
-            screenOperateAuto.ids.lb_real_bend.text = str(val_bend_present)
-            screenOperateAuto.ids.lb_real_turn.text = str(val_turn_present)
+                screenOperateAuto.ids.lb_feed_speed.text = str(val_feed_speed)
+                screenOperateAuto.ids.lb_bend_speed.text = str(val_bend_speed)
+                screenOperateAuto.ids.lb_turn_speed.text = str(val_turn_speed)
+                screenOperateAuto.ids.lb_bed_pos.text = "UP" if val_bed_pos == 1 else "DN"
 
         except Exception as e:
             Logger.error(e)
@@ -884,11 +904,11 @@ class ScreenOperateManual(MDScreen):
         Clock.schedule_once(self.delayed_init)
 
     def delayed_init(self, dt):
-        global val_feed_set, val_bend_set, val_turn_set
+        global val_feed_sv, val_bend_sv, val_turn_sv
 
-        self.ids.input_operate_feed.text = str(val_feed_set)
-        self.ids.input_operate_bend.text = str(val_bend_set)
-        self.ids.input_operate_turn.text = str(val_turn_set)
+        self.ids.input_operate_feed.text = str(val_feed_sv)
+        self.ids.input_operate_bend.text = str(val_bend_sv)
+        self.ids.input_operate_turn.text = str(val_turn_sv)
 
     def exec_mode(self):
         global flag_conn_stat, flag_mode
@@ -1136,17 +1156,17 @@ class ScreenOperateManual(MDScreen):
 
     def exec_operate_feed(self):
         global flag_conn_stat, flag_operate_req_feed
-        global val_feed_set
+        global val_feed_sv
 
         flag_operate_req_feed = True
         self.ids.bt_operate_feed.md_bg_color = "#ee2222"
-        val_feed_set = float(self.ids.input_operate_feed.text)
+        val_feed_sv = float(self.ids.input_operate_feed.text)
 
         try:
             if flag_conn_stat:
                 modbus_client.connect()
                 modbus_client.write_coil(3099, flag_operate_req_feed, slave=1) #M27
-                modbus_client.write_register(3513, int(val_feed_set), slave=1) #V3001
+                modbus_client.write_register(3513, int(val_feed_sv), slave=1) #V3001
                 modbus_client.close()
         except:
             toast("error send exec_operate_feed and val_operate_feed data to PLC Slave") 
@@ -1166,17 +1186,17 @@ class ScreenOperateManual(MDScreen):
 
     def exec_operate_bend(self):
         global flag_conn_stat, flag_operate_req_bend
-        global val_bend_set
+        global val_bend_sv
 
         flag_operate_req_bend = True
         self.ids.bt_operate_bend.md_bg_color = "#ee2222"
-        val_bend_set = float(self.ids.input_operate_bend.text)
+        val_bend_sv = float(self.ids.input_operate_bend.text)
 
         try:
             if flag_conn_stat:
                 modbus_client.connect()
                 modbus_client.write_coil(3100, flag_operate_req_bend, slave=1) #M28
-                modbus_client.write_register(3543, int(val_bend_set), slave=1) #V3031
+                modbus_client.write_register(3543, int(val_bend_sv), slave=1) #V3031
                 modbus_client.close()
         except:
             toast("error send exec_operate_bend and val_operate_bend data to PLC Slave") 
@@ -1196,17 +1216,17 @@ class ScreenOperateManual(MDScreen):
 
     def exec_operate_turn(self):
         global flag_conn_stat, flag_operate_req_turn
-        global val_turn_set
+        global val_turn_sv
 
         flag_operate_req_turn = True
         self.ids.bt_operate_turn.md_bg_color = "#ee2222"
-        val_turn_set = float(self.ids.input_operate_turn.text)
+        val_turn_sv = float(self.ids.input_operate_turn.text)
 
         try:
             if flag_conn_stat:
                 modbus_client.connect()
                 modbus_client.write_coil(3101, flag_operate_req_turn, slave=1) #M29
-                modbus_client.write_register(3573, int(val_turn_set), slave=1) #V3061
+                modbus_client.write_register(3573, int(val_turn_sv), slave=1) #V3061
                 modbus_client.close()
         except:
             toast("error send exec_operate_turn and val_operate_turn data to PLC Slave")
@@ -1669,6 +1689,7 @@ class ScreenCompile(MDScreen):
         try:
             path_name = os.path.expanduser(os.getcwd() + "\data\\")
             filename = path.replace(path_name, "")
+            filename = filename.replace(".gcode", "")
             self.ids.input_file_name.text = filename
             self.exit_manager(path)
         except:
