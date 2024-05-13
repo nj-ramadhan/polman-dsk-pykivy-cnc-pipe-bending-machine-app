@@ -202,80 +202,81 @@
 
 			MDGridLayout:
 				cols:7
-				spacing: 20, 0
+				spacing: 20, 40
 				padding: 20
-				size_hint_y: 0.07
-
-				MDLabel:
-					text: "Feeding Setpoint"
-					font_style: 'Body2'
-					size_hint_x: 0.2
+				size_hint_y: 0.1
 
 				MDLabel:
 					text: "Feeding Speed Mode"
 					font_style: 'Body2'
-					size_hint_x: 0.1
+					size_hint_x: 0.12
 
 				MDLabel:
-					text: "Bending Setpoint"
+					text: "Setpoint"
 					font_style: 'Body2'
-					size_hint_x: 0.2
+					size_hint_x: 0.18
 
 				MDLabel:
 					text: "Bending Speed Mode"
 					font_style: 'Body2'
-					size_hint_x: 0.1
+					size_hint_x: 0.12
 
 				MDLabel:
-					text: "Turning Setpoint"
+					text: "Setpoint"
 					font_style: 'Body2'
-					size_hint_x: 0.2
+					size_hint_x: 0.18
 
 				MDLabel:
 					text: "Turning Speed Mode"
 					font_style: 'Body2'
-					size_hint_x: 0.1
+					size_hint_x: 0.12
+
+				MDLabel:
+					text: "Setpoint"
+					font_style: 'Body2'
+					size_hint_x: 0.18
 
 				MDLabel:
 					text: "Bed Position"
 					font_style: 'Body2'
 					size_hint_x: 0.1
 
-				MDLabel:
-					id: lb_set_feed
-					text: "000.00"
-					font_style: 'H4'
-					size_hint_x: 0.2
 
 				MDFillRoundFlatIconButton:
 					id: lb_feed_speed
 					icon: "speedometer"
 					text: "1"
-					size_hint_x: 0.1
+					size_hint_x: 0.12
 
 				MDLabel:
-					id: lb_set_bend
+					id: lb_set_feed
 					text: "000.00"
 					font_style: 'H4'
-					size_hint_x: 0.2
+					size_hint_x: 0.18
 
 				MDFillRoundFlatIconButton:
 					id: lb_bend_speed
 					icon: "speedometer"
 					text: "1"
-					size_hint_x: 0.1
+					size_hint_x: 0.12
 
 				MDLabel:
-					id: lb_set_turn
+					id: lb_set_bend
 					text: "000.00"
 					font_style: 'H4'
-					size_hint_x: 0.2
+					size_hint_x: 0.18
 
 				MDFillRoundFlatIconButton:
 					id: lb_turn_speed
 					icon: "speedometer"
 					text: "1"
-					size_hint_x: 0.1
+					size_hint_x: 0.12
+
+				MDLabel:
+					id: lb_set_turn
+					text: "000.00"
+					font_style: 'H4'
+					size_hint_x: 0.18
 
 				MDFillRoundFlatIconButton:
 					id: lb_bed_pos
@@ -287,7 +288,7 @@
 				cols:3
 				spacing: 20, 0
 				padding: 20
-				size_hint_y: 0.20
+				size_hint_y: 0.17
 
 				MDLabel:
 					text: "Feeding Realtime Data"
