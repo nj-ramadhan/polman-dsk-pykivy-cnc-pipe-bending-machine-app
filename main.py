@@ -130,6 +130,8 @@ flag_cylinder_chuck = False
 flag_cylinder_mandrell = False
 flag_cylinder_table_up = False
 flag_cylinder_table_shift = False
+flag_cylinder_holder_up = False
+flag_cylinder_holder_down = False
 
 flag_jog_enable = False
 flag_jog_req_feed = False
@@ -1033,6 +1035,42 @@ class ScreenOperateManual(MDScreen):
                 modbus_client.close()
         except:
             toast("error send flag_cylinder_table_shift data to PLC Slave") 
+
+    def exec_holder_up(self):
+        global flag_conn_stat, flag_cylinder_holder_up
+
+        if flag_cylinder_holder_up:
+            flag_cylinder_holder_up = False
+            self.ids.bt_holder_up.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_holder_up = True
+            self.ids.bt_holder_up.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3088, flag_cylinder_holder_up, slave=1) #M16
+                modbus_client.close()
+        except:
+            toast("error send flag_cylinder_holder_up data to PLC Slave") 
+
+    def exec_holder_down(self):
+        global flag_conn_stat, flag_cylinder_holder_down
+
+        if flag_cylinder_holder_down:
+            flag_cylinder_holder_down = False
+            self.ids.bt_holder_down.md_bg_color = "#196BA5"
+        else:
+            flag_cylinder_holder_down = True
+            self.ids.bt_holder_down.md_bg_color = "#ee2222"
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                modbus_client.write_coil(3089, flag_cylinder_holder_down, slave=1) #M17
+                modbus_client.close()
+        except:
+            toast("error send flag_cylinder_holder_down data to PLC Slave") 
 
     def exec_jog_enable(self):
         global flag_conn_stat, flag_jog_enable

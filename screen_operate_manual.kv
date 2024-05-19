@@ -99,57 +99,75 @@
 					spacing: 10
 			
 					MDGridLayout:
-						cols:2
+						cols:3
 						spacing:10
-						size_hint_y: 0.09
-
-						MDFillRoundFlatButton:
-							id: bt_press
-							text: "PRESS"
-							font_style: 'Button'
-							size_hint_x: 0.5
-							on_press: root.exec_press()
+						size_hint_y: 0.06
 
 						MDFillRoundFlatButton:
 							id: bt_clamp
 							text: "CLAMP"
 							font_style: 'Button'
-							size_hint_x: 0.5
+							size_hint_x: 0.3
 							on_press: root.exec_clamp()
-
 
 						MDFillRoundFlatButton:
 							id: bt_chuck
 							text: "CHUCK"
 							font_style: 'Button'
-							size_hint_x: 0.5
+							size_hint_x: 0.3
 							on_press: root.exec_chuck()
 
 						MDFillRoundFlatButton:
 							id: bt_mandrell
 							text: "MANDRELL"
 							font_style: 'Button'
-							size_hint_x: 0.5
+							size_hint_x: 0.3
 							on_press: root.exec_mandrell()
+
+						MDFillRoundFlatButton:
+							id: bt_press
+							text: "PRESS"
+							font_style: 'Button'
+							size_hint_x: 0.3
+							on_press: root.exec_press()
 
 						MDFillRoundFlatButton:
 							id: bt_table_up
 							text: "TABLE UP"
 							font_style: 'Button'
-							size_hint_x: 0.5
+							size_hint_x: 0.3
 							on_press: root.exec_table_up()
 
 						MDFillRoundFlatButton:
 							id: bt_table_shift
 							text: "TABLE SHIFT"
 							font_style: 'Button'
-							size_hint_x: 0.5
+							size_hint_x: 0.3
 							on_press: root.exec_table_shift()
+
+					MDGridLayout:
+						cols:2
+						spacing:10
+						size_hint_y: 0.03
+
+						MDFillRoundFlatButton:
+							id: bt_holder_up
+							text: "HOLDER UP"
+							font_style: 'Button'
+							size_hint_x: 0.5
+							on_press: root.exec_holder_up()
+
+						MDFillRoundFlatButton:
+							id: bt_holder_down
+							text: "HOLDER DOWN"
+							font_style: 'Button'
+							size_hint_x: 0.5
+							on_press: root.exec_holder_down()
 
 					MDGridLayout:
 						cols:3
 						spacing:10
-						size_hint_y: 0.06
+						size_hint_y: 0.03
 
 						MDFillRoundFlatButton:
 							id: bt_jog_feed_p
