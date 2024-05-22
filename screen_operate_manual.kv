@@ -97,7 +97,15 @@
 					size_hint_x: 0.6
 					padding: 20
 					spacing: 10
-			
+
+					MDFillRoundFlatButton:
+						id: bt_jog_enable
+						size_hint_y: 0.02
+						text: "JOG"
+						font_style: 'Button'
+						size_hint_x: 1
+						on_press: root.exec_jog_enable()
+
 					MDGridLayout:
 						cols:3
 						spacing:10
@@ -217,13 +225,26 @@
 							on_press: root.exec_jog_turn_n()
 							on_release: root.end_jog_turn()
 
-					MDFillRoundFlatButton:
-						id: bt_jog_enable
-						size_hint_y: 0.02
-						text: "JOG"
-						font_style: 'Button'
-						size_hint_x: 1
-						on_press: root.exec_jog_enable()
+						MDFillRoundFlatIconButton:
+							id: bt_feed_speed
+							icon: "speedometer"
+							text: "1"
+							size_hint_x: 0.3
+							on_release: root.choice_speed("feed")
+
+						MDFillRoundFlatIconButton:
+							id: bt_bend_speed
+							icon: "speedometer"
+							text: "1"
+							size_hint_x: 0.3
+							on_release: root.choice_speed("bend")
+
+						MDFillRoundFlatIconButton:
+							id: bt_turn_speed
+							icon: "speedometer"
+							text: "1"
+							size_hint_x: 0.3
+							on_release: root.choice_speed("turn")
 
 					MDFillRoundFlatButton:
 						id: bt_origin
@@ -243,53 +264,75 @@
 						on_press: root.exec_reset()
 						on_release: root.end_reset()
 
-				MDGridLayout:
-					cols:2
-					spacing:20
-					padding:20
-					size_hint_x:0.4
+				MDBoxLayout:
+					orientation: "vertical"
+					size_hint_x: 0.4
+					padding: 20
+					spacing: 20
 
-					MDTextField:
-						id: input_operate_feed
-						hint_text: "Input Feed length (mm)"
-						font_style: 'Body1'
-						input_filter: 'float'
-					
-					MDFillRoundFlatButton:
-						id: bt_operate_feed
-						text: "EXECUTE"
-						font_style: 'Button'
-						size_hint_x: 0.2
-						on_press: root.exec_operate_feed()
-						on_release: root.end_operate_feed()
+					MDGridLayout:
+						cols:2
+						spacing:10
 
-					MDTextField:
-						id: input_operate_bend
-						hint_text: "Input Bend Angle (degree)"
-						font_style: 'Body1'
-						input_filter: 'float'
-					
-					MDFillRoundFlatButton:
-						id: bt_operate_bend
-						text: "EXECUTE"
-						font_style: 'Button'
-						size_hint_x: 0.2
-						on_press: root.exec_operate_bend()
-						on_release: root.end_operate_bend()
+						MDTextField:
+							id: input_operate_feed
+							hint_text: "Input Feed length (mm)"
+							font_style: 'Body1'
+							input_filter: 'float'
+						
+						MDFillRoundFlatButton:
+							id: bt_operate_feed
+							text: "EXECUTE"
+							font_style: 'Button'
+							size_hint_x: 0.2
+							on_press: root.exec_operate_feed()
+							on_release: root.end_operate_feed()
 
-					MDTextField:
-						id: input_operate_turn
-						hint_text: "Input Turn Angle (degree)"
-						font_style: 'Body1'
-						input_filter: 'float'
-					
+						MDTextField:
+							id: input_operate_bend
+							hint_text: "Input Bend Angle (degree)"
+							font_style: 'Body1'
+							input_filter: 'float'
+						
+						MDFillRoundFlatButton:
+							id: bt_operate_bend
+							text: "EXECUTE"
+							font_style: 'Button'
+							size_hint_x: 0.2
+							on_press: root.exec_operate_bend()
+							on_release: root.end_operate_bend()
+
+						MDTextField:
+							id: input_operate_turn
+							hint_text: "Input Turn Angle (degree)"
+							font_style: 'Body1'
+							input_filter: 'float'
+						
+						MDFillRoundFlatButton:
+							id: bt_operate_turn
+							text: "EXECUTE"
+							font_style: 'Button'
+							size_hint_x: 0.2
+							on_press: root.exec_operate_turn()
+							on_release: root.end_operate_turn()
+
 					MDFillRoundFlatButton:
-						id: bt_operate_turn
-						text: "EXECUTE"
+						id: bt_origin
+						size_hint_y: 0.02
+						text: "ORIGIN"
 						font_style: 'Button'
-						size_hint_x: 0.2
-						on_press: root.exec_operate_turn()
-						on_release: root.end_operate_turn()
+						size_hint_x: 1
+						on_press: root.exec_origin()
+						on_release: root.end_origin()
+
+					MDFillRoundFlatButton:
+						id: bt_reset
+						size_hint_y: 0.02
+						text: "RESET"
+						font_style: 'Button'
+						size_hint_x: 1
+						on_press: root.exec_reset()
+						on_release: root.end_reset()
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:

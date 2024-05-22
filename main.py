@@ -241,7 +241,7 @@ class ScreenSplash(MDScreen):
                 screenOperateManual.ids.bt_mode.text = "AUTO MODE"
                 screenOperateAuto.ids.bt_mode.md_bg_color = "#ee2222"
                 screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
-
+            
             if flag_run:
                 screenOperateAuto.ids.lp_run.md_bg_color = "#22ee22"
             else:
@@ -328,7 +328,11 @@ class ScreenSplash(MDScreen):
     def regular_highspeed_display(self, dt):
         global val_feed_pv, val_bend_pv, val_turn_pv
         global val_feed_sv, val_bend_sv, val_turn_sv
+        global conf_feed_speed_pv, conf_turn_speed_pv, conf_bend_speed_pv
+        global conf_feed_speed_sv, conf_turn_speed_sv, conf_bend_speed_sv
+        global conf_bed_pos_pv, conf_bed_pos_sv
 
+        screenOperateManual = self.screen_manager.get_screen('screen_operate_manual')
         screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
 
         try:
@@ -337,10 +341,10 @@ class ScreenSplash(MDScreen):
                 feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000
                 bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030
                 turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060
-                feed_speed_registers = modbus_client.read_holding_registers(3712, 1, slave=1) #V3200
-                bend_speed_registers = modbus_client.read_holding_registers(3742, 1, slave=1) #V3230
-                turn_speed_registers = modbus_client.read_holding_registers(3772, 1, slave=1) #V3260
-                bed_pos_registers = modbus_client.read_coils(3372, 1, slave=1) #M300
+                feed_speed_registers = modbus_client.read_holding_registers(3712, 2, slave=1) #V3200
+                bend_speed_registers = modbus_client.read_holding_registers(3742, 2, slave=1) #V3230
+                turn_speed_registers = modbus_client.read_holding_registers(3772, 2, slave=1) #V3260
+                bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300
                 modbus_client.close()
             
                 val_feed_pv = int(feed_registers.registers[0])
@@ -349,10 +353,14 @@ class ScreenSplash(MDScreen):
                 val_bend_sv = int(bend_registers.registers[1])
                 val_turn_pv = int(turn_registers.registers[0])
                 val_turn_sv = int(turn_registers.registers[1])
-                val_feed_speed = int(feed_speed_registers.registers[0])
-                val_bend_speed = int(bend_speed_registers.registers[0])
-                val_turn_speed = int(turn_speed_registers.registers[0])
-                val_bed_pos = bed_pos_registers.bits[0]
+                conf_feed_speed_pv = int(feed_speed_registers.registers[0])
+                conf_feed_speed_sv = int(feed_speed_registers.registers[1])
+                conf_bend_speed_pv = int(bend_speed_registers.registers[0])
+                conf_bend_speed_sv = int(bend_speed_registers.registers[1])
+                conf_turn_speed_pv = int(turn_speed_registers.registers[0])
+                conf_turn_speed_sv = int(turn_speed_registers.registers[1])
+                conf_bed_pos_pv = bed_pos_registers.bits[0]
+                conf_bed_pos_sv = bed_pos_registers.bits[1]
 
                 screenOperateAuto.ids.lb_set_feed.text = str(val_feed_sv)
                 screenOperateAuto.ids.lb_set_bend.text = str(val_bend_sv)
@@ -362,11 +370,15 @@ class ScreenSplash(MDScreen):
                 screenOperateAuto.ids.lb_real_bend.text = str(val_bend_pv)
                 screenOperateAuto.ids.lb_real_turn.text = str(val_turn_pv)
 
-                screenOperateAuto.ids.lb_feed_speed.text = str(val_feed_speed)
-                screenOperateAuto.ids.lb_bend_speed.text = str(val_bend_speed)
-                screenOperateAuto.ids.lb_turn_speed.text = str(val_turn_speed)
-                screenOperateAuto.ids.lb_bed_pos.text = "UP" if val_bed_pos == 1 else "DN"
+                screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
+                screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
+                screenOperateAuto.ids.lb_turn_speed.text = str(conf_turn_speed_pv)
+                screenOperateAuto.ids.lb_bed_pos.text = "UP" if conf_bed_pos_pv == 1 else "DN"
 
+                screenOperateManual.ids.bt_feed_speed.text = str(conf_feed_speed_pv)
+                screenOperateManual.ids.bt_bend_speed.text = str(conf_bend_speed_pv)
+                screenOperateManual.ids.bt_turn_speed.text = str(conf_turn_speed_pv)
+            
         except Exception as e:
             Logger.error(e)
 
@@ -1191,6 +1203,40 @@ class ScreenOperateManual(MDScreen):
         self.ids.bt_jog_turn_p.md_bg_color = "#196BA5"
         self.ids.bt_jog_turn_n.md_bg_color = "#196BA5"
         self.end_jog()
+
+    def choice_speed(self, movement):
+        global flag_conn_stat
+        global conf_feed_speed_sv, conf_bend_speed_sv, conf_turn_speed_sv
+        global data_base_config
+
+        if(movement=="feed"):
+            if conf_feed_speed_sv <= 5:
+                conf_feed_speed_sv += 1
+
+        if(movement=="bend"):
+            if conf_bend_speed_sv <= 5:
+                conf_bend_speed_sv += 1
+
+        if(movement=="turn"):
+            if conf_turn_speed_sv <= 5:
+                conf_turn_speed_sv += 1
+
+        conf_feed_speed_sv[conf_feed_speed_sv > 5] = 1
+        conf_bend_speed_sv[conf_bend_speed_sv > 5] = 1
+        conf_turn_speed_sv[conf_turn_speed_sv > 5] = 1
+
+        try:
+            if flag_conn_stat:
+                modbus_client.connect()
+                # modbus_client.write_register(3712, conf_feed_speed_sv, slave=1) #V3200
+                modbus_client.write_register(3713, conf_feed_speed_sv, slave=1) #V3201
+                # modbus_client.write_register(3742, conf_bend_speed_sv, slave=1) #V3230
+                modbus_client.write_register(3743, conf_bend_speed_sv, slave=1) #V3231
+                # modbus_client.write_register(3772, conf_turn_speed_sv, slave=1) #V3260
+                modbus_client.write_register(3773, conf_turn_speed_sv, slave=1) #V3261
+                modbus_client.close()
+        except:
+            toast("error send configuration speed data to PLC Slave")
 
     def exec_operate_feed(self):
         global flag_conn_stat, flag_operate_req_feed
