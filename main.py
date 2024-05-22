@@ -1210,20 +1210,22 @@ class ScreenOperateManual(MDScreen):
         global data_base_config
 
         if(movement=="feed"):
-            if conf_feed_speed_sv <= 5:
+            if conf_feed_speed_sv < 5:
                 conf_feed_speed_sv += 1
+            else:
+                conf_feed_speed_sv = 1
 
         if(movement=="bend"):
-            if conf_bend_speed_sv <= 5:
+            if conf_bend_speed_sv < 5:
                 conf_bend_speed_sv += 1
+            else:
+                conf_bend_speed_sv = 1
 
         if(movement=="turn"):
-            if conf_turn_speed_sv <= 5:
+            if conf_turn_speed_sv < 5:
                 conf_turn_speed_sv += 1
-
-        conf_feed_speed_sv[conf_feed_speed_sv > 5] = 1
-        conf_bend_speed_sv[conf_bend_speed_sv > 5] = 1
-        conf_turn_speed_sv[conf_turn_speed_sv > 5] = 1
+            else:
+                conf_turn_speed_sv = 1
 
         try:
             if flag_conn_stat:
@@ -2031,24 +2033,24 @@ class ScreenCompile(MDScreen):
         if(movement=="feed"):
             for i in range(0,10):
                 if(number==i):
-                    if conf_feed_speed_step[i] <= 5:
+                    if conf_feed_speed_step[i] < 5:
                         conf_feed_speed_step[i] += 1
 
         if(movement=="bend"):
             for i in range(0,10):
                 if(number==i):
-                    if conf_bend_speed_step[i] <= 5:
+                    if conf_bend_speed_step[i] < 5:
                         conf_bend_speed_step[i] += 1
 
         if(movement=="turn"):
             for i in range(0,10):
                 if(number==i):
-                    if conf_turn_speed_step[i] <= 5:
+                    if conf_turn_speed_step[i] < 5:
                         conf_turn_speed_step[i] += 1
 
-        conf_feed_speed_step[conf_feed_speed_step > 5] = 1
-        conf_bend_speed_step[conf_bend_speed_step > 5] = 1
-        conf_turn_speed_step[conf_turn_speed_step > 5] = 1
+        conf_feed_speed_step[conf_feed_speed_step >= 5] = 1
+        conf_bend_speed_step[conf_bend_speed_step >= 5] = 1
+        conf_turn_speed_step[conf_turn_speed_step >= 5] = 1
 
         self.update_text_config()
 
