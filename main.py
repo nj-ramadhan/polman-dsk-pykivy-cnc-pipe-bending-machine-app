@@ -347,18 +347,18 @@ class ScreenSplash(MDScreen):
                 bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300
                 modbus_client.close()
             
-                val_feed_pv = int(feed_registers.registers[0])
-                val_feed_sv = int(feed_registers.registers[1])
-                val_bend_pv = int(bend_registers.registers[0])
-                val_bend_sv = int(bend_registers.registers[1])
-                val_turn_pv = int(turn_registers.registers[0])
-                val_turn_sv = int(turn_registers.registers[1])
-                conf_feed_speed_pv = int(feed_speed_registers.registers[0])
-                conf_feed_speed_sv = int(feed_speed_registers.registers[1])
-                conf_bend_speed_pv = int(bend_speed_registers.registers[0])
-                conf_bend_speed_sv = int(bend_speed_registers.registers[1])
-                conf_turn_speed_pv = int(turn_speed_registers.registers[0])
-                conf_turn_speed_sv = int(turn_speed_registers.registers[1])
+                val_feed_pv = int(feed_registers.registers[0]) if (int(feed_registers.registers[0]) <= 32768) else (int(feed_registers.registers[0]) - 65536) 
+                val_feed_sv = int(feed_registers.registers[1]) if (int(feed_registers.registers[1]) <= 32768) else (int(feed_registers.registers[1]) - 65536)
+                val_bend_pv = int(bend_registers.registers[0]) if (int(bend_registers.registers[0]) <= 32768) else (int(bend_registers.registers[0]) - 65536)
+                val_bend_sv = int(bend_registers.registers[1]) if (int(bend_registers.registers[1]) <= 32768) else (int(bend_registers.registers[1]) - 65536)
+                val_turn_pv = int(turn_registers.registers[0]) if (int(turn_registers.registers[0]) <= 32768) else (int(turn_registers.registers[0]) - 65536)
+                val_turn_sv = int(turn_registers.registers[1]) if (int(turn_registers.registers[1]) <= 32768) else (int(turn_registers.registers[1]) - 65536)
+                conf_feed_speed_pv = int(feed_speed_registers.registers[0]) if (int(feed_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_feed_speed_sv = int(feed_speed_registers.registers[1]) if (int(feed_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
+                conf_bend_speed_pv = int(bend_speed_registers.registers[0]) if (int(bend_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_bend_speed_sv = int(bend_speed_registers.registers[1]) if (int(bend_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
+                conf_turn_speed_pv = int(turn_speed_registers.registers[0]) if (int(turn_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_turn_speed_sv = int(turn_speed_registers.registers[1]) if (int(turn_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
                 conf_bed_pos_pv = bed_pos_registers.bits[0]
                 conf_bed_pos_sv = bed_pos_registers.bits[1]
 
