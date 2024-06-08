@@ -153,6 +153,9 @@ sens_feed_origin = False
 sens_feed_reducer = False
 sens_chuck_close = False
 
+flag_seqs_arr = np.zeros(11)
+flag_steps_arr = np.zeros(11)
+
 view_camera = np.array([45, 0, 0])
 
 class ScreenSplash(MDScreen):    
@@ -186,6 +189,7 @@ class ScreenSplash(MDScreen):
         global sens_clamp_close, sens_bend_reducer, sens_bend_origin
         global sens_press_open, sens_table_up, sens_table_down
         global sens_feed_origin, sens_feed_reducer, sens_chuck_close
+        global flag_seqs_arr, flag_steps_arr
 
         try:
             if flag_conn_stat:
@@ -194,15 +198,19 @@ class ScreenSplash(MDScreen):
                 # flag_mode, flag_run, flag_alarm, flag_reset = flags
                 jog_flags = modbus_client.read_coils(3092, 1, slave=1) #M20
 
-                feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000
-                bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030
-                turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060
-                feed_speed_registers = modbus_client.read_holding_registers(3712, 2, slave=1) #V3200
-                bend_speed_registers = modbus_client.read_holding_registers(3742, 2, slave=1) #V3230
-                turn_speed_registers = modbus_client.read_holding_registers(3772, 2, slave=1) #V3260
-                bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300
+                feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000 - V3001
+                bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030 - V3031
+                turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060 - V3061
+                feed_speed_registers = modbus_client.read_holding_registers(3712, 2, slave=1) #V3200 - V3201
+                bend_speed_registers = modbus_client.read_holding_registers(3742, 2, slave=1) #V3230 - V3231
+                turn_speed_registers = modbus_client.read_holding_registers(3772, 2, slave=1) #V3260 - V3261
+                bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300 - M301
 
-                sens_flags = modbus_client.read_coils(3512, 9, slave=1) #M111
+                sens_flags = modbus_client.read_coils(3183, 9, slave=1) #M111 - M119
+
+                seq_init_flags = modbus_client.read_coils(3133, 2, slave=1) #M61 - M62
+                seq_flags = modbus_client.read_coils(3143, 9, slave=1) #M71 - M79
+                step_flags = modbus_client.read_coils(3272, 11, slave=1) #M200 - M210
 
                 modbus_client.close()
 
@@ -238,6 +246,15 @@ class ScreenSplash(MDScreen):
                 sens_feed_origin = sens_flags.bits[6]
                 sens_feed_reducer = sens_flags.bits[7]
                 sens_chuck_close = sens_flags.bits[8]
+
+                flag_seqs_arr[0] = seq_init_flags.bits[0]
+                flag_seqs_arr[1] = seq_init_flags.bits[1]
+
+                for seq_flag in seq_flags:
+                    flag_seqs_arr[seq_flag + 2] = seq_flags.bits[seq_flag]
+
+                for step_flag in step_flags:
+                    flag_steps_arr[step_flag] = step_flags.bits[step_flag]
                 
         except Exception as e:
             msg = f'{e}'
@@ -371,6 +388,7 @@ class ScreenSplash(MDScreen):
         global sens_clamp_close, sens_bend_reducer, sens_bend_origin
         global sens_press_open, sens_table_up, sens_table_down
         global sens_feed_origin, sens_feed_reducer, sens_chuck_close
+        global flag_seqs_arr, flag_steps_arr
 
         screenOperateManual = self.screen_manager.get_screen('screen_operate_manual')
         screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
@@ -458,6 +476,116 @@ class ScreenSplash(MDScreen):
                 screenOperateManual.ids.lp_chuck_close.md_bg_color = "#22ee22"
             else:
                 screenOperateManual.ids.lp_chuck_close.md_bg_color = "#223322"
+
+            if flag_seqs_arr[0]:
+                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#223322"
+
+            if flag_seqs_arr[1]:
+                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#223322"
+
+            if flag_seqs_arr[2]:
+                screenOperateAuto.ids.lp_seq1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq1.md_bg_color = "#223322"
+
+            if flag_seqs_arr[3]:
+                screenOperateAuto.ids.lp_seq2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq2.md_bg_color = "#223322"
+
+            if flag_seqs_arr[4]:
+                screenOperateAuto.ids.lp_seq3.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq3.md_bg_color = "#223322"
+
+            if flag_seqs_arr[5]:
+                screenOperateAuto.ids.lp_seq4.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq4.md_bg_color = "#223322"
+
+            if flag_seqs_arr[6]:
+                screenOperateAuto.ids.lp_seq5.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq5.md_bg_color = "#223322"
+
+            if flag_seqs_arr[7]:
+                screenOperateAuto.ids.lp_seq6.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq6.md_bg_color = "#223322"
+
+            if flag_seqs_arr[8]:
+                screenOperateAuto.ids.lp_seq7.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq7.md_bg_color = "#223322"
+
+            if flag_seqs_arr[9]:
+                screenOperateAuto.ids.lp_seq8.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq8.md_bg_color = "#223322"
+
+            if flag_seqs_arr[10]:
+                screenOperateAuto.ids.lp_seq9.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq9.md_bg_color = "#223322"
+
+            if flag_steps_arr[0]:
+                screenOperateAuto.ids.lp_step0.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step0.md_bg_color = "#223322"
+
+            if flag_steps_arr[1]:
+                screenOperateAuto.ids.lp_step1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step1.md_bg_color = "#223322"
+
+            if flag_steps_arr[2]:
+                screenOperateAuto.ids.lp_step2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step2.md_bg_color = "#223322"
+
+            if flag_steps_arr[3]:
+                screenOperateAuto.ids.lp_step3.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step3.md_bg_color = "#223322"
+
+            if flag_steps_arr[4]:
+                screenOperateAuto.ids.lp_step4.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step4.md_bg_color = "#223322"
+
+            if flag_steps_arr[5]:
+                screenOperateAuto.ids.lp_step5.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step5.md_bg_color = "#223322"
+
+            if flag_steps_arr[6]:
+                screenOperateAuto.ids.lp_step6.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step6.md_bg_color = "#223322"
+
+            if flag_steps_arr[7]:
+                screenOperateAuto.ids.lp_step7.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step7.md_bg_color = "#223322"
+
+            if flag_steps_arr[8]:
+                screenOperateAuto.ids.lp_step8.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step8.md_bg_color = "#223322"
+
+            if flag_steps_arr[9]:
+                screenOperateAuto.ids.lp_step9.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step9.md_bg_color = "#223322"
+
+            if flag_steps_arr[10]:
+                screenOperateAuto.ids.lp_step10.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step10.md_bg_color = "#223322"
 
         except Exception as e:
             Logger.error(e)
