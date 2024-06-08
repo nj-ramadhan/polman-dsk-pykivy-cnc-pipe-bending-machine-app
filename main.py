@@ -1210,20 +1210,22 @@ class ScreenOperateManual(MDScreen):
         global data_base_config
 
         if(movement=="feed"):
-            if conf_feed_speed_sv <= 5:
+            if conf_feed_speed_sv < 5:
                 conf_feed_speed_sv += 1
+            else:
+                conf_feed_speed_sv = 1
 
         if(movement=="bend"):
-            if conf_bend_speed_sv <= 5:
+            if conf_bend_speed_sv < 5:
                 conf_bend_speed_sv += 1
+            else:
+                conf_bend_speed_sv = 1
 
         if(movement=="turn"):
-            if conf_turn_speed_sv <= 5:
+            if conf_turn_speed_sv < 5:
                 conf_turn_speed_sv += 1
-
-        conf_feed_speed_sv[conf_feed_speed_sv > 5] = 1
-        conf_bend_speed_sv[conf_bend_speed_sv > 5] = 1
-        conf_turn_speed_sv[conf_turn_speed_sv > 5] = 1
+            else:
+                conf_turn_speed_sv = 1
 
         try:
             if flag_conn_stat:

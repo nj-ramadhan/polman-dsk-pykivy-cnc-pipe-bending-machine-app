@@ -246,24 +246,6 @@
 							size_hint_x: 0.3
 							on_release: root.choice_speed("turn")
 
-					MDFillRoundFlatButton:
-						id: bt_origin
-						size_hint_y: 0.02
-						text: "ORIGIN"
-						font_style: 'Button'
-						size_hint_x: 1
-						on_press: root.exec_origin()
-						on_release: root.end_origin()
-
-					MDFillRoundFlatButton:
-						id: bt_reset
-						size_hint_y: 0.02
-						text: "RESET"
-						font_style: 'Button'
-						size_hint_x: 1
-						on_press: root.exec_reset()
-						on_release: root.end_reset()
-
 				MDBoxLayout:
 					orientation: "vertical"
 					size_hint_x: 0.4
