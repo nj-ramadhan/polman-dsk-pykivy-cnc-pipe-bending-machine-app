@@ -100,7 +100,7 @@
 
 					MDFillRoundFlatButton:
 						id: bt_jog_enable
-						size_hint_y: 0.02
+						size_hint_y: 0.01
 						text: "JOG"
 						font_style: 'Button'
 						size_hint_x: 1
@@ -109,7 +109,66 @@
 					MDGridLayout:
 						cols:3
 						spacing:10
-						size_hint_y: 0.04
+						size_hint_y: 0.03
+
+						MDIconButton:
+							id: lp_clamp_close
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+					
+						MDIconButton:
+							id: lp_bend_reducer
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_bend_origin
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_press_open
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_table_up
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_table_down
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_feed_origin
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_feed_reducer
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+						MDIconButton:
+							id: lp_chuck_close
+							text: " "
+							font_style: 'Button'
+							size_hint_x: 0.3
+
+					MDGridLayout:
+						cols:3
+						spacing:10
+						size_hint_y: 0.02
 
 						MDFillRoundFlatButton:
 							id: bt_clamp
@@ -156,26 +215,26 @@
 					MDGridLayout:
 						cols:2
 						spacing:10
-						size_hint_y: 0.02
+						size_hint_y: 0.01
 
 						MDFillRoundFlatButton:
-							id: bt_holder_up
-							text: "HOLDER UP"
+							id: bt_holder_top
+							text: "HOLDER TOP"
 							font_style: 'Button'
 							size_hint_x: 0.5
-							on_press: root.exec_holder_up()
+							on_press: root.exec_holder_top()
 
 						MDFillRoundFlatButton:
-							id: bt_holder_down
-							text: "HOLDER DOWN"
+							id: bt_holder_bottom
+							text: "HOLDER BOTTOM"
 							font_style: 'Button'
 							size_hint_x: 0.5
-							on_press: root.exec_holder_down()
+							on_press: root.exec_holder_bottom()
 
 					MDGridLayout:
 						cols:3
 						spacing:10
-						size_hint_y: 0.04
+						size_hint_y: 0.03
 
 						MDFillRoundFlatButton:
 							id: bt_jog_feed_p
