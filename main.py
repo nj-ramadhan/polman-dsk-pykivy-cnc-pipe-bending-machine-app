@@ -1707,14 +1707,22 @@ class ScreenOperateAuto(MDScreen):
         val_turn_step = data_base_process[2,:] 
 
         val_feed_absolute_step = np.zeros(10)
+        val_bend_linear_absolute_step = np.zeros(10)
         # bend linear offset = 2 pi * r * die radius / 360 
         # (conversion from bending movement to feed offset linear movement)
         val_bend_linear_offset_step = val_machine_die_radius * 2 * np.pi * val_bend_step / 360
 
-        val_feed_absolute_step[0] = val_feed_step[0]
+        # setting val_advanced_receive_pos_x as first cycle position set value feed
+        val_feed_absolute_step[0] = int(val_feed_step[0] + val_advanced_receive_pos_x)
+        val_bend_linear_absolute_step[0] = int(val_bend_linear_offset_step[0] + val_feed_step[0] + val_advanced_receive_pos_x)
+
         for i in range(1,10):
             # feed absolute = feed offset + last feed absolute + bend linear offset
-            val_feed_absolute_step[i] = int(val_feed_step[i] + val_feed_absolute_step[i-1] + val_bend_linear_offset_step[i])
+            val_feed_absolute_step[i] = int(val_feed_absolute_step[i-1] + val_feed_step[i])
+            val_bend_linear_absolute_step[i] = int(val_feed_absolute_step[i] + val_bend_linear_offset_step[i])
+
+            if val_feed_absolute_step[i] > val_machine_eff_length:
+                val_feed_absolute_step[i] = int(val_feed_step[i] + val_advanced_receive_pos_x)
 
         val_turn_absolute_step = np.zeros(10)
         val_turn_absolute_step[0] = val_turn_step[0]
@@ -1726,8 +1734,7 @@ class ScreenOperateAuto(MDScreen):
         list_val_bend_step = val_bend_step.astype(int).tolist()
         list_val_turn_absolute_step = val_turn_absolute_step.astype(int).tolist()
         # list_val_turn_step = val_turn_step.astype(int).tolist()
-        
-        list_val_bend_linear_offset_step = val_bend_linear_offset_step.astype(int).tolist()
+        list_val_bend_linear_absolute_step = val_bend_linear_absolute_step.astype(int).tolist()
 
         try:
             if flag_conn_stat:
@@ -1744,8 +1751,7 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.write_registers(3553, list_val_bend_step, slave=1) #V3041
                 modbus_client.write_registers(3583, list_val_turn_absolute_step, slave=1) #V3071
                 # modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
-
-                modbus_client.write_registers(3623, list_val_bend_linear_offset_step, slave=1) #V3111
+                modbus_client.write_registers(3623, list_val_bend_linear_absolute_step, slave=1) #V3111
                 modbus_client.close()
         except Exception as e:
             toast(e) 
