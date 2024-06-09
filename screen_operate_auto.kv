@@ -74,7 +74,7 @@
 			# illustration pipe
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.42
+				size_hint_y: 0.50
 				padding: 40
 
 				MDBoxLayout:
@@ -141,7 +141,7 @@
 			MDBoxLayout:
 				orientation: "horizontal"
 				spacing: 10
-				size_hint_y: 0.02
+				size_hint_y: 0.04
 
 				MDFillRoundFlatIconButton:
 					icon: "reload"
@@ -162,14 +162,14 @@
 				text: "MODE MANUAL"
 				font_style: 'Button'
 				size_hint_x: 1
-				size_hint_y: 0.02
+				size_hint_y: 0.04
 				on_press: root.exec_mode()
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.02
+				size_hint_y: 0.04
 				spacing:20
-				padding:0,10
+				padding:0,5
 
 				MDFillRoundFlatIconButton:
 					id: lp_run
@@ -187,6 +187,7 @@
 				orientation: "horizontal"
 				size_hint_y: 0.04
 				spacing:20
+				padding:0,10
 
 				MDLabel:
 					text: "SEQUENCE"
@@ -252,6 +253,7 @@
 				orientation: "horizontal"
 				size_hint_y: 0.04
 				spacing:20
+				padding:0,10
 
 				MDLabel:
 					text: "STEP"
@@ -315,8 +317,9 @@
 
 			MDBoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.02
+				size_hint_y: 0.04
 				spacing:20
+				padding: 0,20
 
 				MDFillRoundFlatIconButton:
 					id: bt_start
@@ -352,8 +355,8 @@
 
 			MDGridLayout:
 				cols:7
-				spacing: 20, 30
-				padding: 20
+				spacing: 20, 10
+				padding: 20, 20
 				size_hint_y: 0.1
 
 				MDLabel:
@@ -436,7 +439,7 @@
 			MDGridLayout:
 				cols:3
 				spacing: 20, 10
-				padding: 20
+				padding: 20, 20
 				size_hint_y: 0.1
 
 				MDLabel:

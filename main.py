@@ -57,42 +57,6 @@ colors = {
 
 modbus_client = ModbusTcpClient('192.168.1.111')
 
-# data_settings = np.loadtxt("conf\\settings.cfg", encoding=None)
-# data_base_load = data_settings.T
-# data_base_pipe_setting = data_base_load[:3]
-# data_base_machine_setting = data_base_load[3:12]
-# data_base_advanced_setting = data_base_load[12:]
-
-# val_pipe_length = data_base_pipe_setting[0]
-# val_pipe_diameter = data_base_pipe_setting[1]
-# val_pipe_thickness = data_base_pipe_setting[2]
-
-# val_machine_eff_length = data_base_machine_setting[0]
-# val_machine_supp_pos = data_base_machine_setting[1]
-# val_machine_clamp_front_delay = data_base_machine_setting[2]
-# val_machine_clamp_rear_delay = data_base_machine_setting[3]
-# val_machine_press_front_delay = data_base_machine_setting[4]
-# val_machine_press_rear_delay = data_base_machine_setting[5]
-# val_machine_collet_clamp_delay = data_base_machine_setting[6]
-# val_machine_collet_open_delay = data_base_machine_setting[7]
-# val_machine_die_radius = data_base_machine_setting[8]
-
-# val_advanced_pipe_head = data_base_advanced_setting[0]
-# val_advanced_start_mode = data_base_advanced_setting[1]
-# val_advanced_first_line = data_base_advanced_setting[2]
-# val_advanced_finish_job = data_base_advanced_setting[3]
-# val_advanced_receive_pos_x = data_base_advanced_setting[4]
-# val_advanced_receive_pos_b = data_base_advanced_setting[5]
-# val_advanced_prod_qty = data_base_advanced_setting[6]
-# val_advanced_press_semiclamp_time = data_base_advanced_setting[7]
-# val_advanced_press_semiopen_time = data_base_advanced_setting[8]
-# val_advanced_clamp_semiclamp_time = data_base_advanced_setting[9]
-# val_advanced_springback_20 = data_base_advanced_setting[10]
-# val_advanced_springback_120 = data_base_advanced_setting[11]
-# val_advanced_max_bend = data_base_advanced_setting[12]
-# val_advanced_press_start_angle = data_base_advanced_setting[13]
-# val_advanced_press_stop_angle = data_base_advanced_setting[14]
-
 val_feed_pv = 0.
 val_bend_pv = 0.
 val_turn_pv = 0.
@@ -1706,6 +1670,11 @@ class ScreenOperateAuto(MDScreen):
         val_bend_step = data_base_process[1,:] 
         val_turn_step = data_base_process[2,:] 
 
+        conf_feed_speed_step = data_base_config[0,:]
+        conf_bend_speed_step = data_base_config[1,:]
+        conf_turn_speed_step = data_base_config[2,:]
+        conf_bed_pos_step = data_base_config[3,:]
+
         val_feed_absolute_step = np.zeros(10)
         val_bend_linear_absolute_step = np.zeros(10)
         # bend linear offset = 2 pi * r * die radius / 360 
@@ -1736,6 +1705,11 @@ class ScreenOperateAuto(MDScreen):
         # list_val_turn_step = val_turn_step.astype(int).tolist()
         list_val_bend_linear_absolute_step = val_bend_linear_absolute_step.astype(int).tolist()
 
+        list_conf_feed_speed_step = conf_feed_speed_step.astype(int).tolist()
+        list_conf_bend_speed_step = conf_bend_speed_step.astype(int).tolist()
+        list_conf_turn_speed_step = conf_turn_speed_step.astype(int).tolist()
+        list_conf_bed_pos_step = conf_bed_pos_step.astype(bool).tolist()
+
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1752,6 +1726,12 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.write_registers(3583, list_val_turn_absolute_step, slave=1) #V3071
                 # modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
                 modbus_client.write_registers(3623, list_val_bend_linear_absolute_step, slave=1) #V3111
+
+                modbus_client.write_registers(3723, list_conf_feed_speed_step, slave=1) #V3211
+                modbus_client.write_registers(3723, list_conf_bend_speed_step, slave=1) #V3241
+                modbus_client.write_registers(3723, list_conf_turn_speed_step, slave=1) #V3271
+                modbus_client.write_coils(3383, list_conf_bed_pos_step, slave=1) #M311
+                modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
                 modbus_client.close()
         except Exception as e:
             toast(e) 
