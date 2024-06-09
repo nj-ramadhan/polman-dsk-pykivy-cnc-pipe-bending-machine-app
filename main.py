@@ -1731,7 +1731,7 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.write_registers(3723, list_conf_bend_speed_step, slave=1) #V3241
                 modbus_client.write_registers(3723, list_conf_turn_speed_step, slave=1) #V3271
                 modbus_client.write_coils(3383, list_conf_bed_pos_step, slave=1) #M311
-                modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
+                # modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
                 modbus_client.close()
         except Exception as e:
             toast(e) 
