@@ -130,8 +130,8 @@ flag_cylinder_chuck = False
 flag_cylinder_mandrell = False
 flag_cylinder_table_up = False
 flag_cylinder_table_shift = False
-flag_cylinder_holder_up = False
-flag_cylinder_holder_down = False
+flag_cylinder_holder_top = False
+flag_cylinder_holder_bottom = False
 
 flag_jog_enable = False
 flag_jog_req_feed = False
@@ -143,6 +143,19 @@ flag_operate_req_turn = False
 
 flag_origin_req = False
 
+sens_clamp_close = False
+sens_bend_reducer = False
+sens_bend_origin = False
+sens_press_open = False
+sens_table_up = False
+sens_table_down = False
+sens_feed_origin = False
+sens_feed_reducer = False
+sens_chuck_close = False
+
+flag_seqs_arr = np.zeros(11)
+flag_steps_arr = np.zeros(11)
+
 view_camera = np.array([45, 0, 0])
 
 class ScreenSplash(MDScreen):    
@@ -152,10 +165,10 @@ class ScreenSplash(MDScreen):
         Clock.schedule_once(self.delayed_init, 5)
         
     def delayed_init(self, dt):
-        Clock.schedule_interval(self.regular_update_connection, 10)
-        Clock.schedule_interval(self.regular_display, 1)
-        Clock.schedule_interval(self.regular_highspeed_display, 0.5)
-        Clock.schedule_interval(self.regular_get_data, 1)
+        Clock.schedule_interval(self.regular_update_connection, 5)
+        Clock.schedule_interval(self.regular_display, 0.5)
+        Clock.schedule_interval(self.regular_highspeed_display, 0.2)
+        Clock.schedule_interval(self.regular_get_data, 0.2)
 
     def regular_update_connection(self, dt):
         global flag_conn_stat
@@ -168,26 +181,87 @@ class ScreenSplash(MDScreen):
 
     def regular_get_data(self, dt):
         global flag_conn_stat, flag_mode, flag_run, flag_alarm, flag_reset, flag_jog_enable
-        operate_flags = [False, False, False, False]
-        jog_flags = [False]
+        global val_feed_pv, val_bend_pv, val_turn_pv
+        global val_feed_sv, val_bend_sv, val_turn_sv
+        global conf_feed_speed_pv, conf_turn_speed_pv, conf_bend_speed_pv
+        global conf_feed_speed_sv, conf_turn_speed_sv, conf_bend_speed_sv
+        global conf_bed_pos_pv, conf_bed_pos_sv
+        global sens_clamp_close, sens_bend_reducer, sens_bend_origin
+        global sens_press_open, sens_table_up, sens_table_down
+        global sens_feed_origin, sens_feed_reducer, sens_chuck_close
+        global flag_seqs_arr, flag_steps_arr
+
         try:
             if flag_conn_stat:
                 modbus_client.connect()
                 operate_flags = modbus_client.read_coils(3072, 4, slave=1) #M0 - M3
+                # flag_mode, flag_run, flag_alarm, flag_reset = flags
+                jog_flags = modbus_client.read_coils(3092, 1, slave=1) #M20
+
+                feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000 - V3001
+                bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030 - V3031
+                turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060 - V3061
+                feed_speed_registers = modbus_client.read_holding_registers(3712, 2, slave=1) #V3200 - V3201
+                bend_speed_registers = modbus_client.read_holding_registers(3742, 2, slave=1) #V3230 - V3231
+                turn_speed_registers = modbus_client.read_holding_registers(3772, 2, slave=1) #V3260 - V3261
+                bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300 - M301
+
+                sens_flags = modbus_client.read_coils(3183, 9, slave=1) #M111 - M119
+
+                seq_init_flags = modbus_client.read_coils(3133, 2, slave=1) #M61 - M62
+                seq_flags = modbus_client.read_coils(3143, 9, slave=1) #M71 - M79
+                step_flags = modbus_client.read_coils(3272, 11, slave=1) #M200 - M210
+
+                modbus_client.close()
+
                 flag_mode = operate_flags.bits[0]
                 flag_run = operate_flags.bits[1]
                 flag_alarm = operate_flags.bits[2]
                 flag_reset = operate_flags.bits[3]
-                # flag_mode, flag_run, flag_alarm, flag_reset = flags
-                jog_flags = modbus_client.read_coils(3092, 1, slave=1) #M20
+
                 flag_jog_enable = jog_flags.bits[0]
-                modbus_client.close()
+
+                val_feed_pv = int(feed_registers.registers[0]) if (int(feed_registers.registers[0]) <= 32768) else (int(feed_registers.registers[0]) - 65536) 
+                val_feed_sv = int(feed_registers.registers[1]) if (int(feed_registers.registers[1]) <= 32768) else (int(feed_registers.registers[1]) - 65536)
+                val_bend_pv = int(bend_registers.registers[0]) if (int(bend_registers.registers[0]) <= 32768) else (int(bend_registers.registers[0]) - 65536)
+                val_bend_sv = int(bend_registers.registers[1]) if (int(bend_registers.registers[1]) <= 32768) else (int(bend_registers.registers[1]) - 65536)
+                val_turn_pv = int(turn_registers.registers[0]) if (int(turn_registers.registers[0]) <= 32768) else (int(turn_registers.registers[0]) - 65536)
+                val_turn_sv = int(turn_registers.registers[1]) if (int(turn_registers.registers[1]) <= 32768) else (int(turn_registers.registers[1]) - 65536)
+
+                conf_feed_speed_pv = int(feed_speed_registers.registers[0]) if (int(feed_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_feed_speed_sv = int(feed_speed_registers.registers[1]) if (int(feed_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
+                conf_bend_speed_pv = int(bend_speed_registers.registers[0]) if (int(bend_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_bend_speed_sv = int(bend_speed_registers.registers[1]) if (int(bend_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
+                conf_turn_speed_pv = int(turn_speed_registers.registers[0]) if (int(turn_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
+                conf_turn_speed_sv = int(turn_speed_registers.registers[1]) if (int(turn_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
+                conf_bed_pos_pv = bed_pos_registers.bits[0]
+                conf_bed_pos_sv = bed_pos_registers.bits[1]
+
+                sens_clamp_close = sens_flags.bits[0]
+                sens_bend_reducer = sens_flags.bits[1]
+                sens_bend_origin = sens_flags.bits[2]
+                sens_press_open = sens_flags.bits[3]
+                sens_table_up = sens_flags.bits[4]
+                sens_table_down = sens_flags.bits[5]
+                sens_feed_origin = sens_flags.bits[6]
+                sens_feed_reducer = sens_flags.bits[7]
+                sens_chuck_close = sens_flags.bits[8]
+
+                flag_seqs_arr[0] = seq_init_flags.bits[0]
+                flag_seqs_arr[1] = seq_init_flags.bits[1]
+
+                for seq_flag in seq_flags:
+                    flag_seqs_arr[seq_flag + 2] = seq_flags.bits[seq_flag]
+
+                for step_flag in step_flags:
+                    flag_steps_arr[step_flag] = step_flags.bits[step_flag]
+                
         except Exception as e:
             msg = f'{e}'
             toast(msg)  
 
-    def regular_display(self, dt):   
-        global flag_mode, flag_run, flag_alarm, flag_reset
+    def regular_display(self, dt):
+        global flag_conn_stat        
         global conf_bed_pos_step
 
         try:
@@ -230,28 +304,7 @@ class ScreenSplash(MDScreen):
                 screenOperateAuto.ids.comm_status.color = "#ee2222"
                 screenCompile.ids.comm_status.text = "Status: Disconnected"
                 screenCompile.ids.comm_status.color = "#ee2222"
-            
-            if not flag_mode:
-                screenOperateManual.ids.bt_mode.md_bg_color = "#196BA5"
-                screenOperateManual.ids.bt_mode.text = "MANUAL MODE"
-                screenOperateAuto.ids.bt_mode.md_bg_color = "#196BA5"
-                screenOperateAuto.ids.bt_mode.text = "MANUAL MODE"
-            else:
-                screenOperateManual.ids.bt_mode.md_bg_color = "#ee2222"
-                screenOperateManual.ids.bt_mode.text = "AUTO MODE"
-                screenOperateAuto.ids.bt_mode.md_bg_color = "#ee2222"
-                screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
-            
-            if flag_run:
-                screenOperateAuto.ids.lp_run.md_bg_color = "#22ee22"
-            else:
-                screenOperateAuto.ids.lp_run.md_bg_color = "#223322"
-
-            if flag_alarm:
-                screenOperateAuto.ids.lp_alarm.md_bg_color = "#ee2222"
-            else:
-                screenOperateAuto.ids.lp_alarm.md_bg_color = "#332222"
-            
+                                  
             if conf_bed_pos_step[0] != 1:
                 screenCompile.ids.bt_bed_pos0.text = "DN"
                 screenCompile.ids.bt_bed_pos0.md_bg_color = "#196BA5"
@@ -326,59 +379,214 @@ class ScreenSplash(MDScreen):
             Logger.error(e)
 
     def regular_highspeed_display(self, dt):
+        global flag_mode, flag_run, flag_alarm
         global val_feed_pv, val_bend_pv, val_turn_pv
         global val_feed_sv, val_bend_sv, val_turn_sv
         global conf_feed_speed_pv, conf_turn_speed_pv, conf_bend_speed_pv
         global conf_feed_speed_sv, conf_turn_speed_sv, conf_bend_speed_sv
         global conf_bed_pos_pv, conf_bed_pos_sv
+        global sens_clamp_close, sens_bend_reducer, sens_bend_origin
+        global sens_press_open, sens_table_up, sens_table_down
+        global sens_feed_origin, sens_feed_reducer, sens_chuck_close
+        global flag_seqs_arr, flag_steps_arr
 
         screenOperateManual = self.screen_manager.get_screen('screen_operate_manual')
         screenOperateAuto = self.screen_manager.get_screen('screen_operate_auto')
 
         try:
-            if flag_conn_stat:
-                modbus_client.connect()
-                feed_registers = modbus_client.read_holding_registers(3512, 2, slave=1) #V3000
-                bend_registers = modbus_client.read_holding_registers(3542, 2, slave=1) #V3030
-                turn_registers = modbus_client.read_holding_registers(3572, 2, slave=1) #V3060
-                feed_speed_registers = modbus_client.read_holding_registers(3712, 2, slave=1) #V3200
-                bend_speed_registers = modbus_client.read_holding_registers(3742, 2, slave=1) #V3230
-                turn_speed_registers = modbus_client.read_holding_registers(3772, 2, slave=1) #V3260
-                bed_pos_registers = modbus_client.read_coils(3372, 2, slave=1) #M300
-                modbus_client.close()
-            
-                val_feed_pv = int(feed_registers.registers[0]) if (int(feed_registers.registers[0]) <= 32768) else (int(feed_registers.registers[0]) - 65536) 
-                val_feed_sv = int(feed_registers.registers[1]) if (int(feed_registers.registers[1]) <= 32768) else (int(feed_registers.registers[1]) - 65536)
-                val_bend_pv = int(bend_registers.registers[0]) if (int(bend_registers.registers[0]) <= 32768) else (int(bend_registers.registers[0]) - 65536)
-                val_bend_sv = int(bend_registers.registers[1]) if (int(bend_registers.registers[1]) <= 32768) else (int(bend_registers.registers[1]) - 65536)
-                val_turn_pv = int(turn_registers.registers[0]) if (int(turn_registers.registers[0]) <= 32768) else (int(turn_registers.registers[0]) - 65536)
-                val_turn_sv = int(turn_registers.registers[1]) if (int(turn_registers.registers[1]) <= 32768) else (int(turn_registers.registers[1]) - 65536)
-                conf_feed_speed_pv = int(feed_speed_registers.registers[0]) if (int(feed_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
-                conf_feed_speed_sv = int(feed_speed_registers.registers[1]) if (int(feed_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
-                conf_bend_speed_pv = int(bend_speed_registers.registers[0]) if (int(bend_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
-                conf_bend_speed_sv = int(bend_speed_registers.registers[1]) if (int(bend_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
-                conf_turn_speed_pv = int(turn_speed_registers.registers[0]) if (int(turn_speed_registers.registers[0]) <= 32768) else (int(feed_speed_registers.registers[0]) - 65536)
-                conf_turn_speed_sv = int(turn_speed_registers.registers[1]) if (int(turn_speed_registers.registers[1]) <= 32768) else (int(feed_speed_registers.registers[1]) - 65536)
-                conf_bed_pos_pv = bed_pos_registers.bits[0]
-                conf_bed_pos_sv = bed_pos_registers.bits[1]
+            screenOperateAuto.ids.lb_set_feed.text = str(val_feed_sv)
+            screenOperateAuto.ids.lb_set_bend.text = str(val_bend_sv)
+            screenOperateAuto.ids.lb_set_turn.text = str(val_turn_sv)
 
-                screenOperateAuto.ids.lb_set_feed.text = str(val_feed_sv)
-                screenOperateAuto.ids.lb_set_bend.text = str(val_bend_sv)
-                screenOperateAuto.ids.lb_set_turn.text = str(val_turn_sv)
+            screenOperateAuto.ids.lb_real_feed.text = str(val_feed_pv)
+            screenOperateAuto.ids.lb_real_bend.text = str(val_bend_pv)
+            screenOperateAuto.ids.lb_real_turn.text = str(val_turn_pv)
 
-                screenOperateAuto.ids.lb_real_feed.text = str(val_feed_pv)
-                screenOperateAuto.ids.lb_real_bend.text = str(val_bend_pv)
-                screenOperateAuto.ids.lb_real_turn.text = str(val_turn_pv)
+            screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
+            screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
+            screenOperateAuto.ids.lb_turn_speed.text = str(conf_turn_speed_pv)
+            screenOperateAuto.ids.lb_bed_pos.text = "UP" if conf_bed_pos_pv == 1 else "DN"
 
-                screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
-                screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
-                screenOperateAuto.ids.lb_turn_speed.text = str(conf_turn_speed_pv)
-                screenOperateAuto.ids.lb_bed_pos.text = "UP" if conf_bed_pos_pv == 1 else "DN"
+            screenOperateManual.ids.bt_feed_speed.text = str(conf_feed_speed_pv)
+            screenOperateManual.ids.bt_bend_speed.text = str(conf_bend_speed_pv)
+            screenOperateManual.ids.bt_turn_speed.text = str(conf_turn_speed_pv)
 
-                screenOperateManual.ids.bt_feed_speed.text = str(conf_feed_speed_pv)
-                screenOperateManual.ids.bt_bend_speed.text = str(conf_bend_speed_pv)
-                screenOperateManual.ids.bt_turn_speed.text = str(conf_turn_speed_pv)
-            
+            if not flag_mode:
+                screenOperateManual.ids.bt_mode.md_bg_color = "#196BA5"
+                screenOperateManual.ids.bt_mode.text = "MANUAL MODE"
+                screenOperateAuto.ids.bt_mode.md_bg_color = "#196BA5"
+                screenOperateAuto.ids.bt_mode.text = "MANUAL MODE"
+            else:
+                screenOperateManual.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateManual.ids.bt_mode.text = "AUTO MODE"
+                screenOperateAuto.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
+
+            if flag_run:
+                screenOperateAuto.ids.lp_run.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_run.md_bg_color = "#223322"
+
+            if flag_alarm:
+                screenOperateAuto.ids.lp_alarm.md_bg_color = "#ee2222"
+            else:
+                screenOperateAuto.ids.lp_alarm.md_bg_color = "#332222"
+
+            if sens_clamp_close:
+                screenOperateManual.ids.lp_clamp_close.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_clamp_close.md_bg_color = "#223322"
+
+            if sens_bend_reducer:
+                screenOperateManual.ids.lp_bend_reducer.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_bend_reducer.md_bg_color = "#223322"
+
+            if sens_bend_origin:
+                screenOperateManual.ids.lp_bend_origin.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_bend_origin.md_bg_color = "#223322"
+
+            if sens_press_open:
+                screenOperateManual.ids.lp_press_open.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_press_open.md_bg_color = "#223322"
+
+            if sens_table_up:
+                screenOperateManual.ids.lp_table_up.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_table_up.md_bg_color = "#223322"
+
+            if sens_table_down:
+                screenOperateManual.ids.lp_table_down.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_table_down.md_bg_color = "#223322"
+
+            if sens_feed_origin:
+                screenOperateManual.ids.lp_feed_origin.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_feed_origin.md_bg_color = "#223322"
+
+            if sens_feed_reducer:
+                screenOperateManual.ids.lp_feed_reducer.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_feed_reducer.md_bg_color = "#223322"
+
+            if sens_chuck_close:
+                screenOperateManual.ids.lp_chuck_close.md_bg_color = "#22ee22"
+            else:
+                screenOperateManual.ids.lp_chuck_close.md_bg_color = "#223322"
+
+            if flag_seqs_arr[0]:
+                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#223322"
+
+            if flag_seqs_arr[1]:
+                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#223322"
+
+            if flag_seqs_arr[2]:
+                screenOperateAuto.ids.lp_seq1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq1.md_bg_color = "#223322"
+
+            if flag_seqs_arr[3]:
+                screenOperateAuto.ids.lp_seq2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq2.md_bg_color = "#223322"
+
+            if flag_seqs_arr[4]:
+                screenOperateAuto.ids.lp_seq3.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq3.md_bg_color = "#223322"
+
+            if flag_seqs_arr[5]:
+                screenOperateAuto.ids.lp_seq4.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq4.md_bg_color = "#223322"
+
+            if flag_seqs_arr[6]:
+                screenOperateAuto.ids.lp_seq5.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq5.md_bg_color = "#223322"
+
+            if flag_seqs_arr[7]:
+                screenOperateAuto.ids.lp_seq6.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq6.md_bg_color = "#223322"
+
+            if flag_seqs_arr[8]:
+                screenOperateAuto.ids.lp_seq7.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq7.md_bg_color = "#223322"
+
+            if flag_seqs_arr[9]:
+                screenOperateAuto.ids.lp_seq8.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq8.md_bg_color = "#223322"
+
+            if flag_seqs_arr[10]:
+                screenOperateAuto.ids.lp_seq9.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_seq9.md_bg_color = "#223322"
+
+            if flag_steps_arr[0]:
+                screenOperateAuto.ids.lp_step0.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step0.md_bg_color = "#223322"
+
+            if flag_steps_arr[1]:
+                screenOperateAuto.ids.lp_step1.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step1.md_bg_color = "#223322"
+
+            if flag_steps_arr[2]:
+                screenOperateAuto.ids.lp_step2.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step2.md_bg_color = "#223322"
+
+            if flag_steps_arr[3]:
+                screenOperateAuto.ids.lp_step3.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step3.md_bg_color = "#223322"
+
+            if flag_steps_arr[4]:
+                screenOperateAuto.ids.lp_step4.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step4.md_bg_color = "#223322"
+
+            if flag_steps_arr[5]:
+                screenOperateAuto.ids.lp_step5.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step5.md_bg_color = "#223322"
+
+            if flag_steps_arr[6]:
+                screenOperateAuto.ids.lp_step6.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step6.md_bg_color = "#223322"
+
+            if flag_steps_arr[7]:
+                screenOperateAuto.ids.lp_step7.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step7.md_bg_color = "#223322"
+
+            if flag_steps_arr[8]:
+                screenOperateAuto.ids.lp_step8.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step8.md_bg_color = "#223322"
+
+            if flag_steps_arr[9]:
+                screenOperateAuto.ids.lp_step9.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step9.md_bg_color = "#223322"
+
+            if flag_steps_arr[10]:
+                screenOperateAuto.ids.lp_step10.md_bg_color = "#22ee22"
+            else:
+                screenOperateAuto.ids.lp_step10.md_bg_color = "#223322"
+
         except Exception as e:
             Logger.error(e)
 
@@ -1048,41 +1256,41 @@ class ScreenOperateManual(MDScreen):
         except:
             toast("error send flag_cylinder_table_shift data to PLC Slave") 
 
-    def exec_holder_up(self):
-        global flag_conn_stat, flag_cylinder_holder_up
+    def exec_holder_top(self):
+        global flag_conn_stat, flag_cylinder_holder_top
 
-        if flag_cylinder_holder_up:
-            flag_cylinder_holder_up = False
-            self.ids.bt_holder_up.md_bg_color = "#196BA5"
+        if flag_cylinder_holder_top:
+            flag_cylinder_holder_top = False
+            self.ids.bt_holder_top.md_bg_color = "#196BA5"
         else:
-            flag_cylinder_holder_up = True
-            self.ids.bt_holder_up.md_bg_color = "#ee2222"
+            flag_cylinder_holder_top = True
+            self.ids.bt_holder_top.md_bg_color = "#ee2222"
 
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3088, flag_cylinder_holder_up, slave=1) #M16
+                modbus_client.write_coil(3088, flag_cylinder_holder_top, slave=1) #M16
                 modbus_client.close()
         except:
-            toast("error send flag_cylinder_holder_up data to PLC Slave") 
+            toast("error send flag_cylinder_holder_top data to PLC Slave") 
 
-    def exec_holder_down(self):
-        global flag_conn_stat, flag_cylinder_holder_down
+    def exec_holder_bottom(self):
+        global flag_conn_stat, flag_cylinder_holder_bottom
 
-        if flag_cylinder_holder_down:
-            flag_cylinder_holder_down = False
-            self.ids.bt_holder_down.md_bg_color = "#196BA5"
+        if flag_cylinder_holder_bottom:
+            flag_cylinder_holder_bottom = False
+            self.ids.bt_holder_bottom.md_bg_color = "#196BA5"
         else:
-            flag_cylinder_holder_down = True
-            self.ids.bt_holder_down.md_bg_color = "#ee2222"
+            flag_cylinder_holder_bottom = True
+            self.ids.bt_holder_bottom.md_bg_color = "#ee2222"
 
         try:
             if flag_conn_stat:
                 modbus_client.connect()
-                modbus_client.write_coil(3089, flag_cylinder_holder_down, slave=1) #M17
+                modbus_client.write_coil(3089, flag_cylinder_holder_bottom, slave=1) #M17
                 modbus_client.close()
         except:
-            toast("error send flag_cylinder_holder_down data to PLC Slave") 
+            toast("error send flag_cylinder_holder_bottom data to PLC Slave") 
 
     def exec_jog_enable(self):
         global flag_conn_stat, flag_jog_enable
@@ -1492,9 +1700,17 @@ class ScreenOperateAuto(MDScreen):
             # feed absolute = feed offset + last feed absolute + bend linear offset
             val_feed_absolute_step[i] = int(val_feed_step[i] + val_feed_absolute_step[i-1] + val_bend_linear_offset_step[i])
 
+        val_turn_absolute_step = np.zeros(10)
+        val_turn_absolute_step[0] = val_turn_step[0]
+        for i in range(1,10):
+            # turn absolute = turn offset + last turn absolute
+            val_turn_absolute_step[i] = int(val_turn_step[i] + val_turn_absolute_step[i-1])
+
         list_val_feed_absolute_step = val_feed_absolute_step.astype(int).tolist()
         list_val_bend_step = val_bend_step.astype(int).tolist()
-        list_val_turn_step = val_turn_step.astype(int).tolist()
+        list_val_turn_absolute_step = val_turn_absolute_step.astype(int).tolist()
+        # list_val_turn_step = val_turn_step.astype(int).tolist()
+        
         list_val_bend_linear_offset_step = val_bend_linear_offset_step.astype(int).tolist()
 
         try:
@@ -1510,7 +1726,8 @@ class ScreenOperateAuto(MDScreen):
 
                 modbus_client.write_registers(3523, list_val_feed_absolute_step, slave=1) #V3011
                 modbus_client.write_registers(3553, list_val_bend_step, slave=1) #V3041
-                modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
+                modbus_client.write_registers(3583, list_val_turn_absolute_step, slave=1) #V3071
+                # modbus_client.write_registers(3583, list_val_turn_step, slave=1) #V3071
 
                 modbus_client.write_registers(3623, list_val_bend_linear_offset_step, slave=1) #V3111
                 modbus_client.close()
