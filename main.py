@@ -250,11 +250,27 @@ class ScreenSplash(MDScreen):
                 flag_seqs_arr[0] = seq_init_flags.bits[0]
                 flag_seqs_arr[1] = seq_init_flags.bits[1]
 
-                for seq_flag in seq_flags:
-                    flag_seqs_arr[seq_flag + 2] = seq_flags.bits[seq_flag]
+                flag_seqs_arr[2] = seq_flags.bits[0]
+                flag_seqs_arr[3] = seq_flags.bits[1]
+                flag_seqs_arr[4] = seq_flags.bits[2]
+                flag_seqs_arr[5] = seq_flags.bits[3]
+                flag_seqs_arr[6] = seq_flags.bits[4]
+                flag_seqs_arr[7] = seq_flags.bits[5]
+                flag_seqs_arr[8] = seq_flags.bits[6]
+                flag_seqs_arr[9] = seq_flags.bits[7]
+                flag_seqs_arr[10] = seq_flags.bits[8]
 
-                for step_flag in step_flags:
-                    flag_steps_arr[step_flag] = step_flags.bits[step_flag]
+                flag_steps_arr[0] = step_flags.bits[0]
+                flag_steps_arr[1] = step_flags.bits[1]
+                flag_steps_arr[2] = step_flags.bits[2]
+                flag_steps_arr[3] = step_flags.bits[3]
+                flag_steps_arr[4] = step_flags.bits[4]
+                flag_steps_arr[5] = step_flags.bits[5]
+                flag_steps_arr[6] = step_flags.bits[6]
+                flag_steps_arr[7] = step_flags.bits[7]
+                flag_steps_arr[8] = step_flags.bits[8]
+                flag_steps_arr[9] = step_flags.bits[9]
+                flag_steps_arr[10] = step_flags.bits[10]
                 
         except Exception as e:
             msg = f'{e}'
