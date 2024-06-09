@@ -138,6 +138,26 @@
 						size_hint_x: 0.5
 						on_press: root.update_view(3)
 
+			MDBoxLayout:
+				orientation: "horizontal"
+				spacing: 10
+				padding: 0, 0
+				size_hint_y: 0.02
+
+				MDFillRoundFlatIconButton:
+					icon: "reload"
+					text: "RELOAD DATA"
+					font_style: 'Button'
+					size_hint_x: 0.5
+					on_release: root.reload()
+
+				MDFillRoundFlatIconButton:
+					icon: "folder"
+					text: "OPEN FILE"
+					font_style: 'Button'
+					size_hint_x: 0.5
+					on_release: root.file_manager_open()	
+
 			MDFillRoundFlatButton:
 				id: bt_mode
 				text: "MODE MANUAL"
@@ -444,27 +464,7 @@
 				MDLabel:
 					id: lb_real_turn
 					text: "000.00"
-					font_style: 'H2'
-					
-			MDBoxLayout:
-				orientation: "horizontal"
-				spacing: 10
-				padding: 0, 0
-				size_hint_y: 0.01
-
-				MDFillRoundFlatIconButton:
-					icon: "reload"
-					text: "RELOAD DATA"
-					font_style: 'Button'
-					size_hint_x: 0.5
-					on_release: root.reload()
-
-				MDFillRoundFlatIconButton:
-					icon: "folder"
-					text: "OPEN FILE"
-					font_style: 'Button'
-					size_hint_x: 0.5
-					on_release: root.file_manager_open()			
+					font_style: 'H2'		
 
 		# MDRectangleFlatIconButton: navigation operation
 		MDBoxLayout:
