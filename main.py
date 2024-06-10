@@ -1683,7 +1683,7 @@ class ScreenOperateAuto(MDScreen):
 
         # setting val_advanced_receive_pos_x as first cycle position set value feed
         val_feed_absolute_step[0] = int(val_feed_step[0] + val_advanced_receive_pos_x)
-        val_bend_linear_absolute_step[0] = int(val_bend_linear_offset_step[0] + val_feed_step[0] + val_advanced_receive_pos_x)
+        val_bend_linear_absolute_step[0] = int(val_feed_absolute_step[0] + val_bend_linear_offset_step[0])
 
         for i in range(1,10):
             # feed absolute = feed offset + last feed absolute + bend linear offset
