@@ -130,9 +130,9 @@ class ScreenSplash(MDScreen):
         
     def delayed_init(self, dt):
         Clock.schedule_interval(self.regular_update_connection, 5)
-        Clock.schedule_interval(self.regular_display, 0.5)
-        Clock.schedule_interval(self.regular_highspeed_display, 0.2)
-        Clock.schedule_interval(self.regular_get_data, 0.2)
+        Clock.schedule_interval(self.regular_display, 1)
+        Clock.schedule_interval(self.regular_highspeed_display, 0.5)
+        Clock.schedule_interval(self.regular_get_data, 0.5)
 
     def regular_update_connection(self, dt):
         global flag_conn_stat
@@ -1659,12 +1659,14 @@ class ScreenOperateAuto(MDScreen):
             self.file_manager.close()
     
     def send_data(self):
-        global val_feed_step
-        global val_bend_step
-        global val_turn_step
+        global val_feed_step, val_bend_step, val_turn_step
 
         global data_base_process
+        global data_base_config
         global val_machine_die_radius
+
+        global conf_feed_speed_step, conf_bend_speed_step, conf_turn_speed_step
+        global conf_bed_pos_step 
 
         val_feed_step = data_base_process[0,:]
         val_bend_step = data_base_process[1,:] 
@@ -1674,24 +1676,28 @@ class ScreenOperateAuto(MDScreen):
         conf_bend_speed_step = data_base_config[1,:]
         conf_turn_speed_step = data_base_config[2,:]
         conf_bed_pos_step = data_base_config[3,:]
+        print(data_base_config)
 
         val_feed_absolute_step = np.zeros(10)
         val_bend_linear_absolute_step = np.zeros(10)
         # bend linear offset = 2 pi * r * die radius / 360 
         # (conversion from bending movement to feed offset linear movement)
         val_bend_linear_offset_step = val_machine_die_radius * 2 * np.pi * val_bend_step / 360
+        # val_bend_linear_offset_step = val_machine_die_radius * val_bend_step / 360
 
         # setting val_advanced_receive_pos_x as first cycle position set value feed
         val_feed_absolute_step[0] = int(val_feed_step[0] + val_advanced_receive_pos_x)
-        val_bend_linear_absolute_step[0] = int(val_feed_absolute_step[0] + val_bend_linear_offset_step[0])
+        val_bend_linear_absolute_step[0] = int(val_feed_absolute_step[0] + val_bend_linear_offset_step[0])        
 
         for i in range(1,10):
             # feed absolute = feed offset + last feed absolute + bend linear offset
             val_feed_absolute_step[i] = int(val_feed_absolute_step[i-1] + val_feed_step[i])
-            val_bend_linear_absolute_step[i] = int(val_feed_absolute_step[i] + val_bend_linear_offset_step[i])
-
+            
             if val_feed_absolute_step[i] > val_machine_eff_length:
                 val_feed_absolute_step[i] = int(val_feed_step[i] + val_advanced_receive_pos_x)
+
+        for i in range(1,9):
+            val_bend_linear_absolute_step[i] = int(val_feed_absolute_step[i] + val_bend_linear_offset_step[i])
 
         val_turn_absolute_step = np.zeros(10)
         val_turn_absolute_step[0] = val_turn_step[0]
@@ -1709,6 +1715,13 @@ class ScreenOperateAuto(MDScreen):
         list_conf_bend_speed_step = conf_bend_speed_step.astype(int).tolist()
         list_conf_turn_speed_step = conf_turn_speed_step.astype(int).tolist()
         list_conf_bed_pos_step = conf_bed_pos_step.astype(bool).tolist()
+
+        print("list_val_feed_absolute_step", list_val_feed_absolute_step)
+        print("list_val_bend_step", list_val_bend_step)
+        print("list_val_turn_absolute_step", list_val_turn_absolute_step)
+        print("list_val_bend_linear_absolute_step", list_val_bend_linear_absolute_step)
+
+
 
         try:
             if flag_conn_stat:
@@ -1728,8 +1741,8 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.write_registers(3623, list_val_bend_linear_absolute_step, slave=1) #V3111
 
                 modbus_client.write_registers(3723, list_conf_feed_speed_step, slave=1) #V3211
-                modbus_client.write_registers(3723, list_conf_bend_speed_step, slave=1) #V3241
-                modbus_client.write_registers(3723, list_conf_turn_speed_step, slave=1) #V3271
+                modbus_client.write_registers(3753, list_conf_bend_speed_step, slave=1) #V3241
+                modbus_client.write_registers(3783, list_conf_turn_speed_step, slave=1) #V3271
                 modbus_client.write_coils(3383, list_conf_bed_pos_step, slave=1) #M311
                 # modbus_client.write_coils(3093, [False, False, False, False, False, False], slave=1) #M21 - M26
                 modbus_client.close()
