@@ -271,89 +271,89 @@ class ScreenSplash(MDScreen):
 
             else:
                 screenMainMenu.ids.comm_status.text = "Status: Disconnected"
-                screenMainMenu.ids.comm_status.color = "#ee2222"
+                screenMainMenu.ids.comm_status.color = "#EE2222"
                 screenPipeSetting.ids.comm_status.text = "Status: Disconnected"
-                screenPipeSetting.ids.comm_status.color = "#ee2222"
+                screenPipeSetting.ids.comm_status.color = "#EE2222"
                 screenMachineSetting.ids.comm_status.text = "Status: Disconnected"
-                screenMachineSetting.ids.comm_status.color = "#ee2222"
+                screenMachineSetting.ids.comm_status.color = "#EE2222"
                 screenAdvancedSetting.ids.comm_status.text = "Status: Disconnected"
-                screenAdvancedSetting.ids.comm_status.color = "#ee2222"
+                screenAdvancedSetting.ids.comm_status.color = "#EE2222"
                 screenOperateManual.ids.comm_status.text = "Status: Disconnected"
-                screenOperateManual.ids.comm_status.color = "#ee2222"
+                screenOperateManual.ids.comm_status.color = "#EE2222"
                 screenOperateAuto.ids.comm_status.text = "Status: Disconnected"
-                screenOperateAuto.ids.comm_status.color = "#ee2222"
+                screenOperateAuto.ids.comm_status.color = "#EE2222"
                 screenCompile.ids.comm_status.text = "Status: Disconnected"
-                screenCompile.ids.comm_status.color = "#ee2222"
+                screenCompile.ids.comm_status.color = "#EE2222"
                                   
             if conf_bed_pos_step[0] != 1:
                 screenCompile.ids.bt_bed_pos0.text = "DN"
                 screenCompile.ids.bt_bed_pos0.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos0.text = "UP"
-                screenCompile.ids.bt_bed_pos0.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos0.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[1] != 1:
                 screenCompile.ids.bt_bed_pos1.text = "DN"
                 screenCompile.ids.bt_bed_pos1.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos1.text = "UP"
-                screenCompile.ids.bt_bed_pos1.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos1.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[2] != 1:
                 screenCompile.ids.bt_bed_pos2.text = "DN"
                 screenCompile.ids.bt_bed_pos2.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos2.text = "UP"
-                screenCompile.ids.bt_bed_pos2.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos2.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[3] != 1:
                 screenCompile.ids.bt_bed_pos3.text = "DN"
                 screenCompile.ids.bt_bed_pos3.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos3.text = "UP"
-                screenCompile.ids.bt_bed_pos3.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos3.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[4] != 1:
                 screenCompile.ids.bt_bed_pos4.text = "DN"
                 screenCompile.ids.bt_bed_pos4.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos4.text = "UP"
-                screenCompile.ids.bt_bed_pos4.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos4.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[5] != 1:
                 screenCompile.ids.bt_bed_pos5.text = "DN"
                 screenCompile.ids.bt_bed_pos5.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos5.text = "UP"
-                screenCompile.ids.bt_bed_pos5.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos5.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[6] != 1:
                 screenCompile.ids.bt_bed_pos6.text = "DN"
                 screenCompile.ids.bt_bed_pos6.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos6.text = "UP"
-                screenCompile.ids.bt_bed_pos6.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos6.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[7] != 1:
                 screenCompile.ids.bt_bed_pos7.text = "DN"
                 screenCompile.ids.bt_bed_pos7.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos7.text = "UP"
-                screenCompile.ids.bt_bed_pos7.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos7.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[8] != 1:
                 screenCompile.ids.bt_bed_pos8.text = "DN"
                 screenCompile.ids.bt_bed_pos8.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos8.text = "UP"
-                screenCompile.ids.bt_bed_pos8.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos8.md_bg_color = "#EE2222"
 
             if conf_bed_pos_step[9] != 1:
                 screenCompile.ids.bt_bed_pos9.text = "DN"
                 screenCompile.ids.bt_bed_pos9.md_bg_color = "#196BA5"
             else:
                 screenCompile.ids.bt_bed_pos9.text = "UP"
-                screenCompile.ids.bt_bed_pos9.md_bg_color = "#ee2222"
+                screenCompile.ids.bt_bed_pos9.md_bg_color = "#EE2222"
 
         except Exception as e:
             Logger.error(e)
@@ -385,10 +385,10 @@ class ScreenSplash(MDScreen):
             screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
             screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
             screenOperateAuto.ids.lb_turn_speed.text = str(conf_turn_speed_pv)
-            
+
             if conf_bed_pos_pv:
                 screenOperateAuto.ids.lb_bed_pos.text = "UP"
-                screenOperateAuto.ids.lb_bed_pos.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.lb_bed_pos.md_bg_color = "#EE2222"
             else:
                 screenOperateAuto.ids.lb_bed_pos.text = "DN"
                 screenOperateAuto.ids.lb_bed_pos.md_bg_color = "#196BA5"
@@ -403,173 +403,173 @@ class ScreenSplash(MDScreen):
                 screenOperateAuto.ids.bt_mode.md_bg_color = "#196BA5"
                 screenOperateAuto.ids.bt_mode.text = "MANUAL MODE"
             else:
-                screenOperateManual.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateManual.ids.bt_mode.md_bg_color = "#EE2222"
                 screenOperateManual.ids.bt_mode.text = "AUTO MODE"
-                screenOperateAuto.ids.bt_mode.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.bt_mode.md_bg_color = "#EE2222"
                 screenOperateAuto.ids.bt_mode.text = "AUTO MODE"
 
             if flag_run:
-                screenOperateAuto.ids.lp_run.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_run.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_run.md_bg_color = "#223322"
 
             if flag_alarm:
-                screenOperateAuto.ids.lp_alarm.md_bg_color = "#ee2222"
+                screenOperateAuto.ids.lp_alarm.md_bg_color = "#EE2222"
             else:
                 screenOperateAuto.ids.lp_alarm.md_bg_color = "#332222"
 
             if sens_clamp_close:
-                screenOperateManual.ids.lp_clamp_close.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_clamp_close.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_clamp_close.md_bg_color = "#223322"
 
             if sens_bend_reducer:
-                screenOperateManual.ids.lp_bend_reducer.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_bend_reducer.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_bend_reducer.md_bg_color = "#223322"
 
             if sens_bend_origin:
-                screenOperateManual.ids.lp_bend_origin.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_bend_origin.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_bend_origin.md_bg_color = "#223322"
 
             if sens_press_open:
-                screenOperateManual.ids.lp_press_open.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_press_open.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_press_open.md_bg_color = "#223322"
 
             if sens_table_up:
-                screenOperateManual.ids.lp_table_up.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_table_up.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_table_up.md_bg_color = "#223322"
 
             if sens_table_down:
-                screenOperateManual.ids.lp_table_down.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_table_down.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_table_down.md_bg_color = "#223322"
 
             if sens_feed_origin:
-                screenOperateManual.ids.lp_feed_origin.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_feed_origin.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_feed_origin.md_bg_color = "#223322"
 
             if sens_feed_reducer:
-                screenOperateManual.ids.lp_feed_reducer.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_feed_reducer.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_feed_reducer.md_bg_color = "#223322"
 
             if sens_chuck_close:
-                screenOperateManual.ids.lp_chuck_close.md_bg_color = "#22ee22"
+                screenOperateManual.ids.lp_chuck_close.md_bg_color = "#22EE22"
             else:
                 screenOperateManual.ids.lp_chuck_close.md_bg_color = "#223322"
 
             if flag_seqs_arr[0]:
-                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq_init1.md_bg_color = "#223322"
 
             if flag_seqs_arr[1]:
-                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq_init2.md_bg_color = "#223322"
 
             if flag_seqs_arr[2]:
-                screenOperateAuto.ids.lp_seq1.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq1.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq1.md_bg_color = "#223322"
 
             if flag_seqs_arr[3]:
-                screenOperateAuto.ids.lp_seq2.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq2.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq2.md_bg_color = "#223322"
 
             if flag_seqs_arr[4]:
-                screenOperateAuto.ids.lp_seq3.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq3.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq3.md_bg_color = "#223322"
 
             if flag_seqs_arr[5]:
-                screenOperateAuto.ids.lp_seq4.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq4.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq4.md_bg_color = "#223322"
 
             if flag_seqs_arr[6]:
-                screenOperateAuto.ids.lp_seq5.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq5.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq5.md_bg_color = "#223322"
 
             if flag_seqs_arr[7]:
-                screenOperateAuto.ids.lp_seq6.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq6.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq6.md_bg_color = "#223322"
 
             if flag_seqs_arr[8]:
-                screenOperateAuto.ids.lp_seq7.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq7.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq7.md_bg_color = "#223322"
 
             if flag_seqs_arr[9]:
-                screenOperateAuto.ids.lp_seq8.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq8.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq8.md_bg_color = "#223322"
 
             if flag_seqs_arr[10]:
-                screenOperateAuto.ids.lp_seq9.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_seq9.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_seq9.md_bg_color = "#223322"
 
             if flag_steps_arr[0]:
-                screenOperateAuto.ids.lp_step0.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step0.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step0.md_bg_color = "#223322"
 
             if flag_steps_arr[1]:
-                screenOperateAuto.ids.lp_step1.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step1.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step1.md_bg_color = "#223322"
 
             if flag_steps_arr[2]:
-                screenOperateAuto.ids.lp_step2.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step2.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step2.md_bg_color = "#223322"
 
             if flag_steps_arr[3]:
-                screenOperateAuto.ids.lp_step3.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step3.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step3.md_bg_color = "#223322"
 
             if flag_steps_arr[4]:
-                screenOperateAuto.ids.lp_step4.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step4.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step4.md_bg_color = "#223322"
 
             if flag_steps_arr[5]:
-                screenOperateAuto.ids.lp_step5.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step5.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step5.md_bg_color = "#223322"
 
             if flag_steps_arr[6]:
-                screenOperateAuto.ids.lp_step6.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step6.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step6.md_bg_color = "#223322"
 
             if flag_steps_arr[7]:
-                screenOperateAuto.ids.lp_step7.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step7.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step7.md_bg_color = "#223322"
 
             if flag_steps_arr[8]:
-                screenOperateAuto.ids.lp_step8.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step8.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step8.md_bg_color = "#223322"
 
             if flag_steps_arr[9]:
-                screenOperateAuto.ids.lp_step9.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step9.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step9.md_bg_color = "#223322"
 
             if flag_steps_arr[10]:
-                screenOperateAuto.ids.lp_step10.md_bg_color = "#22ee22"
+                screenOperateAuto.ids.lp_step10.md_bg_color = "#22EE22"
             else:
                 screenOperateAuto.ids.lp_step10.md_bg_color = "#223322"
 
@@ -1142,7 +1142,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_press.md_bg_color = "#196BA5"
         else:
             flag_cylinder_press = True
-            self.ids.bt_press.md_bg_color = "#ee2222"
+            self.ids.bt_press.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1160,7 +1160,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_clamp.md_bg_color = "#196BA5"
         else:
             flag_cylinder_clamp = True
-            self.ids.bt_clamp.md_bg_color = "#ee2222"
+            self.ids.bt_clamp.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1178,7 +1178,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_chuck.md_bg_color = "#196BA5"
         else:
             flag_cylinder_chuck = True
-            self.ids.bt_chuck.md_bg_color = "#ee2222"
+            self.ids.bt_chuck.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1196,7 +1196,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_mandrell.md_bg_color = "#196BA5"
         else:
             flag_cylinder_mandrell = True
-            self.ids.bt_mandrell.md_bg_color = "#ee2222"
+            self.ids.bt_mandrell.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1214,7 +1214,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_table_up.md_bg_color = "#196BA5"
         else:
             flag_cylinder_table_up = True
-            self.ids.bt_table_up.md_bg_color = "#ee2222"
+            self.ids.bt_table_up.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1232,7 +1232,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_table_shift.md_bg_color = "#196BA5"
         else:
             flag_cylinder_table_shift = True
-            self.ids.bt_table_shift.md_bg_color = "#ee2222"
+            self.ids.bt_table_shift.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1250,7 +1250,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_holder_top.md_bg_color = "#196BA5"
         else:
             flag_cylinder_holder_top = True
-            self.ids.bt_holder_top.md_bg_color = "#ee2222"
+            self.ids.bt_holder_top.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1268,7 +1268,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_holder_bottom.md_bg_color = "#196BA5"
         else:
             flag_cylinder_holder_bottom = True
-            self.ids.bt_holder_bottom.md_bg_color = "#ee2222"
+            self.ids.bt_holder_bottom.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1285,7 +1285,7 @@ class ScreenOperateManual(MDScreen):
             self.ids.bt_jog_enable.md_bg_color = "#196BA5"
         else:
             flag_jog_enable = True
-            self.ids.bt_jog_enable.md_bg_color = "#ee2222"
+            self.ids.bt_jog_enable.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1308,7 +1308,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_feed_p(self):
         global flag_conn_stat, flag_jog_req_feed
         flag_jog_req_feed = True
-        self.ids.bt_jog_feed_p.md_bg_color = "#ee2222"
+        self.ids.bt_jog_feed_p.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1320,7 +1320,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_feed_n(self):
         global flag_conn_stat, flag_jog_req_feed
         flag_jog_req_feed = True
-        self.ids.bt_jog_feed_n.md_bg_color = "#ee2222"
+        self.ids.bt_jog_feed_n.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1339,7 +1339,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_bend_p(self):
         global flag_conn_stat, flag_jog_req_bend
         flag_jog_req_bend = True
-        self.ids.bt_jog_bend_p.md_bg_color = "#ee2222"
+        self.ids.bt_jog_bend_p.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1351,7 +1351,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_bend_n(self):
         global flag_conn_stat, flag_jog_req_bend
         flag_jog_req_bend = True
-        self.ids.bt_jog_bend_n.md_bg_color = "#ee2222"
+        self.ids.bt_jog_bend_n.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1370,7 +1370,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_turn_p(self):
         global flag_conn_stat, flag_jog_req_turn
         flag_jog_req_turn = True
-        self.ids.bt_jog_turn_p.md_bg_color = "#ee2222"
+        self.ids.bt_jog_turn_p.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1382,7 +1382,7 @@ class ScreenOperateManual(MDScreen):
     def exec_jog_turn_n(self):
         global flag_conn_stat, flag_jog_req_turn
         flag_jog_req_turn = True
-        self.ids.bt_jog_turn_n.md_bg_color = "#ee2222"
+        self.ids.bt_jog_turn_n.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1439,7 +1439,7 @@ class ScreenOperateManual(MDScreen):
         global val_feed_sv
 
         flag_operate_req_feed = True
-        self.ids.bt_operate_feed.md_bg_color = "#ee2222"
+        self.ids.bt_operate_feed.md_bg_color = "#EE2222"
         val_feed_sv = float(self.ids.input_operate_feed.text)
 
         try:
@@ -1469,7 +1469,7 @@ class ScreenOperateManual(MDScreen):
         global val_bend_sv
 
         flag_operate_req_bend = True
-        self.ids.bt_operate_bend.md_bg_color = "#ee2222"
+        self.ids.bt_operate_bend.md_bg_color = "#EE2222"
         val_bend_sv = float(self.ids.input_operate_bend.text)
 
         try:
@@ -1499,7 +1499,7 @@ class ScreenOperateManual(MDScreen):
         global val_turn_sv
 
         flag_operate_req_turn = True
-        self.ids.bt_operate_turn.md_bg_color = "#ee2222"
+        self.ids.bt_operate_turn.md_bg_color = "#EE2222"
         val_turn_sv = float(self.ids.input_operate_turn.text)
 
         try:
@@ -1527,7 +1527,7 @@ class ScreenOperateManual(MDScreen):
     def exec_origin(self):
         global flag_conn_stat, flag_origin_req
         flag_origin_req = True
-        self.ids.bt_origin.md_bg_color = "#ee2222"
+        self.ids.bt_origin.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1553,7 +1553,7 @@ class ScreenOperateManual(MDScreen):
     def exec_reset(self):
         global flag_conn_stat, flag_reset
         flag_reset = True
-        self.ids.bt_reset.md_bg_color = "#ee2222"
+        self.ids.bt_reset.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1886,7 +1886,7 @@ class ScreenOperateAuto(MDScreen):
     def exec_start(self):
         global flag_conn_stat, flag_run
         flag_run = True
-        self.ids.bt_start.md_bg_color = "#ee2222"
+        self.ids.bt_start.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1902,7 +1902,7 @@ class ScreenOperateAuto(MDScreen):
     def exec_stop(self):
         global flag_conn_stat, flag_run
         flag_run = False
-        self.ids.bt_stop.md_bg_color = "#ee2222"
+        self.ids.bt_stop.md_bg_color = "#EE2222"
         try:
             if flag_conn_stat:
                 modbus_client.connect()
@@ -1917,7 +1917,7 @@ class ScreenOperateAuto(MDScreen):
     def exec_origin(self):
         global flag_conn_stat, flag_origin_req
         flag_origin_req = True
-        self.ids.bt_origin.md_bg_color = "#ee2222"
+        self.ids.bt_origin.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
@@ -1943,7 +1943,7 @@ class ScreenOperateAuto(MDScreen):
     def exec_reset(self):
         global flag_conn_stat, flag_reset
         flag_reset = True
-        self.ids.bt_reset.md_bg_color = "#ee2222"
+        self.ids.bt_reset.md_bg_color = "#EE2222"
 
         try:
             if flag_conn_stat:
