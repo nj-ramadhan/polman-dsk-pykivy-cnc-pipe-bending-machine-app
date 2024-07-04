@@ -385,7 +385,13 @@ class ScreenSplash(MDScreen):
             screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
             screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
             screenOperateAuto.ids.lb_turn_speed.text = str(conf_turn_speed_pv)
-            screenOperateAuto.ids.lb_bed_pos.text = "UP" if conf_bed_pos_pv == 1 else "DN"
+            
+            if conf_bed_pos_pv:
+                screenOperateAuto.ids.lb_bed_pos.text = "UP"
+                screenOperateAuto.ids.lb_bed_pos.md_bg_color = "#ee2222"
+            else:
+                screenOperateAuto.ids.lb_bed_pos.text = "DN"
+                screenOperateAuto.ids.lb_bed_pos.md_bg_color = "#196BA5"
 
             screenOperateManual.ids.bt_feed_speed.text = str(conf_feed_speed_pv)
             screenOperateManual.ids.bt_bend_speed.text = str(conf_bend_speed_pv)
