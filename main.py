@@ -64,7 +64,7 @@ mqtt_topic_machine_status = "machine-status/"
 mqtt_topic_product_name = "product-name/"
 mqtt_topic_production_target = "production-target/"
 mqtt_topic_production_result = "production-result/"
-mqtt_client_id = f'publish-rafindo-cnc-pipe-001'
+mqtt_client_id = "publish-rafindo-cnc-pipe-001"
 # username = 'emqx'
 # password = 'public'
 
@@ -1031,8 +1031,6 @@ class ScreenAdvancedSetting(MDScreen):
 
         global mqtt_topic_production_target
 
-        screenSplash = self.screen_manager.get_screen('screen_splash')
-        screenSplash.mqtt_publish(mqtt_topic_production_target, val_advanced_prod_qty)
 
         val_advanced_pipe_head = float(self.ids.input_advanced_pipe_head.text)
         val_advanced_start_mode = float(self.ids.input_advanced_start_mode.text)
@@ -1051,6 +1049,9 @@ class ScreenAdvancedSetting(MDScreen):
         val_advanced_press_stop_angle = float(self.ids.input_advanced_press_stop_angle.text)
 
         try:
+            screenSplash = self.screen_manager.get_screen('screen_splash')
+            screenSplash.mqtt_publish(mqtt_topic_production_target, val_advanced_prod_qty)
+
             if flag_conn_stat:
                 modbus_client.connect()
                 modbus_client.write_register(2522, int(val_advanced_pipe_head), slave=1) #V2010
@@ -1680,8 +1681,8 @@ class ScreenOperateAuto(MDScreen):
         Clock.schedule_once(self.delayed_init, 5)
 
     def delayed_init(self, dt):
-        self.reset_product_qty()
         self.reload()
+        self.reset_product_qty()
 
     def update_view(self, direction):
         global view_camera
