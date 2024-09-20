@@ -1029,6 +1029,11 @@ class ScreenAdvancedSetting(MDScreen):
         global val_advanced_press_start_angle
         global val_advanced_press_stop_angle
 
+        global mqtt_topic_production_target
+
+        screenSplash = self.screen_manager.get_screen('screen_splash')
+        screenSplash.mqtt_publish(mqtt_topic_production_target, val_advanced_prod_qty)
+
         val_advanced_pipe_head = float(self.ids.input_advanced_pipe_head.text)
         val_advanced_start_mode = float(self.ids.input_advanced_start_mode.text)
         val_advanced_first_line = float(self.ids.input_advanced_first_line.text)
@@ -1675,6 +1680,7 @@ class ScreenOperateAuto(MDScreen):
         Clock.schedule_once(self.delayed_init, 5)
 
     def delayed_init(self, dt):
+        self.reset_product_qty()
         self.reload()
 
     def update_view(self, direction):
@@ -1700,10 +1706,14 @@ class ScreenOperateAuto(MDScreen):
         self.update_graph(elev, azim, roll)
 
     def reset_product_qty(self):
+        global mqtt_topic_production_result
         global val_prod_qty_result
-        
+
         val_prod_qty_result = 0
 
+        screenSplash = self.screen_manager.get_screen('screen_splash')
+        screenSplash.mqtt_publish(mqtt_topic_production_result, val_prod_qty_result)
+        
     def reload(self):
         global data_base_process
         
