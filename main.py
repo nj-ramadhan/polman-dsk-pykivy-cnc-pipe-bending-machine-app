@@ -302,7 +302,7 @@ class ScreenSplash(MDScreen):
                 flag_steps_arr[10] = step_flags.bits[10]
 
                 flag_finish_prod = flag_steps_arr[10]
-                
+
                 if(flag_finish_prod and not flag_finish_prod_prev):
                     val_prod_qty_result += 1
 
@@ -439,6 +439,8 @@ class ScreenSplash(MDScreen):
             else:
                 screenCompile.ids.bt_bed_pos9.text = "UP"
                 screenCompile.ids.bt_bed_pos9.md_bg_color = "#EE2222"
+
+            screenOperateAuto.ids.lb_product_qty.text = str(val_prod_qty_result)
 
         except Exception as e:
             Logger.error(e)
@@ -1722,6 +1724,11 @@ class ScreenOperateAuto(MDScreen):
         view_camera = np.array([elev, azim, roll])        
         self.update_graph(elev, azim, roll)
 
+    def reset_product_qty(self):
+        global val_prod_qty_result
+        
+        val_prod_qty_result = 0
+
     def reload(self):
         global data_base_process
         
@@ -1733,23 +1740,27 @@ class ScreenOperateAuto(MDScreen):
         self.manager_open = True
 
     def select_path(self, path: str):
+        global str_product_name
         try:
             path_name = os.path.expanduser(os.getcwd() + "\data\\")
             filename = path.replace(path_name, "")
             filename = filename.replace(".gcode", "")
-            self.ids.lb_product_name.text = filename
+            str_product_name = filename
+            self.ids.lb_product_name.text = str_product_name
             self.exit_manager(path)
         except:
             toast("error select file path")
 
     def exit_manager(self, *args):
-        global data_base_process, data_base_config
+        global data_base_process, data_base_config, val_prod_qty_result
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
             data_base_load = data_set.T
             data_base_process = data_base_load[:3,:]
             data_base_config = data_base_load[3:,:]
             self.reload()
+
+            val_prod_qty_result = 0
 
             self.manager_open = False
             self.file_manager.close()
