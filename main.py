@@ -239,7 +239,7 @@ class ScreenSplash(MDScreen):
 
                 seq_init_flags = modbus_client.read_coils(3133, 2, slave=1) #M61 - M62
                 seq_flags = modbus_client.read_coils(3143, 9, slave=1) #M71 - M79
-                step_flags = modbus_client.read_coils(3272, 11, slave=1) #M200 - M210
+                step_flags = modbus_client.read_coils(3272, 13, slave=1) #M200 - M212
 
                 modbus_client.close()
 
@@ -300,8 +300,7 @@ class ScreenSplash(MDScreen):
                 flag_steps_arr[8] = step_flags.bits[8]
                 flag_steps_arr[9] = step_flags.bits[9]
                 flag_steps_arr[10] = step_flags.bits[10]
-
-                flag_finish_prod = flag_steps_arr[10]
+                flag_finish_prod = step_flags.bits[12]
 
                 if(flag_finish_prod and not flag_finish_prod_prev):
                     val_prod_qty_result += 1
@@ -1759,8 +1758,7 @@ class ScreenOperateAuto(MDScreen):
             data_base_process = data_base_load[:3,:]
             data_base_config = data_base_load[3:,:]
             self.reload()
-
-            val_prod_qty_result = 0
+            self.reset_product_qty()
 
             self.manager_open = False
             self.file_manager.close()

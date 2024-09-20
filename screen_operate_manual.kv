@@ -314,6 +314,7 @@
 					MDGridLayout:
 						cols:2
 						spacing:10
+						size_hint_y: 0.06
 
 						MDTextField:
 							id: input_operate_feed
@@ -357,42 +358,47 @@
 							on_press: root.exec_operate_turn()
 							on_release: root.end_operate_turn()
 
+					MDLabel:
+						text: "Realtime Data"
+						halign: "center"
+						valign: "middle"
+						size_hint_y: 0.005
+
 					MDGridLayout:
 						cols:3
-						spacing: 20, 10
-						padding: 20, 20
-						size_hint_y: 0.1
+						spacing: 10
+						size_hint_y: 0.03
 
 						MDLabel:
-							text: "Feeding Realtime Data"
+							text: "Feeding"
 							font_style: 'Body2'
 
 						MDLabel:
-							text: "Bending Realtime Data"
+							text: "Bending"
 							font_style: 'Body2'
 
 						MDLabel:
-							text: "Turning Realtime Data"
+							text: "Turning"
 							font_style: 'Body2'
 
 						MDLabel:
 							id: lb_real_feed
 							text: "000.00"
-							font_style: 'H5'
+							font_style: 'H3'
 
 						MDLabel:
 							id: lb_real_bend
 							text: "000.00"
-							font_style: 'H5'
+							font_style: 'H3'
 
 						MDLabel:
 							id: lb_real_turn
 							text: "000.00"
-							font_style: 'H5'	
+							font_style: 'H3'	
 
 					MDFillRoundFlatButton:
 						id: bt_origin
-						size_hint_y: 0.02
+						size_hint_y: 0.01
 						text: "ORIGIN"
 						font_style: 'Button'
 						size_hint_x: 1
@@ -401,7 +407,7 @@
 
 					MDFillRoundFlatButton:
 						id: bt_reset
-						size_hint_y: 0.02
+						size_hint_y: 0.01
 						text: "RESET"
 						font_style: 'Button'
 						size_hint_x: 1
