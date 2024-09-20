@@ -59,13 +59,11 @@ colors = {
 modbus_client = ModbusTcpClient('192.168.1.111')
 
 mqtt_broker = 'broker.hivemq.com'
-# mqtt_broker = 'demo.thingsboard.io/dashboard/'
 mqtt_port = 1883
 mqtt_topic_machine_status = "machine-status/"
 mqtt_topic_product_name = "product-name/"
 mqtt_topic_production_target = "production-target/"
 mqtt_topic_production_result = "production-result/"
-# Generate a Client ID with the publish prefix.
 mqtt_client_id = f'publish-rafindo-cnc-pipe-001'
 # username = 'emqx'
 # password = 'public'
@@ -166,37 +164,19 @@ class ScreenSplash(MDScreen):
         client.connect(mqtt_broker, mqtt_port)
         return client
 
-    def mqtt_publish(self, client, machine_status, str_product_name, production_target, production_result):
-        global mqtt_topic_machine_status, mqtt_topic_product_name, mqtt_topic_production_target, mqtt_topic_production_result
-
-        result = client.publish(mqtt_topic_machine_status, machine_status)
+    def mqtt_publish(self, topic, message):
+        mqtt_client = self.mqtt_connect()
+        mqtt_client.loop_start()
+        
+        result = mqtt_client.publish(topic, message)
         status = result[0]
         if status == 0:
-            toast(f"Send `{machine_status}` to topic `{mqtt_topic_machine_status}`")
+            toast(f"Send `{message}` to topic `{topic}`")
         else:
             toast(f"Failed to send message to topic {mqtt_topic_machine_status}")
-
-        result = client.publish(mqtt_topic_product_name, str_product_name)
-        status = result[0]
-        if status == 0:
-            toast(f"Send `{str_product_name}` to topic `{mqtt_topic_product_name}`")
-        else:
-            toast(f"Failed to send message to topic {mqtt_topic_production_target}")
-
-        result = client.publish(mqtt_topic_production_target, production_target)
-        status = result[0]
-        if status == 0:
-            toast(f"Send `{production_target}` to topic `{mqtt_topic_production_target}`")
-        else:
-            toast(f"Failed to send message to topic {mqtt_topic_production_target}")
-
-        result = client.publish(mqtt_topic_production_result, production_result)
-        status = result[0]
-        if status == 0:
-            toast(f"Send `{production_result}` to topic `{mqtt_topic_production_result}`")
-        else:
-            toast(f"Failed to send message to topic {mqtt_topic_production_result}")
-
+        
+        mqtt_client.loop_stop()
+        
 
     def regular_update_connection(self, dt):
         global flag_conn_stat
@@ -219,6 +199,7 @@ class ScreenSplash(MDScreen):
         global sens_feed_origin, sens_feed_reducer, sens_chuck_close
         global flag_seqs_arr, flag_steps_arr
         global flag_finish_prod, flag_finish_prod_prev, val_prod_qty_result, flag_run_prev, str_product_name
+        global mqtt_topic_machine_status, mqtt_topic_product_name, mqtt_topic_production_target, mqtt_topic_production_result
 
         try:
             if flag_conn_stat:
@@ -305,16 +286,11 @@ class ScreenSplash(MDScreen):
                 if(flag_finish_prod and not flag_finish_prod_prev):
                     val_prod_qty_result += 1
 
-                    mqtt_client = self.mqtt_connect()
-                    mqtt_client.loop_start()
-                    self.mqtt_publish(mqtt_client, flag_run, str_product_name, val_advanced_prod_qty, val_prod_qty_result)
-                    mqtt_client.loop_stop()
+                    self.mqtt_publish(mqtt_topic_production_target, val_advanced_prod_qty)
+                    self.mqtt_publish(mqtt_topic_production_result, val_prod_qty_result)
 
                 if((flag_run and not flag_run_prev) or (not flag_run and flag_run_prev)):
-                    mqtt_client = self.mqtt_connect()
-                    mqtt_client.loop_start()
-                    self.mqtt_publish(mqtt_client, flag_run, str_product_name, val_advanced_prod_qty, val_prod_qty_result)
-                    mqtt_client.loop_stop()
+                    self.mqtt_publish(mqtt_topic_machine_status, flag_run)
 
                 flag_finish_prod_prev = flag_finish_prod
                 flag_run_prev = flag_run
@@ -1740,12 +1716,18 @@ class ScreenOperateAuto(MDScreen):
 
     def select_path(self, path: str):
         global str_product_name
+        global mqtt_topic_product_name
         try:
+            screenSplash = self.screen_manager.get_screen('screen_splash')
+
             path_name = os.path.expanduser(os.getcwd() + "\data\\")
             filename = path.replace(path_name, "")
             filename = filename.replace(".gcode", "")
             str_product_name = filename
             self.ids.lb_product_name.text = str_product_name
+
+            screenSplash.mqtt_publish(mqtt_topic_product_name, str_product_name)
+            
             self.exit_manager(path)
         except:
             toast("error select file path")
