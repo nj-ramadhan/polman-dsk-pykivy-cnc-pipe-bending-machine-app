@@ -19,6 +19,7 @@ mqtt_broker = 'broker.hivemq.com'
 # mqtt_broker = 'demo.thingsboard.io/dashboard/'
 mqtt_port = 1883
 mqtt_topic_machine_status = "machine-status/"
+mqtt_topic_product_name = "product-name/"
 mqtt_topic_production_target = "production-target/"
 mqtt_topic_production_result = "production-result/"
 # Generate a Client ID with the publish prefix.
@@ -26,6 +27,7 @@ mqtt_client_id = f'publish-rafindo-cnc-pipe-001'
 # username = 'emqx'
 # password = 'public'
 flag_run = True
+str_product_name = "bracket 870"
 val_advanced_prod_qty = 100
 val_prod_qty_result = 0
 
@@ -63,7 +65,7 @@ def publish(client):
             break
 
 def mqtt_connect():
-    global mqtt_broker, mqtt_port, mqtt_topic_machine_status, mqtt_topic_production_target, mqtt_topic_production_result, mqtt_client_id
+    global mqtt_broker, mqtt_port, mqtt_client_id
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
@@ -76,8 +78,8 @@ def mqtt_connect():
     client.connect(mqtt_broker, mqtt_port)
     return client
 
-def mqtt_publish(client, machine_status, production_target, production_result):
-    global mqtt_topic_machine_status, mqtt_topic_production_target, mqtt_topic_production_result
+def mqtt_publish(client, machine_status, str_product_name, production_target, production_result):
+    global mqtt_topic_machine_status, mqtt_topic_product_name, mqtt_topic_production_target, mqtt_topic_production_result
 
     result = client.publish(mqtt_topic_machine_status, machine_status)
     status = result[0]
@@ -85,6 +87,13 @@ def mqtt_publish(client, machine_status, production_target, production_result):
         print(f"Send `{machine_status}` to topic `{mqtt_topic_machine_status}`")
     else:
         print(f"Failed to send message to topic {mqtt_topic_machine_status}")
+
+    result = client.publish(mqtt_topic_product_name, str_product_name)
+    status = result[0]
+    if status == 0:
+        print(f"Send `{str_product_name}` to topic `{mqtt_topic_product_name}`")
+    else:
+        print(f"Failed to send message to topic {mqtt_topic_production_target}")
 
     result = client.publish(mqtt_topic_production_target, production_target)
     status = result[0]
@@ -105,7 +114,7 @@ def run():
     mqtt_client = mqtt_connect()
     mqtt_client.loop_start()
     for i in range(10):
-        mqtt_publish(mqtt_client, flag_run, val_advanced_prod_qty, val_prod_qty_result)
+        mqtt_publish(mqtt_client, flag_run, str_product_name, val_advanced_prod_qty, val_prod_qty_result)
         val_prod_qty_result += 1
     mqtt_client.loop_stop()    
     # client = connect_mqtt()

@@ -141,7 +141,7 @@
 			MDBoxLayout:
 				orientation: "horizontal"
 				spacing: 10
-				size_hint_y: 0.04
+				size_hint_y: 0.03
 
 				MDFillRoundFlatIconButton:
 					icon: "reload"
@@ -156,6 +156,22 @@
 					font_style: 'Button'
 					size_hint_x: 0.5
 					on_release: root.file_manager_open()	
+
+			MDBoxLayout:
+				orientation: "horizontal"
+				spacing: 10
+				size_hint_y: 0.01
+
+				MDLabel:
+					text: "PRODUCT NAME :"
+					font_style: 'Body1'
+					size_hint_x: 0.3
+
+				MDLabel:
+					id: lb_product_name
+					text: ""
+					font_style: 'Body1'
+					size_hint_x: 0.7
 
 			MDFillRoundFlatButton:
 				id: bt_mode
