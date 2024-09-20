@@ -71,7 +71,6 @@
 			padding:20
 			spacing:20
 			
-
 			MDCard:
 				id: bt_screen_pipe_setting
 				ripple_behavior: True
@@ -109,6 +108,24 @@
 					font_style: 'Button'
 
 			MDCard:
+				id: bt_screen_advanced_setting
+				ripple_behavior: True
+				orientation: "vertical"
+				on_press: root.screen_advanced_setting()
+				padding:20
+				spacing:20
+
+				Image:
+					source:'asset/logo_machine_setting.png'
+					allow_stretch: True 
+
+				MDLabel:
+					text: "ADVANCED SETTING"
+					halign: "center"
+					valign: "middle"
+					font_style: 'Button'
+
+			MDCard:
 				id: bt_screen_operate_auto
 				ripple_behavior: True
 				orientation: "vertical"
@@ -140,24 +157,6 @@
 
 				MDLabel:
 					text: "COMPILE PROGRAM"
-					halign: "center"
-					valign: "middle"
-					font_style: 'Button'
-
-			MDCard:
-				id: bt_screen_advanced_setting
-				ripple_behavior: True
-				orientation: "vertical"
-				on_press: root.screen_advanced_setting()
-				padding:20
-				spacing:20
-
-				Image:
-					source:'asset/logo_machine_setting.png'
-					allow_stretch: True 
-
-				MDLabel:
-					text: "ADVANCED SETTING"
 					halign: "center"
 					valign: "middle"
 					font_style: 'Button'
