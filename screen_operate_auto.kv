@@ -141,21 +141,55 @@
 			MDBoxLayout:
 				orientation: "horizontal"
 				spacing: 10
-				size_hint_y: 0.04
+				size_hint_y: 0.03
 
 				MDFillRoundFlatIconButton:
 					icon: "reload"
 					text: "RELOAD DATA"
 					font_style: 'Button'
-					size_hint_x: 0.5
+					size_hint_x: 0.3
 					on_release: root.reload()
 
 				MDFillRoundFlatIconButton:
 					icon: "folder"
 					text: "OPEN FILE"
 					font_style: 'Button'
-					size_hint_x: 0.5
+					size_hint_x: 0.3
 					on_release: root.file_manager_open()	
+
+				MDFillRoundFlatIconButton:
+					icon: "numeric"
+					text: "RESET PRODUCT QTY"
+					font_style: 'Button'
+					size_hint_x: 0.3
+					on_release: root.reset_product_qty()
+					
+			MDBoxLayout:
+				orientation: "horizontal"
+				spacing: 10
+				size_hint_y: 0.01
+
+				MDLabel:
+					text: "PRODUCT NAME:"
+					font_style: 'Body1'
+					size_hint_x: 0.3
+
+				MDLabel:
+					id: lb_product_name
+					text: ""
+					font_style: 'Body1'
+					size_hint_x: 0.4
+
+				MDLabel:
+					text: "RESULT QTY:"
+					font_style: 'Body1'
+					size_hint_x: 0.2
+
+				MDLabel:
+					id: lb_product_qty
+					text: ""
+					font_style: 'Body1'
+					size_hint_x: 0.2
 
 			MDFillRoundFlatButton:
 				id: bt_mode

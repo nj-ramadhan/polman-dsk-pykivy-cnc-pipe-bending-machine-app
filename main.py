@@ -10,6 +10,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from paho.mqtt import client as mqtt_client
 from pymodbus.client import ModbusTcpClient
 from pymodbus.client import AsyncModbusTcpClient
 from datetime import datetime
@@ -56,6 +57,18 @@ colors = {
 }
 
 modbus_client = ModbusTcpClient('192.168.1.111')
+
+mqtt_broker = 'broker.hivemq.com'
+# mqtt_broker = 'demo.thingsboard.io/dashboard/'
+mqtt_port = 1883
+mqtt_topic_machine_status = "machine-status/"
+mqtt_topic_product_name = "product-name/"
+mqtt_topic_production_target = "production-target/"
+mqtt_topic_production_result = "production-result/"
+# Generate a Client ID with the publish prefix.
+mqtt_client_id = f'publish-rafindo-cnc-pipe-001'
+# username = 'emqx'
+# password = 'public'
 
 val_feed_pv = 0.
 val_bend_pv = 0.
@@ -120,6 +133,11 @@ sens_chuck_close = False
 flag_seqs_arr = np.zeros(11)
 flag_steps_arr = np.zeros(11)
 
+flag_run_prev = False
+flag_finish_prod = False
+flag_finish_prod_prev = False
+val_prod_qty_result = 0
+str_product_name = ""
 view_camera = np.array([45, 0, 0])
 
 class ScreenSplash(MDScreen):    
@@ -133,6 +151,52 @@ class ScreenSplash(MDScreen):
         Clock.schedule_interval(self.regular_display, 1)
         Clock.schedule_interval(self.regular_highspeed_display, 0.5)
         Clock.schedule_interval(self.regular_get_data, 0.5)
+
+    def mqtt_connect(self):
+        global mqtt_broker, mqtt_port, mqtt_client_id
+        def on_connect(client, userdata, flags, rc):
+            if rc == 0:
+                toast("Connected to MQTT Broker!")
+            else:
+                toast("Failed to connect, return code %d\n", rc)
+
+        client = mqtt_client.Client(mqtt_client_id)
+        # client.username_pw_set(username, password)
+        client.on_connect = on_connect
+        client.connect(mqtt_broker, mqtt_port)
+        return client
+
+    def mqtt_publish(self, client, machine_status, str_product_name, production_target, production_result):
+        global mqtt_topic_machine_status, mqtt_topic_product_name, mqtt_topic_production_target, mqtt_topic_production_result
+
+        result = client.publish(mqtt_topic_machine_status, machine_status)
+        status = result[0]
+        if status == 0:
+            toast(f"Send `{machine_status}` to topic `{mqtt_topic_machine_status}`")
+        else:
+            toast(f"Failed to send message to topic {mqtt_topic_machine_status}")
+
+        result = client.publish(mqtt_topic_product_name, str_product_name)
+        status = result[0]
+        if status == 0:
+            toast(f"Send `{str_product_name}` to topic `{mqtt_topic_product_name}`")
+        else:
+            toast(f"Failed to send message to topic {mqtt_topic_production_target}")
+
+        result = client.publish(mqtt_topic_production_target, production_target)
+        status = result[0]
+        if status == 0:
+            toast(f"Send `{production_target}` to topic `{mqtt_topic_production_target}`")
+        else:
+            toast(f"Failed to send message to topic {mqtt_topic_production_target}")
+
+        result = client.publish(mqtt_topic_production_result, production_result)
+        status = result[0]
+        if status == 0:
+            toast(f"Send `{production_result}` to topic `{mqtt_topic_production_result}`")
+        else:
+            toast(f"Failed to send message to topic {mqtt_topic_production_result}")
+
 
     def regular_update_connection(self, dt):
         global flag_conn_stat
@@ -154,6 +218,7 @@ class ScreenSplash(MDScreen):
         global sens_press_open, sens_table_up, sens_table_down
         global sens_feed_origin, sens_feed_reducer, sens_chuck_close
         global flag_seqs_arr, flag_steps_arr
+        global flag_finish_prod, flag_finish_prod_prev, val_prod_qty_result, flag_run_prev, str_product_name
 
         try:
             if flag_conn_stat:
@@ -235,6 +300,25 @@ class ScreenSplash(MDScreen):
                 flag_steps_arr[8] = step_flags.bits[8]
                 flag_steps_arr[9] = step_flags.bits[9]
                 flag_steps_arr[10] = step_flags.bits[10]
+
+                flag_finish_prod = flag_steps_arr[10]
+
+                if(flag_finish_prod and not flag_finish_prod_prev):
+                    val_prod_qty_result += 1
+
+                    mqtt_client = self.mqtt_connect()
+                    mqtt_client.loop_start()
+                    self.mqtt_publish(mqtt_client, flag_run, str_product_name, val_advanced_prod_qty, val_prod_qty_result)
+                    mqtt_client.loop_stop()
+
+                if((flag_run and not flag_run_prev) or (not flag_run and flag_run_prev)):
+                    mqtt_client = self.mqtt_connect()
+                    mqtt_client.loop_start()
+                    self.mqtt_publish(mqtt_client, flag_run, str_product_name, val_advanced_prod_qty, val_prod_qty_result)
+                    mqtt_client.loop_stop()
+
+                flag_finish_prod_prev = flag_finish_prod
+                flag_run_prev = flag_run
                 
         except Exception as e:
             msg = f'{e}'
@@ -243,6 +327,7 @@ class ScreenSplash(MDScreen):
     def regular_display(self, dt):
         global flag_conn_stat        
         global conf_bed_pos_step
+        global flag_run, val_advanced_prod_qty, val_prod_qty_result
 
         try:
             screenMainMenu = self.screen_manager.get_screen('screen_main_menu')
@@ -355,6 +440,8 @@ class ScreenSplash(MDScreen):
                 screenCompile.ids.bt_bed_pos9.text = "UP"
                 screenCompile.ids.bt_bed_pos9.md_bg_color = "#EE2222"
 
+            screenOperateAuto.ids.lb_product_qty.text = str(val_prod_qty_result)
+
         except Exception as e:
             Logger.error(e)
 
@@ -381,6 +468,10 @@ class ScreenSplash(MDScreen):
             screenOperateAuto.ids.lb_real_feed.text = str(val_feed_pv)
             screenOperateAuto.ids.lb_real_bend.text = str(val_bend_pv)
             screenOperateAuto.ids.lb_real_turn.text = str(val_turn_pv)
+
+            screenOperateManual.ids.lb_real_feed.text = str(val_feed_pv)
+            screenOperateManual.ids.lb_real_bend.text = str(val_bend_pv)
+            screenOperateManual.ids.lb_real_turn.text = str(val_turn_pv)
 
             screenOperateAuto.ids.lb_feed_speed.text = str(conf_feed_speed_pv)
             screenOperateAuto.ids.lb_bend_speed.text = str(conf_bend_speed_pv)
@@ -1633,6 +1724,11 @@ class ScreenOperateAuto(MDScreen):
         view_camera = np.array([elev, azim, roll])        
         self.update_graph(elev, azim, roll)
 
+    def reset_product_qty(self):
+        global val_prod_qty_result
+        
+        val_prod_qty_result = 0
+
     def reload(self):
         global data_base_process
         
@@ -1644,19 +1740,27 @@ class ScreenOperateAuto(MDScreen):
         self.manager_open = True
 
     def select_path(self, path: str):
+        global str_product_name
         try:
+            path_name = os.path.expanduser(os.getcwd() + "\data\\")
+            filename = path.replace(path_name, "")
+            filename = filename.replace(".gcode", "")
+            str_product_name = filename
+            self.ids.lb_product_name.text = str_product_name
             self.exit_manager(path)
         except:
             toast("error select file path")
 
     def exit_manager(self, *args):
-        global data_base_process, data_base_config
+        global data_base_process, data_base_config, val_prod_qty_result
         try:
             data_set = np.loadtxt(*args, delimiter="\t", encoding=None, skiprows=1)
             data_base_load = data_set.T
             data_base_process = data_base_load[:3,:]
             data_base_config = data_base_load[3:,:]
             self.reload()
+
+            val_prod_qty_result = 0
 
             self.manager_open = False
             self.file_manager.close()

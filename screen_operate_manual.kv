@@ -357,6 +357,39 @@
 							on_press: root.exec_operate_turn()
 							on_release: root.end_operate_turn()
 
+					MDGridLayout:
+						cols:3
+						spacing: 20, 10
+						padding: 20, 20
+						size_hint_y: 0.1
+
+						MDLabel:
+							text: "Feeding Realtime Data"
+							font_style: 'Body2'
+
+						MDLabel:
+							text: "Bending Realtime Data"
+							font_style: 'Body2'
+
+						MDLabel:
+							text: "Turning Realtime Data"
+							font_style: 'Body2'
+
+						MDLabel:
+							id: lb_real_feed
+							text: "000.00"
+							font_style: 'H5'
+
+						MDLabel:
+							id: lb_real_bend
+							text: "000.00"
+							font_style: 'H5'
+
+						MDLabel:
+							id: lb_real_turn
+							text: "000.00"
+							font_style: 'H5'	
+
 					MDFillRoundFlatButton:
 						id: bt_origin
 						size_hint_y: 0.02
