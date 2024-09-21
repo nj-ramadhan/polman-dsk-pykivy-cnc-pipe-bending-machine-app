@@ -131,6 +131,7 @@ sens_chuck_close = False
 flag_seqs_arr = np.zeros(11)
 flag_steps_arr = np.zeros(11)
 
+flag_iot_enable = False
 flag_run_prev = False
 flag_finish_prod = False
 flag_finish_prod_prev = False
@@ -165,17 +166,20 @@ class ScreenSplash(MDScreen):
         return client
 
     def mqtt_publish(self, topic, message):
-        mqtt_client = self.mqtt_connect()
-        mqtt_client.loop_start()
-        
-        result = mqtt_client.publish(topic, message)
-        status = result[0]
-        if status == 0:
-            toast(f"Send `{message}` to topic `{topic}`")
-        else:
-            toast(f"Failed to send message to topic {mqtt_topic_machine_status}")
-        
-        mqtt_client.loop_stop()
+        global flag_iot_enable
+
+        if(flag_iot_enable):
+            mqtt_client = self.mqtt_connect()
+            mqtt_client.loop_start()
+            
+            result = mqtt_client.publish(topic, message)
+            status = result[0]
+            if status == 0:
+                toast(f"Send `{message}` to topic `{topic}`")
+            else:
+                toast(f"Failed to send message to topic {mqtt_topic_machine_status}")
+            
+            mqtt_client.loop_stop()
         
 
     def regular_update_connection(self, dt):
@@ -314,37 +318,68 @@ class ScreenSplash(MDScreen):
             screenCompile = self.screen_manager.get_screen('screen_compile')
 
             if flag_conn_stat:
-                screenMainMenu.ids.comm_status.text = "Status: Connected"
-                screenMainMenu.ids.comm_status.color = "#196BA5"
-                screenPipeSetting.ids.comm_status.text = "Status: Connected"
-                screenPipeSetting.ids.comm_status.color = "#196BA5"
-                screenMachineSetting.ids.comm_status.text = "Status: Connected"
-                screenMachineSetting.ids.comm_status.color = "#196BA5"                        
-                screenAdvancedSetting.ids.comm_status.text = "Status: Connected"
-                screenAdvancedSetting.ids.comm_status.color = "#196BA5"  
-                screenOperateManual.ids.comm_status.text = "Status: Connected"
-                screenOperateManual.ids.comm_status.color = "#196BA5"  
-                screenOperateAuto.ids.comm_status.text = "Status: Connected"
-                screenOperateAuto.ids.comm_status.color = "#196BA5"  
-                screenCompile.ids.comm_status.text = "Status: Connected"
-                screenCompile.ids.comm_status.color = "#196BA5"  
+                screenMainMenu.ids.comm_status.text = "PLC is Connected"
+                screenMainMenu.ids.comm_status.md_bg_color = "#196BA5"
+                screenPipeSetting.ids.comm_status.text = "PLC is Connected"
+                screenPipeSetting.ids.comm_status.md_bg_color = "#196BA5"
+                screenMachineSetting.ids.comm_status.text = "PLC is Connected"
+                screenMachineSetting.ids.comm_status.md_bg_color = "#196BA5"                        
+                screenAdvancedSetting.ids.comm_status.text = "PLC is Connected"
+                screenAdvancedSetting.ids.comm_status.md_bg_color = "#196BA5"  
+                screenOperateManual.ids.comm_status.text = "PLC is Connected"
+                screenOperateManual.ids.comm_status.md_bg_color = "#196BA5"  
+                screenOperateAuto.ids.comm_status.text = "PLC is Connected"
+                screenOperateAuto.ids.comm_status.md_bg_color = "#196BA5"  
+                screenCompile.ids.comm_status.text = "PLC is Connected"
+                screenCompile.ids.comm_status.md_bg_color = "#196BA5"  
 
             else:
-                screenMainMenu.ids.comm_status.text = "Status: Disconnected"
-                screenMainMenu.ids.comm_status.color = "#EE2222"
-                screenPipeSetting.ids.comm_status.text = "Status: Disconnected"
-                screenPipeSetting.ids.comm_status.color = "#EE2222"
-                screenMachineSetting.ids.comm_status.text = "Status: Disconnected"
-                screenMachineSetting.ids.comm_status.color = "#EE2222"
-                screenAdvancedSetting.ids.comm_status.text = "Status: Disconnected"
-                screenAdvancedSetting.ids.comm_status.color = "#EE2222"
-                screenOperateManual.ids.comm_status.text = "Status: Disconnected"
-                screenOperateManual.ids.comm_status.color = "#EE2222"
-                screenOperateAuto.ids.comm_status.text = "Status: Disconnected"
-                screenOperateAuto.ids.comm_status.color = "#EE2222"
-                screenCompile.ids.comm_status.text = "Status: Disconnected"
-                screenCompile.ids.comm_status.color = "#EE2222"
-                                  
+                screenMainMenu.ids.comm_status.text = "PLC is Disconnected"
+                screenMainMenu.ids.comm_status.md_bg_color = "#EE2222"
+                screenPipeSetting.ids.comm_status.text = "PLC is Disconnected"
+                screenPipeSetting.ids.comm_status.md_bg_color = "#EE2222"
+                screenMachineSetting.ids.comm_status.text = "PLC is Disconnected"
+                screenMachineSetting.ids.comm_status.md_bg_color = "#EE2222"
+                screenAdvancedSetting.ids.comm_status.text = "PLC is Disconnected"
+                screenAdvancedSetting.ids.comm_status.md_bg_color = "#EE2222"
+                screenOperateManual.ids.comm_status.text = "PLC is Disconnected"
+                screenOperateManual.ids.comm_status.md_bg_color = "#EE2222"
+                screenOperateAuto.ids.comm_status.text = "PLC is Disconnected"
+                screenOperateAuto.ids.comm_status.md_bg_color = "#EE2222"
+                screenCompile.ids.comm_status.text = "PLC is Disconnected"
+                screenCompile.ids.comm_status.md_bg_color = "#EE2222"
+
+            if flag_iot_enable:
+                screenMainMenu.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenMainMenu.ids.bt_iot_enable.md_bg_color = "#196BA5"
+                screenPipeSetting.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenPipeSetting.ids.bt_iot_enable.md_bg_color = "#196BA5"
+                screenMachineSetting.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenMachineSetting.ids.bt_iot_enable.md_bg_color = "#196BA5"                
+                screenAdvancedSetting.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenAdvancedSetting.ids.bt_iot_enable.md_bg_color = "#196BA5"
+                screenOperateManual.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenOperateManual.ids.bt_iot_enable.md_bg_color = "#196BA5"
+                screenOperateAuto.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenOperateAuto.ids.bt_iot_enable.md_bg_color = "#196BA5"  
+                screenCompile.ids.bt_iot_enable.text = "IOT is Enabled"
+                screenCompile.ids.bt_iot_enable.md_bg_color = "#196BA5"  
+            else:
+                screenMainMenu.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenMainMenu.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenPipeSetting.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenPipeSetting.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenMachineSetting.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenMachineSetting.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenAdvancedSetting.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenAdvancedSetting.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenOperateManual.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenOperateManual.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenOperateAuto.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenOperateAuto.ids.bt_iot_enable.md_bg_color = "#EE2222"
+                screenCompile.ids.bt_iot_enable.text = "IOT is Disabled"
+                screenCompile.ids.bt_iot_enable.md_bg_color = "#EE2222"                                                                                
+
             if conf_bed_pos_step[0] != 1:
                 screenCompile.ids.bt_bed_pos0.text = "DN"
                 screenCompile.ids.bt_bed_pos0.md_bg_color = "#196BA5"
@@ -661,6 +696,10 @@ class ScreenSplash(MDScreen):
 class ScreenMainMenu(MDScreen):    
     def __init__(self, **kwargs):
         super(ScreenMainMenu, self).__init__(**kwargs)
+    
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -827,6 +866,10 @@ class ScreenPipeSetting(MDScreen):
     def menu_callback(self, text_item):
         print(text_item)
 
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -978,6 +1021,10 @@ class ScreenMachineSetting(MDScreen):
             toast("sucessfully save machine setting")
         except:
             toast("error save machine setting")
+
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -1154,6 +1201,10 @@ class ScreenAdvancedSetting(MDScreen):
             toast("sucessfully save advanced setting")
         except:
             toast("error save advanced setting")
+
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
 
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
@@ -1648,6 +1699,10 @@ class ScreenOperateManual(MDScreen):
         except:
             toast("error send flag_reset data to PLC Slave")
 
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -2060,7 +2115,11 @@ class ScreenOperateAuto(MDScreen):
                 modbus_client.close()
         except:
             toast("error send flag_reset data to PLC Slave")
-    
+
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 
@@ -2595,7 +2654,11 @@ class ScreenCompile(MDScreen):
             print(e)
             print("error saving data")
             toast("error saving data")
-                
+
+    def exec_iot_enable(self):
+        global flag_iot_enable
+        flag_iot_enable = not flag_iot_enable
+
     def screen_main_menu(self):
         self.screen_manager.current = 'screen_main_menu'
 

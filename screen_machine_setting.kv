@@ -27,12 +27,25 @@
 					valign: "middle"
 					font_style: 'H5'
 
-				MDLabel:
-					id: comm_status
-					text: "Status:"
-					halign: "center"
-					valign: "middle"
+				MDBoxLayout:
+					orientation: "horizontal"
+					padding: 50, 0
+					spacing: 50
 
+					MDFillRoundFlatIconButton:
+						id: comm_status
+						icon: "connection"
+						text: "Status:"
+						font_style: 'Button'
+						size_hint_x: 0.5
+
+					MDFillRoundFlatIconButton:
+						id: bt_iot_enable
+						icon: "wifi"
+						text: "IOT DISABLED"
+						font_style: 'Button'
+						size_hint_x: 0.5
+						on_release: root.exec_iot_enable()
                   
             Image:
                 id: logo
